@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Sora } from "next/font/google";
 import React from "react";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Providers from "@/providers/Providers";
 
 const sora = Sora({ subsets: ["latin"], display: "swap" });
@@ -19,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${sora.className}`}>
-      <body className={`h-full bg-gray-900 text-slate-200`}>
+      <body className="min-h-screen flex">
         <Providers>{children}</Providers>
         <ToastContainer
           position="bottom-right"
