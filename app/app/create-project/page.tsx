@@ -4,7 +4,7 @@ import InputText from "@/components/Form/InputText";
 import InputImage from "@/components/Form/InputImage";
 import { toast } from "react-toastify";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 import { projectRegistry } from "@/constants/abis";
 
