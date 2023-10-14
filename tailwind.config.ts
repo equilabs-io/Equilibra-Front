@@ -8,7 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {},
+      colors: {
+        primary: "var(--color-primary)",
+        secondary: "var(--color-secondary)",
+        background: "var(--color-background)",
+        background2: "var(--color-background2)",
+        white: "var(--color-white)",
+        white_10: "var(--color-white_10)",
+        white_5: "var(--color-white_5)",
+      },
     },
   },
   plugins: [],

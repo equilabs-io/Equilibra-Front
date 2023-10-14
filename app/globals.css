@@ -2,6 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    
+:root {
+  --color-primary: #00eab4;
+  --color-secondary: #14171a;
+  --color-white: #e2e8f0;
+  --color-white_10: #e2e8f01a;
+  --color-white_5: #e2e8f00d;
+  --color-background: #111111;
+  --color-background2: #1b1b1b;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-white);
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+}
+
+h1 {
+  font-size: 3rem;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-size: 2rem;
+  line-height: 1.25;
+  letter-spacing: 0px;
+}
+
+h3 {
+  font-size: 1.64rem;
+  line-height: 1.43;
+  letter-spacing: 0.5px;
+}
+
+h4 {
+  font-size: 1.32rem;
+  line-height: 1.43;
+  letter-spacing: 0px;
+}
+
+label {
+  font-size: 1.2rem;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+}
+
+input {
+  font-size: 1.2rem;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
 }
