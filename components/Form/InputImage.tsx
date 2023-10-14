@@ -48,7 +48,6 @@ export default function InputImage({
         body: data,
       });
       const json = await res.json();
-      console.log(json);
 
       if (json?.IpfsHash) {
         handleChange(json.IpfsHash, name);
@@ -97,6 +96,7 @@ export default function InputImage({
                     className="sr-only"
                     accept="image/*"
                     onChange={handleFileChange}
+                    required={required}
                   />
                 </label>
 
