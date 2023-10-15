@@ -9,7 +9,7 @@
   --color-white_10: #e2e8f01a;
   --color-white_5: #e2e8f00d;
   --color-background: #111111;
-  --color-background2: #1b1b1b;
+  --color-surface: #1b1b1b;
 }
 
 body {
@@ -24,7 +24,7 @@ p {
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 4rem;
   line-height: 1.2;
   letter-spacing: -0.5px;
 }
