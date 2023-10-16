@@ -11,6 +11,21 @@
   --color-background: #111111;
   --color-surface: #1b1b1b;
 }
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-background);
+  border-radius: 5px;
+  opacity: 0.1;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 50px;
+  border: 3px solid var(--color-surface);
+}
 
 body {
   background: var(--color-background);
