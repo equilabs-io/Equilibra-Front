@@ -22,6 +22,9 @@ export const Hero: React.FC = () => {
   return (
     <>
       <motion.section
+        animate={{ opacity: 1 }}
+        initial={{ opacity: 0 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
         ref={heroRef}
         style={{ opacity, scale }}
         className="h-screen flex items-center justify-center relative"
@@ -32,7 +35,6 @@ export const Hero: React.FC = () => {
           <LogoSvg styles="text-[#00FFC4] w-[120px] h-[70px]" />
         </div>
       </motion.section>
-      <div className="h-[100vh]"></div>
     </>
   );
 };
