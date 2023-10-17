@@ -13,6 +13,7 @@ const config: Config = {
         secondary: "var(--color-secondary)",
         background: "var(--color-background)",
         surface: "var(--color-surface)",
+        textSecondary: "var(--color-text-secondary)",
         white: "var(--color-white)",
         white_5: "var(--color-white_5)",
         white_10: "var(--color-white_10)",

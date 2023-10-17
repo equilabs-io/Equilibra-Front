@@ -3,7 +3,8 @@ import { NextPage } from "next";
 import { motion } from "framer-motion";
 import WavesSvg from "@/assets/WavesSvg";
 import { Hero } from "@/components/Landing";
-import { Features } from "@/components/Landing";
+import { PillardsStack } from "@/components/Landing";
+import { HorizontalFeatures } from "@/components/Landing/HorizontalFeatures";
 import { Team } from "@/components/Landing";
 
 const Home: NextPage = () => {
@@ -35,7 +36,8 @@ const Home: NextPage = () => {
                 </p>
               </div>
             </motion.div>
-            <Features />
+            <PillardsStack />
+            <HorizontalFeatures />
             {/* <Team />  */}
             {/* <Footer /> */}
           </div>

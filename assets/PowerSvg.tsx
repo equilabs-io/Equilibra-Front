@@ -4,7 +4,6 @@ export default function PowerSvg({ styles }: any) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 500 500"
       height="100%"
       width="100%"
       className={`fill-primary rounded-md ${styles}`}
