@@ -7,16 +7,32 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 import { projectRegistry } from "@/constants/abis";
+import InputSelect from "@/components/Form/InputSelect";
 
 interface FormState {
   description: string;
   link: string;
   fileHash: string;
+  name: string;
+  category: string;
 }
 
 interface ErrorCause {
   metaMessages: string[];
 }
+
+const categories = [
+  { id: 1, name: "Decentralized Finance (DeFi)" },
+  { id: 2, name: "Decentralized Autonomous Organization (DAO)" },
+  { id: 3, name: "Non-Fungible Token (NFT) Marketplaces" },
+  { id: 4, name: "Cross-Chain Interoperability Protocols" },
+  { id: 5, name: "Smart Contract Security Auditing Services" },
+  { id: 6, name: "Decentralized Exchanges (DEX)" },
+  { id: 7, name: "Cryptocurrency Mining Pools" },
+  { id: 8, name: "Blockchain-Based Supply Chain Management" },
+  { id: 9, name: "Decentralized Social Networks" },
+  { id: 10, name: "Blockchain-Based Voting Systems" },
+];
 
 export default function CreateProject() {
   const [beneficiary, setBeneficiary] = useState("");
@@ -24,6 +40,8 @@ export default function CreateProject() {
     description: "",
     link: "",
     fileHash: "",
+    name: "",
+    category: "",
   });
 
   const handleChange = (value: string | number, name: string) => {
@@ -109,6 +127,17 @@ export default function CreateProject() {
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <InputText
+                  label="Project name"
+                  name="name"
+                  handleChange={handleChange}
+                  value={formState.name}
+                  type="text"
+                  placeholder="My project name"
+                  required
+                />
+              </div>
+              <div className="sm:col-span-4">
+                <InputText
                   label="Beneficiary address"
                   name="beneficiary"
                   handleChange={handleChange}
@@ -137,6 +166,16 @@ export default function CreateProject() {
                   type="textarea"
                   rows={3}
                   placeholder="Project description..."
+                  required
+                />
+              </div>
+              <div className="sm:col-span-4">
+                <InputSelect
+                  list={categories}
+                  label="Category"
+                  name="category"
+                  handleChange={handleChange}
+                  value={formState.category}
                   required
                 />
               </div>
