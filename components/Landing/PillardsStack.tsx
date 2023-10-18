@@ -98,7 +98,7 @@ export const PillardsStack = () => {
 
   return (
     <>
-      <motion.section ref={targetRef} className="min-h-[150vh] mt-[200px]">
+      <motion.section ref={targetRef} className="min-h-[180vh] mt-[200px]">
         {pillardsInfo.map((pillard, index) => (
           <PillardCard key={index} {...pillard} />
         ))}

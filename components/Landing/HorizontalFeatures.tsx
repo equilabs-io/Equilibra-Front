@@ -74,9 +74,22 @@ const HorizontalScrollAnimate = () => {
   });
 
   const x = useTransform(scrollYProgress, [0, 1], ["1%", "-75%"]);
+  const fadeOut = useTransform(scrollYProgress, [0, 1], [1, 0]);
+  const color = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["", "var(--color-primary)"]
+  );
 
   return (
     <section ref={targetRef} className="relative h-[300vh]">
+      <motion.h2
+        style={{ opacity: fadeOut, color }}
+        transition={{ duration: 0.8 }}
+        className="text-center text-5xl sticky top-20 transition-all ease-in-out duration-500"
+      >
+        Unleash the Power of Our Features
+      </motion.h2>
       <div className="sticky top-0 flex h-screen items-center overflow-hidden space-y-4">
         <motion.div style={{ x }} className="flex gap-8">
           {featuresInfo.map((card) => {
@@ -89,22 +102,8 @@ const HorizontalScrollAnimate = () => {
 };
 
 export const HorizontalFeatures: React.FC = () => {
-  const titleRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: titleRef,
-  });
-
   return (
     <>
-      {/* <motion.h2
-        animate={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
-        className="text-center text-5xl sticky top-20"
-      >
-        Unleash the Power of Our Features
-      </motion.h2> */}
-
       <HorizontalScrollAnimate />
     </>
   );
