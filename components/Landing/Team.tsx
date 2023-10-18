@@ -1,29 +1,30 @@
+import Image from "next/image";
 const equilibraTeam = [
   {
     name: "Mati",
     role: "FullStack Developer",
-    imageUrl: "",
+    imageUrl: "/logo.png",
     twitterUrl: "#",
     linkedinUrl: "#",
   },
   {
     name: "Lucho",
     role: "Frontend Developer",
-    imageUrl: "",
+    imageUrl: "/logo.png",
     twitterUrl: "#",
     linkedinUrl: "#",
   },
   {
     name: "Vero",
     role: "UX/UI Designer",
-    imageUrl: "",
+    imageUrl: "/logo.png",
     twitterUrl: "#",
     linkedinUrl: "#",
   },
   {
     name: "Fede",
     role: "Solidity Engineer",
-    imageUrl: "",
+    imageUrl: "/logo.png",
     twitterUrl: "#",
     linkedinUrl: "#",
   },
@@ -53,11 +54,18 @@ export const Team = () => {
               key={person.name}
               className="rounded-2xl bg-background px-8 py-10 hover:border-[1px] hover:border-primary"
             >
-              <img
-                className="mx-auto h-48 w-48 rounded-full md:h-56 md:w-56"
-                src={person.imageUrl}
-                alt=""
-              />
+              {person.imageUrl && (
+                <div className="mx-auto h-48 w-48 md:h-56 md:w-56 relative">
+                  <Image
+                    src={person.imageUrl}
+                    alt=""
+                    layout="fill"
+                    objectFit="fit"
+                    className="rounded-full "
+                  />
+                </div>
+              )}
+
               <h3 className="mt-6 text-base font-semibold leading-7 tracking-tight text-white">
                 {person.name}
               </h3>

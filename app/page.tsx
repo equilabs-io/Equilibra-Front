@@ -41,11 +41,11 @@ const Home: NextPage = () => {
               </h2>
               <div className="max-w-[900px] text-center px-4 md:px-0 min-h-max">
                 <p className="leading-8 font-thin">
-                  We're here to change how projects get funded. Whether you're a
-                  DAO or an organization, we offer tailored solutions for
+                  We are here to change how projects get funded. Whether you are
+                  a DAO or an organization, we offer tailored solutions for
                   decentralized communities. Be a part of the crowdfunding
                   revolution, shaping a better tomorrow, many projects at a
-                  time."
+                  time.
                 </p>
               </div>
             </motion.div>
