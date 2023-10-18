@@ -5,6 +5,7 @@ import { Hero } from "@/components/Landing";
 import { PillardsStack } from "@/components/Landing";
 import { HorizontalFeatures } from "@/components/Landing/HorizontalFeatures";
 import { Team } from "@/components/Landing";
+import { Footer } from "@/components/Footer";
 
 const Home: NextPage = () => {
   return (
@@ -51,7 +52,7 @@ const Home: NextPage = () => {
             <PillardsStack />
             <HorizontalFeatures />
             <Team />
-            {/* <Footer /> */}
+            <Footer />
           </div>
         </main>
       </div>

@@ -33,15 +33,15 @@ const equilibraTeam = [
 
 export const Team = () => {
   return (
-    <div className="bg-gray-900  sm:py-24  rounded-2xl">
+    <div className="bg-gray-900 py-24 rounded-2xl">
       <div className="mx-auto max-w-7xl px-6 text-center lg:px-8">
         <div className="mx-auto max-w-2xl">
           <h2 className="text-3xl font-bold tracking-tight spacing text-primary sm:text-4xl">
             Meet our pioneers
           </h2>
-          <p className="mt-4 text-lg leading-8 text-textSecondary font-thin">
+          <p className="mt-4 text-lg leading-8 text-textSecondary">
             An amazing web3 team supercharged to push the boundaries of
-            innovation,
+            innovation.
           </p>
         </div>
         <ul
