@@ -13,7 +13,7 @@ const featuresInfo = [
   {
     title: "Conviction Voting",
     description:
-      "Stake tokens to influence decisions based on commitment and time. Experience a democratic and transparent system",
+      "Stake tokens to influence decisions based on commitment and time while experiencing a democratic and transparent system",
     image: <ArrowUpRightIcon />,
   },
   {
@@ -48,7 +48,7 @@ const featuresInfo = [
 const FeaturesCard = ({ title, description, image }: FeaturesCardProps) => {
   return (
     <>
-      <motion.div className="p-4 min-w-[400px] min-h-[300px] rounded-md bg-surface hover:border-2 hover:border-primary bg-gradient-to-b from-[#103029] from-14% to-surface to-86%  cursor-pointer">
+      <motion.div className="p-4 min-w-[450px] min-h-[280px] rounded-md bg-surface hover:border-2 hover:border-primary bg-gradient-to-b from-[#103029] from-14% to-surface to-86%  cursor-pointer">
         <div className="flex justify-end">
           <ArrowUpRightIcon
             height={"30px"}
@@ -56,11 +56,13 @@ const FeaturesCard = ({ title, description, image }: FeaturesCardProps) => {
             className="text-primary text-right"
           />
         </div>
-        <div className="h-full flex flex-col justify-evenly">
-          <h3 className="text-4xl text-primary mb-6 text-center">{title}</h3>
-          <p className="text-textSecondary font-thin text-center">
-            {description}
-          </p>
+        <div className="h-full flex flex-col justify-between relative">
+          <h3 className="text-4xl text-primary mb-6 text-center pt-3">
+            {title}
+          </h3>
+          <div className="absolute top-28 w-full">
+            <p className="text-textSecondary text-center">{description}</p>
+          </div>
         </div>
       </motion.div>
     </>
