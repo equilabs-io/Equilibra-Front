@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${sora.className}`}>
-      <body className="min-h-screen flex">
+      <body className="min-h-screen">
         <Providers>{children}</Providers>
         <ToastContainer
           position="bottom-right"

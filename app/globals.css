@@ -3,13 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #00ffc4;
-  --color-secondary: #ff0f68;
+  --color-primary: #00eab4;
+  --color-secondary: #14171a;
+  --color-text-secondary: #bdbdbd;
   --color-white: #e2e8f0;
   --color-white_10: #e2e8f01a;
   --color-white_5: #e2e8f00d;
   --color-background: #161919;
-  --color-background2: #16201E;
+  --color-surface: #16201E;
   --color-grey-light: #808886;
   --color-grey-mlight: #5b6361;
   --color-grey-mdark: #383d3c;
@@ -40,7 +41,7 @@ p {
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 4rem;
   line-height: 1.2;
   letter-spacing: -0.5px;
 }
