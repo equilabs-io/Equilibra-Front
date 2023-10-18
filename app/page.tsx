@@ -50,7 +50,7 @@ const Home: NextPage = () => {
             </motion.div>
             <PillardsStack />
             <HorizontalFeatures />
-            {/* <Team />  */}
+            <Team />
             {/* <Footer /> */}
           </div>
         </main>

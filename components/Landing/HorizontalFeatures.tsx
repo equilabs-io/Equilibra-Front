@@ -93,19 +93,17 @@ export const HorizontalFeatures: React.FC = () => {
   const { scrollYProgress } = useScroll({
     target: titleRef,
   });
-  const x = useTransform(scrollYProgress, [0, 1], ["1%", "-50%"]);
 
   return (
     <>
-      <motion.h2
+      {/* <motion.h2
         animate={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
-        ref={titleRef}
         className="text-center text-5xl sticky top-20"
       >
         Unleash the Power of Our Features
-      </motion.h2>
+      </motion.h2> */}
 
       <HorizontalScrollAnimate />
     </>
