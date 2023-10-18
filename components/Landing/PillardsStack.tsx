@@ -23,7 +23,7 @@ export const PillardsStack = () => {
   const fadeIn = useTransform(scrollYProgress, [0.1, 0.3], [0, 1]);
   const scaleIn = useTransform(scrollYProgress, [0.1, 0.3], [0.5, 1]);
 
-  const fontSize = "text-xl md:text-4xl lg:text-5xl ";
+  const fontSize = "text-xl md:text-4xl lg:text-5xl";
 
   const PillardCard = ({
     title,
@@ -87,10 +87,10 @@ export const PillardsStack = () => {
       className: "top-24",
     },
     {
-      title: "Support",
-      subtitle: "Dive Into the Funding Ocean",
+      title: "Staking",
+      subtitle: "Contributing to the Web3 Ecosystem",
       description:
-        "Discover an extensive selection of meticulously chosen pools, tailored for particular Web3 initiatives, fostering their growth from conception to comprehensive realization.",
+        "Stake your tokens in the most promising projects and earn rewards. The more you stake, the more you earn.",
       image: <BricksSvg styles="fill-primary" />,
       className: "top-36",
     },
