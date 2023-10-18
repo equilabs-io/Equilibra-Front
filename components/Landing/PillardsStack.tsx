@@ -90,7 +90,7 @@ export const PillardsStack = () => {
       title: "Staking",
       subtitle: "Contributing to the Web3 Ecosystem",
       description:
-        "Stake your tokens in the most promising projects and earn rewards. The more you stake, the more you earn.",
+        "Bring your community ecosystem to the next level by supporting your favorite proyects",
       image: <BricksSvg styles="fill-primary" />,
       className: "top-36",
     },
