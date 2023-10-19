@@ -1,23 +1,27 @@
 "use client";
 import React, { useState } from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+
+import { Link } from "../components/Link";
+import { NavItem } from "./DropDownMenu";
 import { Dialog } from "@headlessui/react";
+
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { navItems } from "@/constants/navigation";
 import LogoSvg from "@/assets";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hiddenNav, setHiddenNav] = useState(false);
 
   const { scrollY } = useScroll();
-  const [hidden, setHidden] = useState(false);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious();
     if (latest > previous) {
-      setHidden(true);
+      setHiddenNav(true);
     } else {
-      setHidden(false);
+      setHiddenNav(false);
     }
   });
 
@@ -26,9 +30,9 @@ export default function Header() {
       <motion.nav
         variants={{
           visible: { y: 0 },
-          hidden: { y: "-100%" },
+          hiddenNav: { y: "-100%" },
         }}
-        animate={hidden ? "hidden" : "visible"}
+        animate={hiddenNav ? "hiddenNav" : "visible"}
         transition={{
           duration: 0.5,
           ease: "easeInOut",
@@ -39,24 +43,55 @@ export default function Header() {
       >
         <div className="m-[1px] flex w-full max-w-4xl items-center justify-between rounded-full py-2.5 pr-2.5 pl-3 bg-surface">
           <div className="flex lg:flex-1">
-            <a href="/app" className="-m-1.5 p-1.5">
+            {/* <a href="/app" className="-m-1.5 p-1.5"> */}
+            <Link href="/">
               <span className="sr-only">Equilibra</span>
               <div className="h-8 w-auto">
                 <LogoSvg styles="text-primary" />
               </div>
-            </a>
+            </Link>
           </div>
           {/* Items - Links Section */}
-          <div className="hidden lg:flex lg:gap-x-8 ">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.link}
-                className="font-bold uppercase hover:opacity-7 hover:opacity-80 transition-all duration-250 ease-in-out"
-              >
-                {item.name}
-              </a>
-            ))}
+          <div className="hidden lg:flex lg:gap-x-8">
+            {/*  */}
+            <NavItem
+              label={"POOLS"}
+              href={"/demo/create-pools"}
+              menuItems={[
+                {
+                  label: "Create Pool",
+                  href: "/demo/create-pool",
+                },
+                {
+                  label: "View All",
+                  href: "/demo",
+                },
+              ]}
+            />
+            <NavItem
+              label={"PROJECTS"}
+              href={"/demo/create-pool"}
+              menuItems={[
+                {
+                  label: "Create Project",
+                  href: "/demo/create-project",
+                },
+                {
+                  label: "View All",
+                  href: "/demo",
+                },
+              ]}
+            />
+            <NavItem
+              label={"Contribute"}
+              href={"/demo/create-pools"}
+              menuItems={[
+                {
+                  label: "Stake & Support Projects",
+                  href: "/demo",
+                },
+              ]}
+            />
           </div>
           {/* Wallter Connect Button */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
@@ -77,9 +112,10 @@ export default function Header() {
       </motion.nav>
 
       {/* Mobile Menu */}
+      {/* TODO: add animation and styles to Dialog*/}
       <Dialog
         as="div"
-        className="lg:hidden"
+        className="lg:hiddenNav"
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
       >
@@ -98,7 +134,7 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               <span className="sr-only">Close menu</span>
-              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+              <XMarkIcon className="h-6 w-6" aria-hiddenNav="true" />
             </button>
           </div>
           <div className="mt-6 flow-root">
@@ -121,9 +157,6 @@ export default function Header() {
           </div>
         </Dialog.Panel>
       </Dialog>
-      <div className="h-[300vh]"></div>
     </header>
   );
 }
-
-("fixed z-50 w-full text-gray-900 bg-white bg-opacity-50 dark:bg-dark dark:text-gray-100 backdrop-filter backdrop-blur-lg dark:bg-opacity-50");
