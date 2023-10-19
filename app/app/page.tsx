@@ -2,5 +2,9 @@
 import React from "react";
 
 export default function App() {
-  return <>App main</>;
+  return (
+    <>
+      <span className="sr-only">{/* content */}</span>
+    </>
+  );
 }
