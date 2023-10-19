@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { navItems } from "@/constants/navigation";
@@ -9,15 +9,35 @@ import LogoSvg from "@/assets";
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const { scrollY } = useScroll();
+  const [hidden, setHidden] = useState(false);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious();
+    if (latest > previous) {
+      setHidden(true);
+    } else {
+      setHidden(false);
+    }
+  });
+
   return (
     <header>
       <motion.nav
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-        className="mx-auto flex max-w-7xl items-center justify-center p-6 lg:px-8"
+        variants={{
+          visible: { y: 0 },
+          hidden: { y: "-100%" },
+        }}
+        animate={hidden ? "hidden" : "visible"}
+        transition={{
+          duration: 0.5,
+          ease: "easeInOut",
+          stiffness: 100,
+          bounce: 50,
+        }}
+        className="mx-auto flex max-w-7xl items-center justify-center p-6 lg:px-8 sticky top-0"
       >
-        <div className="m-[1px] flex w-full max-w-4xl items-center justify-between rounded-full py-2.5 pr-2.5 pl-3 shadow-2xl transition-width duration-200 ease-in-out bg-surface">
+        <div className="m-[1px] flex w-full max-w-4xl items-center justify-between rounded-full py-2.5 pr-2.5 pl-3 bg-surface">
           <div className="flex lg:flex-1">
             <a href="/app" className="-m-1.5 p-1.5">
               <span className="sr-only">Equilibra</span>
@@ -26,7 +46,6 @@ export default function Header() {
               </div>
             </a>
           </div>
-
           {/* Items - Links Section */}
           <div className="hidden lg:flex lg:gap-x-8 ">
             {navItems.map((item) => (
@@ -43,19 +62,20 @@ export default function Header() {
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <w3m-button balance="show" size="md" label="CONNECT" />
           </div>
+          {/* Mobile Open Button */}
+          <div className="flex lg:hidden">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-md p-2.5"
+              onClick={() => setMobileMenuOpen(true)}
+            >
+              <span className="sr-only">Open main menu</span>
+              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </motion.nav>
-      {/* Mobile Open Button */}
-      <div className="flex lg:hidden">
-        <button
-          type="button"
-          className="inline-flex items-center justify-center rounded-md p-2.5"
-          onClick={() => setMobileMenuOpen(true)}
-        >
-          <span className="sr-only">Open main menu</span>
-          <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-        </button>
-      </div>
+
       {/* Mobile Menu */}
       <Dialog
         as="div"
@@ -101,6 +121,7 @@ export default function Header() {
           </div>
         </Dialog.Panel>
       </Dialog>
+      <div className="h-[300vh]"></div>
     </header>
   );
 }
