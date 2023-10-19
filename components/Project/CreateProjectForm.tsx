@@ -26,11 +26,23 @@ const categories = [
   { id: 10, name: "Blockchain-Based Voting Systems" },
 ];
 
+type createProjectFormProps = {
+  handleFormChange: (value: string | number, name: string) => void;
+  formState: {
+    description: string;
+    link: string;
+    fileHash: string;
+    name: string;
+    category: string;
+  };
+  beneficiary: string;
+};
+
 export default function CreateProjectForm({
   handleFormChange,
   formState,
   beneficiary,
-}) {
+}: createProjectFormProps) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
