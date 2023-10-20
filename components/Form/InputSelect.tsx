@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
@@ -20,6 +20,11 @@ interface InputFormProps {
   required?: boolean;
 }
 
+interface Selected {
+  id: number;
+  name: string;
+}
+
 export default function InputSelect({
   list,
   name,
@@ -28,7 +33,13 @@ export default function InputSelect({
   handleChange,
   required = false,
 }: InputFormProps) {
-  const [selected, setSelected] = useState({ id: 0, name: "example" });
+  const [selected, setSelected] = useState(list[0]);
+
+  useEffect(() => {
+    if (selected) {
+      handleChange(selected.name, name);
+    }
+  }, [selected]);
 
   return (
     <Listbox value={selected} onChange={setSelected}>

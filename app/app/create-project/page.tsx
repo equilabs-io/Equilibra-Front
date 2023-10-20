@@ -37,11 +37,11 @@ const categories = [
 export default function CreateProject() {
   const [beneficiary, setBeneficiary] = useState("");
   const [formState, setFormState] = useState<FormState>({
-    description: "",
-    link: "",
-    fileHash: "",
     name: "",
+    link: "",
+    description: "",
     category: "",
+    fileHash: "",
   });
 
   const handleChange = (value: string | number, name: string) => {
@@ -67,7 +67,6 @@ export default function CreateProject() {
         const abiCoder = new ethers.utils.AbiCoder();
         const encodedData = abiCoder.encode(["string"], [ipfsHash]);
 
-        console.log("ipfs json hash: " + ipfsHash);
         write({
           args: [debouncedBeneficiary, encodedData],
         });
@@ -111,7 +110,7 @@ export default function CreateProject() {
     if (isSuccess) {
       toast.success("Successfully Created a Project!");
     } else if (isError && error) {
-      toast.error((error.cause as ErrorCause).metaMessages[0]);
+      toast.error((error.cause as ErrorCause)?.metaMessages[0]);
     }
   }, [isLoading, isSuccess, isError]);
 
@@ -127,23 +126,23 @@ export default function CreateProject() {
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <InputText
-                  label="Project name..."
+                  label="Project name"
                   name="name"
                   handleChange={handleChange}
                   value={formState.name}
                   type="text"
-                  placeholder="My project name"
+                  placeholder="My project name..."
                   required
                 />
               </div>
               <div className="sm:col-span-4">
                 <InputText
-                  label="Beneficiary address..."
+                  label="Beneficiary address"
                   name="beneficiary"
                   handleChange={handleChange}
                   value={beneficiary}
                   type="text"
-                  placeholder="Eth address"
+                  placeholder="Eth address..."
                   required
                 />
               </div>
@@ -154,7 +153,7 @@ export default function CreateProject() {
                   handleChange={handleChange}
                   value={formState.link}
                   type="text"
-                  placeholder="Project link"
+                  placeholder="Project link..."
                 />
               </div>
               <div className="col-span-full">
