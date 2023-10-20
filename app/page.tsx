@@ -6,12 +6,18 @@ import { PillardsStack } from "@/components/Landing";
 import { HorizontalFeatures } from "@/components/Landing/HorizontalFeatures";
 import { Team } from "@/components/Landing";
 import { Footer } from "@/components/Footer";
+import { GridPattern } from "@/components/Landing/GridPattern";
 
 const Home: NextPage = () => {
   return (
     <>
       <div className="flex min-h-screen flex-col">
         <main className="container mx-auto">
+          <GridPattern
+            className="absolute inset-x-0 -top-14  w-full h-[800px] fill-primary stroke-slate-800 [mask-image:linear-gradient(to_bottom_left,white_40%,transparent_50%)]"
+            yOffset={10}
+            interactive
+          />
           <div className="mx-auto flex w-11/12 flex-col relative">
             <Hero />
             <motion.div
