@@ -1,4 +1,11 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  images: {
+    domains: [process.env.PINATA_GATEWAY],
+  },
+  experimental: {
+    serverActions: true,
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
