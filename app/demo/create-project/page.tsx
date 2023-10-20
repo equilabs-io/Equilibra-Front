@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import CreateProjectForm from "@/components/Project/CreateProjectForm";
+import { CardProject } from "@/components/Project";
 interface FormState {
   description: string;
   link: string;
@@ -36,6 +37,7 @@ export default function CreateProject() {
         formState={formState}
         beneficiary={beneficiary}
       />
+      <CardProject />
     </>
   );
 }

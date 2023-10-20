@@ -1,3 +1,4 @@
+import { Link } from "../Link";
 export const LaunchAppButton = ({ center = false }) => {
   return (
     <>
@@ -6,9 +7,11 @@ export const LaunchAppButton = ({ center = false }) => {
           center && "justify-center"
         }`}
       >
-        <button className="font-semibold bg-primary text-black py-2 px-4 rounded-full text-sm hover:opacity-80">
-          Launch App
-        </button>
+        <Link href={"./demo"}>
+          <button className="font-semibold bg-primary text-black py-2 px-4 rounded-full text-sm hover:opacity-80">
+            Launch Demo
+          </button>
+        </Link>
       </div>
     </>
   );

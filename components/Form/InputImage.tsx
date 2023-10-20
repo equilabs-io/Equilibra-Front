@@ -64,7 +64,7 @@ export default function InputImage({
     <>
       <label
         htmlFor="cover-photo"
-        className="block text-sm font-medium leading-6 "
+        className="block text-sm font-thin leading-6 "
       >
         {label}
       </label>
@@ -86,7 +86,7 @@ export default function InputImage({
                 />
                 <label
                   htmlFor={name}
-                  className="relative cursor-pointer rounded-lg bg-gray-900 font-semibold focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-200 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-indigo-400 "
+                  className="relative cursor-pointer rounded-lg bg-gray-900 font-semibold focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-200 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   <span>Upload a file</span>
                   <input

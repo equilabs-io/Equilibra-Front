@@ -26,8 +26,9 @@ const categories = [
   { id: 10, name: "Blockchain-Based Voting Systems" },
 ];
 
-type createProjectFormProps = {
+type createProjectForm = {
   handleFormChange: (value: string | number, name: string) => void;
+  //TODO: abstract this props to types folder
   formState: {
     description: string;
     link: string;
@@ -42,7 +43,7 @@ export default function CreateProjectForm({
   handleFormChange,
   formState,
   beneficiary,
-}: createProjectFormProps) {
+}: createProjectForm) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -109,7 +110,7 @@ export default function CreateProjectForm({
   return (
     <>
       <form
-        className="mx-auto w-full max-w-2xl p-6 rounded-lg bg-surface shadow"
+        className="mx-auto w-full max-w-3xl p-6 rounded-lg bg-secondary shadow "
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-12">
@@ -148,7 +149,7 @@ export default function CreateProjectForm({
                   placeholder="Project link"
                 />
               </div>
-              <div className="col-span-full">
+              <div className="col-span-full h-96">
                 <InputText
                   label="Description"
                   name="description"
@@ -184,9 +185,9 @@ export default function CreateProjectForm({
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <button
             type="submit"
-            className="rounded-md bg-primary text-background px-3 py-2 text-sm font-semibold  shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="rounded-md bg-primary text-background px-3 py-2 text-md font-semibold  shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 w-full uppercase hover:opacity-80"
           >
-            Create
+            Unleash Project
           </button>
         </div>
       </form>
