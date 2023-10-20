@@ -27,6 +27,9 @@ export default function InputText({
     handleChange(e.target.value, name);
   };
 
+  {
+    /* //TODO: create a sinlge Input*/
+  }
   return (
     <>
       {label && (
@@ -38,6 +41,7 @@ export default function InputText({
           {required && "  *"}
         </label>
       )}
+
       <div className="mt-2">
         {type == "textarea" ? (
           <textarea

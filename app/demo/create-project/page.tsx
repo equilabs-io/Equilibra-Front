@@ -11,7 +11,7 @@ interface FormState {
 }
 
 export default function CreateProject() {
-  // Function thats Handles Form Change
+  // Function to handle Form Change
   const [beneficiary, setBeneficiary] = useState("");
   const [formState, setFormState] = useState<FormState>({
     description: "",
@@ -28,6 +28,8 @@ export default function CreateProject() {
       setFormState({ ...formState, [name]: value });
     }
   };
+
+  console.log(formState);
   //
 
   return (
@@ -37,7 +39,13 @@ export default function CreateProject() {
         formState={formState}
         beneficiary={beneficiary}
       />
-      <CardProject />
+      <CardProject
+        name={formState.name}
+        beneficary={beneficiary}
+        category={formState.category}
+        link={formState.link}
+        description={formState.description}
+      />
     </>
   );
 }

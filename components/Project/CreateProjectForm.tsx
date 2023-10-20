@@ -1,13 +1,15 @@
 "use client";
 import React, { useState, useEffect, FormEvent } from "react";
-import InputText from "@/components/Form/InputText";
-import InputImage from "@/components/Form/InputImage";
-import { toast } from "react-toastify";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useContractWrite } from "wagmi";
+import { toast } from "react-toastify";
 import { ethers } from "ethers";
-import { projectRegistry } from "@/constants/abis";
+import InputText from "@/components/Form/InputText";
+import InputImage from "@/components/Form/InputImage";
 import InputSelect from "@/components/Form/InputSelect";
+import { projectRegistry } from "@/constants/abis";
+
+import WavesSvg from "@/assets/WavesSvg";
 
 interface ErrorCause {
   metaMessages: string[];
@@ -105,16 +107,16 @@ export default function CreateProjectForm({
     } else if (isError && error) {
       toast.error((error.cause as ErrorCause).metaMessages[0]);
     }
-  }, [isLoading, isSuccess, isError]);
+  }, [isLoading, isSuccess, isError, error]);
 
   return (
     <>
       <form
-        className="mx-auto w-full max-w-3xl p-6 rounded-lg bg-secondary shadow "
+        className="mx-auto w-full max-w-3xl p-6 rounded-lg bg-secondary"
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-12">
-          <div className="border-b pb-12">
+          <div className="pb-12">
             <h2>Create a project</h2>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
@@ -128,6 +130,7 @@ export default function CreateProjectForm({
                   required
                 />
               </div>
+              {/* beneficary */}
               <div className="sm:col-span-4">
                 <InputText
                   label="Beneficiary address..."
@@ -139,6 +142,7 @@ export default function CreateProjectForm({
                   required
                 />
               </div>
+              {/* link */}
               <div className="sm:col-span-4">
                 <InputText
                   label="Project link"
@@ -149,6 +153,7 @@ export default function CreateProjectForm({
                   placeholder="Project link"
                 />
               </div>
+              {/* description */}
               <div className="col-span-full h-96">
                 <InputText
                   label="Description"
@@ -156,21 +161,23 @@ export default function CreateProjectForm({
                   handleChange={handleFormChange}
                   value={formState.description}
                   type="textarea"
-                  rows={3}
+                  rows={15}
                   placeholder="Project description..."
                   required
                 />
               </div>
+              {/* category */}
               <div className="sm:col-span-4">
                 <InputSelect
                   list={categories}
                   label="Category"
                   name="category"
                   handleChange={handleFormChange}
-                  value={formState.category}
+                  value={categories[0].name}
                   required
                 />
               </div>
+              {/* cover imag */}
               <div className="col-span-full">
                 <InputImage
                   label="Cover photo"

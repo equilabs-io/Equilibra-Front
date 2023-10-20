@@ -8,7 +8,10 @@ import { Dialog } from "@headlessui/react";
 
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { navItems } from "@/constants/navigation";
-import LogoSvg from "@/assets";
+import { PowerSvg } from "@/assets";
+import { BricksSvg } from "@/assets";
+import { WavesSvg } from "@/assets";
+//import { EquilibraLogo } from "@/assets";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -47,7 +50,7 @@ export default function Header() {
             <Link href="/">
               <span className="sr-only">Equilibra</span>
               <div className="h-8 w-auto">
-                <LogoSvg styles="text-primary" />
+                {/* <EquilibraLogo styles="text-primary" /> */}
               </div>
             </Link>
           </div>
@@ -125,7 +128,7 @@ export default function Header() {
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Equilibra</span>
               <div className="h-8 w-auto">
-                <LogoSvg styles="text-primary" />
+                {/* <EquilibraLogo styles="text-primary" /> */}
               </div>
             </a>
             <button

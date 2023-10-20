@@ -2,6 +2,7 @@ import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
+// TODO: move func to utils folder
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -29,7 +30,7 @@ export default function InputSelect({
   required = false,
 }: InputFormProps) {
   const [selected, setSelected] = useState({ id: 0, name: "example" });
-
+  console.log("selected", selected);
   return (
     <Listbox value={selected} onChange={setSelected}>
       {({ open }) => (

@@ -4,6 +4,7 @@ import React from "react";
 
 type CardProjectProps = {
   name: string;
+  beneficary: string;
   link: string;
   category: string;
   image: string;
@@ -12,6 +13,7 @@ type CardProjectProps = {
 
 export const CardProject = ({
   name = "Equilabs",
+  beneficary = "0x547bb .... 33bF",
   link,
   category = "DAO tooling",
   image,
@@ -45,10 +47,12 @@ export const CardProject = ({
                 <div className="flex justify-center w-full">
                   {/* Image Section  */}
                   <div className="relative mb-4">
-                    <motion.div
-                      style={{ rotate }}
-                      className="border-white border-gray-800 rounded-full align-middle border-8 absolute -m-16  min-w-[150px] min-h-[150px]"
-                    />
+                    {image && (
+                      <>
+                        <motion.div className="border-white border-gray-800 rounded-full align-middle border-8 absolute -m-16  min-w-[150px] min-h-[150px]" />
+                        <img src={image} alt="cover image" />
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -56,14 +60,14 @@ export const CardProject = ({
                 <h3 className="mb-1 text-2xl font-bold leading-normal text-gray-700 dark:text-gray-300">
                   {name}
                 </h3>
-                <h3 className="mb-1 text-2xl font-bold leading-normal text-gray-700 dark:text-gray-300">
-                  Ox547bb .... 33bF
-                </h3>
+                <motion.h3 className="mb-1 text-2xl font-bold leading-normal text-gray-700 dark:text-gray-300">
+                  {beneficary}
+                </motion.h3>
                 <h3 className="mb-1 text-2xl font-bold leading-normal text-gray-700 dark:text-gray-300">
                   {category}
                 </h3>
                 <h3 className="mb-1 text-xl font-bold leading-normal text-gray-700 dark:text-gray-300">
-                  https://github.com/equilabs-io
+                  {link}
                 </h3>
               </div>
               <div className="pt-6 mx-6 mt-6 text-center border-t border-gray-200 dark:border-gray-700/50">
@@ -71,10 +75,6 @@ export const CardProject = ({
                   <div className="w-full px-6">
                     <p className="mb-4 font-light text-justify leading-relaxed text-gray-600 dark:text-gray-400">
                       {description}
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Proin turpis orci, maximus sed purus a, cursus scelerisque
-                      purus. Morbi molestie, odio at sagittis rhoncus, felis
-                      massa iaculis mi, quis molestie erat ipsum vel risus.
                     </p>
                   </div>
                 </div>

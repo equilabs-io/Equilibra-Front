@@ -1,7 +1,8 @@
 import { Fragment, useRef } from "react";
 import type { FC, ReactNode } from "react";
-import Link from "next/link";
 import { useHover } from "@/hooks/useHover";
+import { motion } from "framer-motion";
+import Link from "next/link";
 import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 
@@ -12,6 +13,7 @@ type MenuItemProps = {
   isLast?: boolean;
 };
 
+// TODO: separate navItem into it own component
 const DropDownMenu: FC<MenuItemProps> = function ({
   href,
   label,
@@ -134,6 +136,7 @@ export const NavItem: FC<NavItemProps> = function ({
   );
 };
 
+// TODO: add animation
 const wrapperVariants = {
   open: {
     scaleY: 1,

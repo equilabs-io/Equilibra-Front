@@ -5,8 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 //components
 import { LaunchAppButton } from "@/components/Buttons";
 //assets
-import LogoSvg from "@/assets";
-
+import { EquilibraLogo } from "@/assets";
 export const Hero: React.FC = () => {
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -30,7 +29,7 @@ export const Hero: React.FC = () => {
         <LaunchAppButton />
         <div className="flex flex-col md:flex-row items-center space-x-4">
           <h1 className="mb-2 md:mb-0">Equilibra</h1>
-          <LogoSvg styles="text-[#00FFC4] w-[120px] h-[70px]" />
+          <EquilibraLogo styles="text-[#00FFC4] w-[120px] h-[70px]" />
         </div>
       </motion.section>
     </>
