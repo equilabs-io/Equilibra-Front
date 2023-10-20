@@ -1,11 +1,13 @@
 import React from "react";
 
-export default function PowerSvg({ styles }: any) {
+export const PowerSvg = ({ styles }: any) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       height="100%"
       width="100%"
+      // viewBox="0 0 1818.000000 1000.000000"
+      // preserveAspectRatio="xMidYMid meet"
       className={`fill-primary rounded-md ${styles}`}
     >
       <g>
@@ -412,4 +414,4 @@ export default function PowerSvg({ styles }: any) {
       </g>
     </svg>
   );
-}
+};

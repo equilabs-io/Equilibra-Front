@@ -1,8 +1,8 @@
 import { useScroll, useTransform, motion } from "framer-motion";
 import { ReactNode, useRef } from "react";
-import WaveSvg from "@/assets/WavesSvg";
-import PowerSvg from "@/assets/PowerSvg";
-import BricksSvg from "@/assets/BricksSvg";
+import { WavesSvg } from "@/assets/WavesSvg";
+import { PowerSvg } from "@/assets/PowerSvg";
+import { BricksSvg } from "@/assets/BricksSvg";
 
 type cardProps = {
   title: string;
@@ -75,7 +75,7 @@ export const PillardsStack = () => {
       subtitle: "Dive Into the Funding Ocean",
       description:
         "Explore a wide variety of handpicked pools carefully designed for specific Web3 projects, nurturing them from inception to full-fledged reality.",
-      image: <WaveSvg styles="fill-primary" />,
+      image: <WavesSvg styles="fill-primary" />,
     },
     {
       title: "Projects",

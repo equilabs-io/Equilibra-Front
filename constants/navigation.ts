@@ -1,14 +1,14 @@
 export const navItems = [
   {
-    name: "Create project",
-    link: "/app/create-project",
-  },
-  {
-    name: "Create pool",
+    name: "Pools",
     link: "/app/create-pool",
   },
   {
-    name: "Support projects",
+    name: "Projects",
+    link: "/app/create-project",
+  },
+  {
+    name: "Stake",
     link: "/app/projects",
   },
 ];

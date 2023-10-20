@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function EquilibraLogo({ styles }: any) {
+export const EquilibraLogo = ({ styles }: any) => {
   return (
     <svg
       version="1.0"
@@ -39,4 +39,4 @@ m3061 -1076 c449 -20 791 -106 1155 -289 489 -247 861 -622 1081 -1086 243
       </g>
     </svg>
   );
-}
+};

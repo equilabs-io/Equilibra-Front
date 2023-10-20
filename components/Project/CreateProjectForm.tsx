@@ -1,21 +1,13 @@
 "use client";
 import React, { useState, useEffect, FormEvent } from "react";
-import InputText from "@/components/Form/InputText";
-import InputImage from "@/components/Form/InputImage";
-import { toast } from "react-toastify";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useContractWrite } from "wagmi";
+import { toast } from "react-toastify";
 import { ethers } from "ethers";
-import { projectRegistry } from "@/constants/abis";
+import InputText from "@/components/Form/InputText";
+import InputImage from "@/components/Form/InputImage";
 import InputSelect from "@/components/Form/InputSelect";
-
-interface FormState {
-  description: string;
-  link: string;
-  fileHash: string;
-  name: string;
-  category: string;
-}
+import { projectRegistry } from "@/constants/abis";
 
 interface ErrorCause {
   metaMessages: string[];
@@ -34,24 +26,24 @@ const categories = [
   { id: 10, name: "Blockchain-Based Voting Systems" },
 ];
 
-export default function CreateProject() {
-  const [beneficiary, setBeneficiary] = useState("");
-  const [formState, setFormState] = useState<FormState>({
-    name: "",
-    link: "",
-    description: "",
-    category: "",
-    fileHash: "",
-  });
-
-  const handleChange = (value: string | number, name: string) => {
-    if (name == "beneficiary" && typeof value === "string") {
-      setBeneficiary(value);
-    } else {
-      setFormState({ ...formState, [name]: value });
-    }
+type createProjectForm = {
+  handleFormChange: (value: string | number, name: string) => void;
+  //TODO: abstract this props to types folder
+  formState: {
+    description: string;
+    link: string;
+    fileHash: string;
+    name: string;
+    category: string;
   };
+  beneficiary: string;
+};
 
+export default function CreateProjectForm({
+  handleFormChange,
+  formState,
+  beneficiary,
+}: createProjectForm) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -112,77 +104,82 @@ export default function CreateProject() {
     } else if (isError && error) {
       toast.error((error.cause as ErrorCause)?.metaMessages[0]);
     }
-  }, [isLoading, isSuccess, isError]);
+  }, [isLoading, isSuccess, isError, error]);
 
   return (
     <>
       <form
-        className="mx-auto w-full max-w-2xl p-6 rounded-lg bg-surface shadow"
+        className="mx-auto w-full max-w-3xl p-6 rounded-lg bg-secondary"
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-12">
-          <div className="border-b pb-12">
+          <div className="pb-12">
             <h2>Create a project</h2>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <InputText
                   label="Project name"
                   name="name"
-                  handleChange={handleChange}
+                  handleChange={handleFormChange}
                   value={formState.name}
                   type="text"
                   placeholder="My project name..."
                   required
                 />
               </div>
+              {/* beneficary */}
               <div className="sm:col-span-4">
                 <InputText
                   label="Beneficiary address"
                   name="beneficiary"
-                  handleChange={handleChange}
+                  handleChange={handleFormChange}
                   value={beneficiary}
                   type="text"
                   placeholder="Eth address..."
                   required
                 />
               </div>
+              {/* link */}
               <div className="sm:col-span-4">
                 <InputText
                   label="Project link"
                   name="link"
-                  handleChange={handleChange}
+                  handleChange={handleFormChange}
                   value={formState.link}
                   type="text"
                   placeholder="Project link..."
                 />
               </div>
-              <div className="col-span-full">
+              {/* description */}
+              <div className="col-span-full h-96">
                 <InputText
                   label="Description"
                   name="description"
-                  handleChange={handleChange}
+                  handleChange={handleFormChange}
                   value={formState.description}
                   type="textarea"
-                  rows={3}
+                  rows={15}
                   placeholder="Project description..."
                   required
                 />
               </div>
+              {/* category */}
               <div className="sm:col-span-4">
                 <InputSelect
                   list={categories}
                   label="Category"
                   name="category"
-                  handleChange={handleChange}
-                  value={formState.category}
+                  handleChange={handleFormChange}
+                  value={categories[0].name}
                   required
                 />
               </div>
+              {/* cover imag */}
               <div className="col-span-full">
                 <InputImage
                   label="Cover photo"
                   name="fileHash"
-                  handleChange={handleChange}
+                  handleChange={handleFormChange}
                   required
                 />
               </div>
@@ -192,9 +189,9 @@ export default function CreateProject() {
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <button
             type="submit"
-            className="rounded-md bg-primary text-background px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            className="rounded-md bg-primary text-background px-3 py-2 text-md font-semibold  shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 w-full uppercase hover:opacity-80"
           >
-            Create
+            Unleash Project
           </button>
         </div>
       </form>

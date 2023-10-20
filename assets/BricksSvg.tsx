@@ -1,11 +1,13 @@
 import React from "react";
 
-export default function BricksSvg({ styles }: any) {
+export const BricksSvg = ({ styles }: any) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       height="100%"
       width="100%"
+      // viewBox="0 0 1818.000000 1000.000000"
+      preserveAspectRatio="xMidYMid meet"
       className={`fill-primary rounded-md ${styles}`}
     >
       <path
@@ -115,4 +117,4 @@ export default function BricksSvg({ styles }: any) {
       />
     </svg>
   );
-}
+};
