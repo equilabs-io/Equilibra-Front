@@ -29,9 +29,6 @@ export default function CreateProject() {
     }
   };
 
-  console.log(formState);
-  //
-
   return (
     <>
       <CreateProjectForm

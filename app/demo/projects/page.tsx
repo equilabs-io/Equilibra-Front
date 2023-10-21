@@ -3,10 +3,9 @@ import ProjectCard from "@/components/ProjectCard";
 import { getUrqlClient } from "@/services/urqlService";
 import { ethers } from "ethers";
 
-
 const projectsQuery = `
   query {
-    projects(first: 10) {
+    projects(skip: 2, first: 5) {
         admin
         id
         beneficiary
@@ -22,10 +21,6 @@ interface Project {
   __typename: string;
 }
 
-interface ProjectQuery {
-  projects: Project[];
-}
-
 const getIpfsData = async (hash: string) => {
   try {
     const res = await fetch(`${process.env.PINATA_GATEWAY_URL}${hash}`);
@@ -36,7 +31,7 @@ const getIpfsData = async (hash: string) => {
   }
 };
 
-const getParsedProjects = async (projectsQuery: ProjectQuery) => {
+const getParsedProjects = async (projectsQuery: { projects: Project[] }) => {
   const abiCoder = new ethers.utils.AbiCoder();
 
   const projects = projectsQuery?.projects.map((project) => {
@@ -50,9 +45,6 @@ const getParsedProjects = async (projectsQuery: ProjectQuery) => {
       return undefined;
     }
   });
-
-  // not working at the moment
-  projects.filter(Boolean); // filter by truthy values using Boolean constructor
 
   const parsedProjects = await Promise.all(
     projects.map(async (project) => {
@@ -68,7 +60,12 @@ const getParsedProjects = async (projectsQuery: ProjectQuery) => {
       }
     })
   );
-  return parsedProjects;
+
+  const filteredProjects = parsedProjects.filter((project) =>
+    Boolean(project?.content?.fileHash)
+  );
+
+  return filteredProjects;
 };
 
 export default async function Projects() {
@@ -89,10 +86,7 @@ export default async function Projects() {
           {projects?.map((project, id) => {
             if (project)
               return (
-                <div
-                  key={id}
-                  className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white"
-                >
+                <div key={id}>
                   <ProjectCard project={project} />
                 </div>
               );

@@ -15,21 +15,22 @@ interface ErrorCause {
 }
 
 const categories = [
-  { id: 1, name: "Decentralized Finance (DeFi)" },
-  { id: 2, name: "Decentralized Autonomous Organization (DAO)" },
-  { id: 3, name: "Non-Fungible Token (NFT) Marketplaces" },
+  { id: 1, name: "(DeFi) Decentralized Finance" },
+  { id: 2, name: "(DAO) Decentralized Autonomous Organization" },
+  { id: 3, name: "(NFT) Non-Fungible Token" },
   { id: 4, name: "Cross-Chain Interoperability Protocols" },
   { id: 5, name: "Smart Contract Security Auditing Services" },
-  { id: 6, name: "Decentralized Exchanges (DEX)" },
+  { id: 6, name: "(DEX) Decentralized Exchanges" },
   { id: 7, name: "Cryptocurrency Mining Pools" },
   { id: 8, name: "Blockchain-Based Supply Chain Management" },
   { id: 9, name: "Decentralized Social Networks" },
   { id: 10, name: "Blockchain-Based Voting Systems" },
+  { id: 11, name: "Public Goods" },
+  { id: 12, name: "Others" },
 ];
 
 type createProjectForm = {
   handleFormChange: (value: string | number, name: string) => void;
-  //TODO: abstract this props to types folder
   formState: {
     description: string;
     link: string;
@@ -63,6 +64,17 @@ export default function CreateProjectForm({
         write({
           args: [debouncedBeneficiary, encodedData],
         });
+
+        // id, admin, beneficiary, data
+        // updateProject
+        // write({
+        //   args: [
+        //     7 as number,
+        //     "0x584ddfb0bdd922ff1fbf3e85e7e781d5816b4f23",
+        //     debouncedBeneficiary,
+        //     encodedData,
+        //   ],
+        // });
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -75,7 +87,7 @@ export default function CreateProjectForm({
     useContractWrite({
       address: projectRegistry.address,
       abi: projectRegistry.abi,
-      functionName: "registerProject",
+      functionName: "updateProject",
     });
 
   const ipfsJsonUpload = async () => {
