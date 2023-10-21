@@ -23,9 +23,7 @@ const DropDownMenu: FC<MenuItemProps> = function ({
   return (
     <Popover.Button as={Link} href={href}>
       <div
-        className={`px-4 py-2 transition-all ${
-          isLast && "rounded-b-lg"
-        } bg-surface`}
+        className={`px-4 py-2 transition-all bg-surface hover:brightness-150`}
       >
         {icon}
         <div className="text-md">{label}</div>
@@ -113,8 +111,8 @@ export const NavItem: FC<NavItemProps> = function ({
                 leaveTo="opacity-0 translate-y-1"
               >
                 <Popover.Panel className="absolute top-8 z-10 w-44" static>
-                  <div className="rounded-b-lg border-t-2 border-t-primary ">
-                    <div className="flex flex-col flex-nowrap gap-1">
+                  <div className="rounded-lg border-2 border-grey_mdark">
+                    <div className="flex flex-col divide-y-2 divide-grey_mdark">
                       {menuItems.map((item, index) => (
                         <DropDownMenu
                           key={index}
