@@ -21,6 +21,9 @@ createWeb3Modal({
   wagmiConfig,
   projectId,
   chains,
+  themeVariables: {
+    // "--w3m-accent": "var(--color-primary-var)",
+  },
 });
 
 export default function WagmiProvider({

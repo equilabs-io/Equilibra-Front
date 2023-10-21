@@ -4,11 +4,10 @@
 
 :root {
   --color-primary: #00eab4;
+  --color-primary-var: #009775;
   --color-secondary: #ff9f00;
   --color-text-secondary: #bdbdbd;
   --color-white: #e2e8f0;
-  --color-white_10: #e2e8f01a;
-  --color-white_5: #e2e8f00d;
   --color-background: #161919;
   --color-surface: #16201e;
   --color-surface-secondary: #322922;

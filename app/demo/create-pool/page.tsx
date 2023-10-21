@@ -8,7 +8,7 @@ import { useContractWrite } from "wagmi";
 import { ethers } from "ethers";
 import { projectRegistry } from "@/constants/abis";
 import InputSelect from "@/components/Form/InputSelect";
-
+import CustomButton from "@/components/CustomButton";
 interface FormState {
   description: string;
   fundingToken: string;
@@ -162,12 +162,7 @@ export default function CreatePool() {
           </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button
-            type="submit"
-            className="rounded-md bg-primary text-background px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-          >
-            Create
-          </button>
+          <CustomButton text="Create pool" type="submit" />
         </div>
       </form>
     </>

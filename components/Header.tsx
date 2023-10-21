@@ -136,7 +136,7 @@ export default function Header() {
                 ))}
               </div>
               <div className="py-6">
-                <w3m-button balance="show" size="md" label="Connect Wallet" />
+                <w3m-button label="Connect Wallet" />
               </div>
             </div>
           </div>

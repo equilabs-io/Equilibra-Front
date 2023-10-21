@@ -3,7 +3,7 @@ import React from "react";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 //components
-import { LaunchAppButton } from "@/components/Buttons";
+import CustomButton from "@/components/CustomButton";
 //assets
 import { EquilibraLogo } from "@/assets";
 export const Hero: React.FC = () => {
@@ -26,7 +26,13 @@ export const Hero: React.FC = () => {
         style={{ opacity, scale }}
         className="h-screen flex items-center justify-center relative"
       >
-        <LaunchAppButton />
+        <div className={`w-full absolute top-0 p-6 flex justify-end`}>
+          <CustomButton
+            text="Launch Demo"
+            link="/demo/projects"
+            type="button"
+          />
+        </div>
         <div className="flex flex-col md:flex-row items-center space-x-4">
           <h1 className="mb-2 md:mb-0">Equilibra</h1>
           <EquilibraLogo styles="text-[#00FFC4] w-[120px] h-[70px]" />

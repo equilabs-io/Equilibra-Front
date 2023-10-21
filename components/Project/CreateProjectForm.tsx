@@ -8,6 +8,7 @@ import InputText from "@/components/Form/InputText";
 import InputImage from "@/components/Form/InputImage";
 import InputSelect from "@/components/Form/InputSelect";
 import { projectRegistry } from "@/constants/abis";
+import CustomButton from "@/components/CustomButton";
 
 interface ErrorCause {
   metaMessages: string[];
@@ -187,12 +188,7 @@ export default function CreateProjectForm({
           </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button
-            type="submit"
-            className="rounded-md bg-primary text-background px-3 py-2 text-md font-semibold  shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 w-full uppercase hover:opacity-80"
-          >
-            Unleash Project
-          </button>
+          <CustomButton text="Create project" type="submit" />
         </div>
       </form>
     </>
