@@ -23,8 +23,8 @@ const pools: Pool[] = [
     name: "Pool 1",
     description:
       "Community of builders and contributors who are working to build a more sustainable and equitable future for all.",
-    token: "PO1",
-    govToken: "PO1",
+    token: "OP",
+    govToken: "OP",
     supporting: 1000,
     available: 7000,
     streaming: 2000,
@@ -50,9 +50,9 @@ const pools: Pool[] = [
     description:
       "Providing the tools and infrastructure to create and manage decentralized organizations.",
     token: "USDC",
-    govToken: "ANT",
+    govToken: "DAO-t",
     supporting: 10000,
-    available: 1000000,
+    available: 100000,
     streaming: 20000,
     streamed: 50000,
     elegibleProjects: ["One", "Four", "Five"],
