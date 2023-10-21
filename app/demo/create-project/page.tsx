@@ -39,13 +39,13 @@ export default function CreateProject() {
         formState={formState}
         beneficiary={beneficiary}
       />
-      <CardProject
+      {/* <CardProject
         name={formState.name}
         beneficary={beneficiary}
         category={formState.category}
         link={formState.link}
         description={formState.description}
-      />
+      /> */}
     </>
   );
 }

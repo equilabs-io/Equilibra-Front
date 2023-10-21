@@ -71,7 +71,7 @@ const getParsedProjects = async (projectsQuery: ProjectQuery) => {
   return parsedProjects;
 };
 
-export default async function SupportProjects() {
+export default async function Projects() {
   const projectsQueryResult = await getUrqlClient().query(projectsQuery, {});
 
   const projects = await getParsedProjects(projectsQueryResult.data);

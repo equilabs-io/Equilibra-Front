@@ -17,7 +17,11 @@ const metadata = {
 const chains = [mainnet, optimism, goerli];
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
-createWeb3Modal({ wagmiConfig, projectId, chains });
+createWeb3Modal({
+  wagmiConfig,
+  projectId,
+  chains,
+});
 
 export default function WagmiProvider({
   children,

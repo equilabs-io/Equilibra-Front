@@ -109,7 +109,7 @@ export default function CreateProjectForm({
   return (
     <>
       <form
-        className="mx-auto w-full max-w-3xl p-6 rounded-lg bg-secondary"
+        className="mx-auto w-full max-w-3xl p-6 rounded-lg bg-surface"
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-12">
