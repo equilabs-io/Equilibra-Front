@@ -50,7 +50,7 @@ export default function Header() {
               },
               {
                 label: "View All",
-                href: "/demo",
+                href: "/demo/pools",
               },
             ]}
           />
@@ -74,7 +74,7 @@ export default function Header() {
             menuItems={[
               {
                 label: "Stake & Support Projects",
-                href: "/demo",
+                href: "/demo/contribute",
               },
             ]}
           />
