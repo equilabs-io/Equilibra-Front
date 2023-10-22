@@ -2,13 +2,18 @@ import React from "react";
 
 interface InputFormProps {
   value?: string | number;
-  handleChange: (value: string | number, name: string) => void;
+  handleChange: (
+    value: string | number,
+    name: string,
+    index: number | undefined
+  ) => void;
   type?: string;
   name: string;
   label?: string;
   placeholder?: string;
   required?: boolean;
   rows?: number;
+  index?: number;
 }
 
 export default function InputText({
@@ -20,16 +25,13 @@ export default function InputText({
   placeholder,
   required = false,
   rows,
+  index,
 }: InputFormProps) {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    handleChange(e.target.value, name);
+    handleChange(e.target.value, name, index);
   };
-
-  {
-    /* //TODO: create a sinlge Input*/
-  }
   return (
     <>
       {label && (

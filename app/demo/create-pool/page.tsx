@@ -16,7 +16,7 @@ interface FormState {
   governanceToken: string;
   name: string;
   isMultiSig: boolean;
-  multiSigOwners: string[];
+  multiSigOwners: any[];
   sigsRequired: number;
 }
 
@@ -34,8 +34,8 @@ export default function CreatePool() {
     governanceToken: "",
     name: "",
     isMultiSig: false,
-    multiSigOwners: [],
-    sigsRequired: 0,
+    multiSigOwners: ["", "", ""],
+    sigsRequired: 2,
   });
 
   const handleChange = (
@@ -43,8 +43,10 @@ export default function CreatePool() {
     name: string,
     index?: number
   ) => {
-    if (index) {
-      setFormState({ ...formState, [name[index]]: value });
+    if (index !== undefined) {
+      const auxArr = [...formState.multiSigOwners];
+      auxArr[index] = value;
+      setFormState({ ...formState, [name]: auxArr });
     } else {
       setFormState({ ...formState, [name]: value });
     }
@@ -187,6 +189,7 @@ export default function CreatePool() {
                           name="multiSigOwners"
                           handleChange={handleChange}
                           value={formState.multiSigOwners[0]}
+                          index={0}
                           type="text"
                           placeholder="Wallet address..."
                           required
@@ -198,6 +201,7 @@ export default function CreatePool() {
                           name="multiSigOwners"
                           handleChange={handleChange}
                           value={formState.multiSigOwners[1]}
+                          index={1}
                           type="text"
                           placeholder="Wallet address 2..."
                           required
@@ -209,6 +213,7 @@ export default function CreatePool() {
                           name="multiSigOwners"
                           handleChange={handleChange}
                           value={formState.multiSigOwners[2]}
+                          index={2}
                           type="text"
                           placeholder="Wallet address 3..."
                           required

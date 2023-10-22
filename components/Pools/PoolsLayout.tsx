@@ -190,10 +190,10 @@ export const PoolsLayout = ({ pools }: { pools: Pool[] }) => {
                           {pool.name}
                         </p>
                         <p className="mt-1 text-2xl font-semibold leading-6">
-                          {pool.available}
+                          $ {pool.available}
                         </p>
                       </div>
-                      <div className="flex-none self-end">
+                      <div className="flex-none self-end pr-6">
                         <div className="flex flex-col items-center space-y-4">
                           <p className="sr-only">Funding Token</p>
                           <p className="rounded-md bg-green-50 px-2 py-1 text-xs font-bold text-blue-600 ring-1 ring-inset ring-green-600/20">
@@ -212,7 +212,7 @@ export const PoolsLayout = ({ pools }: { pools: Pool[] }) => {
                           </p>
                         </div>
                         <p className="text-sm font-medium leading-">
-                          {pool.streamed}
+                          $ {pool.streamed}
                         </p>
                       </div>
                       <div className="mt-4 flex w-full flex-none items-center gap-x-4 px-6">
@@ -224,7 +224,7 @@ export const PoolsLayout = ({ pools }: { pools: Pool[] }) => {
                         </div>
                         <div className="text-sm leading-6">
                           <p className="text-sm font-medium leading-">
-                            {pool.streaming}
+                            $ {pool.streaming}
                           </p>
                         </div>
                       </div>
@@ -316,7 +316,7 @@ export const PoolsLayout = ({ pools }: { pools: Pool[] }) => {
                   </div>
                 )}
                 {/* Right Column  Projects from pool view*/}
-                <div className="-mx-4 px-4 py-8 shadow-sm  sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-2 shadow-primary cursor-pointer">
+                <div className="px-4 py-8 border-2 border-grey_mdark sm:mx-0 sm:rounded-lg sm:px-8 lg:col-span-2 lg:row-span-2 lg:row-end-2 shadow-primary cursor-pointer">
                   <table className="w-full whitespace-nowrap text-left text-sm leading-6">
                     <colgroup>
                       <col className="w-full" />
@@ -354,16 +354,6 @@ export const PoolsLayout = ({ pools }: { pools: Pool[] }) => {
                         <tr key={item.id} className="border-b border-surface">
                           <td className="max-w-0 px-0 py-5 align-top">
                             <div className="truncate font-mediu flex items-center gap-3">
-                              <div className="h-11 w-11 flex-shrink-">
-                                <img
-                                  className="h-11 w-11 rounded-full border-2"
-                                  src={
-                                    "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMp9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                  }
-                                  alt=""
-                                />
-                              </div>
-
                               <h4>{item.title}</h4>
                             </div>
                           </td>
