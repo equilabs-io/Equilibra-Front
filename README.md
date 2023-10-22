@@ -1,8 +1,8 @@
 # Equilibra
 
-![Equilibra Logo](./assets/equilibra-logo-png)
+<!-- ![Equilibra Logo](./assets/equilibra-logo-png) -->
 
-> Revolutionizing funds distribution within decentralized organizations, Equilibra empowers users to distribute their voting power across multiple projects.
+Revolutionizing funds distribution within decentralized organizations, Equilibra empowers users to distribute their voting power across multiple projects.
 
 Equilibra is a groundbreaking omnichain and multi-token crowdfunding platform. It aims to address the critical issues of project outcomes being determined solely by popularity and a lack of certainty among contributors about a project's evolution in the current landscape of decentralized organizations.
 
