@@ -74,7 +74,7 @@ export const PillardsStack = () => {
       title: "Pools",
       subtitle: "Dive Into the Funding Ocean",
       description:
-        "Explore a wide variety of handpicked pools carefully designed for specific Web3 projects, nurturing them from inception to full-fledged reality.",
+        "Serve as a mechanism for collecting and distributing funds and support various projects or proposals. Play a significant role in creating a more equitable and effective crowdfunding ecosystem within the decentralized community.",
       image: <WavesSvg styles="fill-primary" />,
     },
     {
