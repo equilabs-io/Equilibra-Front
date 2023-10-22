@@ -1,7 +1,7 @@
 import React from "react";
 import { getProjects } from "@/services/getProjectsService";
 import WorkInProgress from "@/components/WorkInProgress";
-import { SupportProjects } from "@/components/SupportCard";
+import { SupportCard } from "@/components/SupportCard";
 import { slice } from "viem";
 
 export default async function Contribute() {
@@ -21,7 +21,7 @@ export default async function Contribute() {
                 return (
                   <div key={id}>
                     <h2>
-                      <SupportProjects project={project} />
+                      <SupportCard project={project} />
                     </h2>
                   </div>
                 );

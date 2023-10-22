@@ -1,6 +1,15 @@
 import Image from "next/image";
 
-export const SupportProjects = ({ project }) => {
+interface Project {
+  id: string;
+  admin: string;
+  beneficiary: string;
+  contentHash: string;
+  content: any;
+  __typename: string;
+}
+
+export const SupportCard = ({ project }: { project: Project }) => {
   const { id, admin, beneficiary, contentHash, content } = project;
 
   const { fileHash, name } = content;
