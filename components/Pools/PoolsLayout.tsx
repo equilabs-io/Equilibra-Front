@@ -101,14 +101,29 @@ const activity = [
   },
 ];
 
-type PoolsLayoutProps = {
-  pools: Pool[];
-};
-function classNames(...classes) {
+interface Pool {
+  name: string;
+  description: string;
+  token: string;
+  govToken: string;
+  elegibleProjects: string[];
+  supporting: number;
+  available: number;
+  streaming: number;
+  streamed: number;
+  streams: {
+    [key: string]: {
+      streamed: number;
+      streaming: number;
+    };
+  };
+}
+
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export const PoolsLayout = ({ pools }: PoolsLayoutProps) => {
+export const PoolsLayout = ({ pools }: { pools: Pool[] }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [history, setHistory] = useState(false);
   return (
@@ -162,11 +177,8 @@ export const PoolsLayout = ({ pools }: PoolsLayoutProps) => {
         {/* <header className="relative isolate pt-16 border-2 h-44 border-red-400"></header> */}
 
         {pools.map((pool, idx) => (
-          <>
-            <div
-              key={idx}
-              className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"
-            >
+          <div key={idx}>
+            <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
               <div className="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
                 {/* Left column item 1 Pool Card*/}
                 <div className="lg:col-start-1 lg:row-end-1 cursor-pointer">
@@ -193,38 +205,38 @@ export const PoolsLayout = ({ pools }: PoolsLayoutProps) => {
                         </div>
                       </div>
                       <div className="mt-6 flex items-center w-full flex-none gap-x-4 border-t border-m_gray px-6 pt-6 bo">
-                        <p className="flex-none">
+                        <div className="flex-none">
                           <span className="sr-only">Client</span>
                           <p className="text-xl font-medium leading-">
                             Founded:
                           </p>
-                        </p>
+                        </div>
                         <p className="text-sm font-medium leading-">
                           {pool.streamed}
                         </p>
                       </div>
                       <div className="mt-4 flex w-full flex-none items-center gap-x-4 px-6">
-                        <p className="flex-none">
+                        <div className="flex-none">
                           <span className="sr-only">Due date</span>
                           <p className="text-xl font-medium leading-">
                             M / streaming:
                           </p>
-                        </p>
-                        <p className="text-sm leading-6">
+                        </div>
+                        <div className="text-sm leading-6">
                           <p className="text-sm font-medium leading-">
                             {pool.streaming}
                           </p>
-                        </p>
+                        </div>
                       </div>
                       <div className="mt-4 flex items-center w-full flex-none gap-x-4 px-6">
-                        <p className="flex-none">
+                        <div className="flex-none">
                           <span className="sr-only">
                             how many projects support
                           </span>
                           <p className="text-xl font-medium leading-">
                             Supporting:
                           </p>
-                        </p>
+                        </div>
                         <p className="text-sm leading-6">
                           {pool.elegibleProjects?.length}
                         </p>
@@ -277,7 +289,7 @@ export const PoolsLayout = ({ pools }: PoolsLayoutProps) => {
                                 {activityItem.type === "paid" ? (
                                   <CheckCircleIcon
                                     className="h-6 w-6 text-primary"
-                                    aria-hipen="true"
+                                    aria-hidden="true"
                                   />
                                 ) : (
                                   <div className="h-1.5 w-1.5 rounded-full" />
@@ -371,7 +383,7 @@ export const PoolsLayout = ({ pools }: PoolsLayoutProps) => {
                 </div>
               </div>
             </div>
-          </>
+          </div>
         ))}
       </main>
     </>

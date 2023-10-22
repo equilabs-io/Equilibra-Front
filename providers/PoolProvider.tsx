@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-type Pool = {
+interface Pool  {
   name: string;
   description: string;
   token: string;
