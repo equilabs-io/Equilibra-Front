@@ -164,14 +164,14 @@ export default function CreateProjectForm({
                 />
               </div>
               {/* description */}
-              <div className="col-span-full h-96">
+              <div className="col-span-full">
                 <InputText
                   label="Description"
                   name="description"
                   handleChange={handleFormChange}
                   value={formState.description}
                   type="textarea"
-                  rows={15}
+                  rows={6}
                   placeholder="Project description..."
                   required
                 />
@@ -183,7 +183,6 @@ export default function CreateProjectForm({
                   label="Category"
                   name="category"
                   handleChange={handleFormChange}
-                  value={categories[0].name}
                   required
                 />
               </div>

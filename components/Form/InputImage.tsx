@@ -64,7 +64,7 @@ export default function InputImage({
     <>
       <label
         htmlFor="cover-photo"
-        className="block text-sm font-thin leading-6 "
+        className="block"
       >
         {label}
       </label>

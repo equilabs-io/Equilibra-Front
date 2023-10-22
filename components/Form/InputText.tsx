@@ -33,10 +33,7 @@ export default function InputText({
   return (
     <>
       {label && (
-        <label
-          htmlFor={name}
-          className="block text-sm leading-6 text-white font-thin"
-        >
+        <label htmlFor={name} className="block">
           {label}
           {required && "  *"}
         </label>
@@ -52,7 +49,7 @@ export default function InputText({
             rows={rows}
             value={value}
             autoComplete={name}
-            className="block w-full h-full text-white placeholder-grey_light first:rounded-md border-0 bg-grey_dark py-1.5 px-3 shadow-sm ring-1 ring-inset focus:outline-none ring-grey_mlight focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+            className="block w-full h-full text-white placeholder-grey_light first:rounded-md border-0 bg-grey_dark py-1.5 px-3 shadow-sm ring-1 ring-inset focus:outline-none ring-grey_mlight focus:ring-2 focus:ring-inset focus:ring-primary text-sm leading-6"
             placeholder={placeholder}
           />
         ) : (
@@ -64,7 +61,7 @@ export default function InputText({
             onChange={handleInputChange}
             value={value}
             autoComplete={name}
-            className="block w-full text-white placeholder-grey_light rounded-md border-0 bg-grey_dark py-1.5 px-3 shadow-sm ring-1 ring-inset focus:outline-none ring-grey_mlight focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+            className="block w-full text-white placeholder-grey_light rounded-md border-0 bg-grey_dark py-1.5 px-3 shadow-sm ring-1 ring-inset focus:outline-none ring-grey_mlight focus:ring-2 focus:ring-inset focus:ring-primary text-sm leading-6"
             placeholder={placeholder}
           />
         )}

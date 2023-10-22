@@ -6,18 +6,18 @@ import { toast } from "react-toastify";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useContractWrite } from "wagmi";
 import { ethers } from "ethers";
-import { projectRegistry } from "@/constants/abis";
 import InputSelect from "@/components/Form/InputSelect";
 import CustomButton from "@/components/CustomButton";
+import InputSwitch from "@/components/Form/InputSwitch";
+import { motion, AnimatePresence } from "framer-motion";
 interface FormState {
   description: string;
   fundingToken: string;
-  fileHash: string;
+  governanceToken: string;
   name: string;
-}
-
-interface ErrorCause {
-  metaMessages: string[];
+  isMultiSig: boolean;
+  multiSigOwners: string[];
+  sigsRequired: number;
 }
 
 const tokens = [
@@ -28,84 +28,90 @@ const tokens = [
 ];
 
 export default function CreatePool() {
-  // const [beneficiary, setBeneficiary] = useState("");
   const [formState, setFormState] = useState<FormState>({
     description: "",
     fundingToken: "",
-    fileHash: "",
+    governanceToken: "",
     name: "",
+    isMultiSig: false,
+    multiSigOwners: [],
+    sigsRequired: 0,
   });
 
-  const handleChange = (value: string | number, name: string) => {
-    // if (name == "beneficiary" && typeof value === "string") {
-    //   setBeneficiary(value);
-    // } else {
-    setFormState({ ...formState, [name]: value });
-    // }
+  const handleChange = (
+    value: string | number | boolean,
+    name: string,
+    index?: number
+  ) => {
+    if (index) {
+      setFormState({ ...formState, [name[index]]: value });
+    } else {
+      setFormState({ ...formState, [name]: value });
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(formState);
+    // const ipfsUpload = ipfsJsonUpload();
 
-    const ipfsUpload = ipfsJsonUpload();
+    // toast
+    //   .promise(ipfsUpload, {
+    //     pending: "Uploading to IPFS...",
+    //     success: "Successfully uploaded!",
+    //     error: "Ups, something went wrong with IPFS.",
+    //   })
+    //   .then((ipfsHash: string) => {
+    const abiCoder = new ethers.utils.AbiCoder();
+    // const encodedData = abiCoder.encode(["string"], [ipfsHash]);
 
-    toast
-      .promise(ipfsUpload, {
-        pending: "Uploading to IPFS...",
-        success: "Successfully uploaded!",
-        error: "Ups, something went wrong with IPFS.",
-      })
-      .then((ipfsHash: string) => {
-        const abiCoder = new ethers.utils.AbiCoder();
-        const encodedData = abiCoder.encode(["string"], [ipfsHash]);
-
-        console.log("ipfs json hash: " + ipfsHash);
-        write({
-          // args: [debouncedBeneficiary, encodedData],
-        });
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    // console.log("ipfs json hash: " + ipfsHash);
+    // write({
+    // args: [debouncedBeneficiary, encodedData],
+    // });
+    // })
+    // .catch((error) => {
+    //   console.error("Error:", error);
+    // });
   };
 
   // const debouncedBeneficiary = useDebounce(beneficiary);
 
-  const { write, data, error, isError, isLoading, isSuccess } =
-    useContractWrite({
-      address: projectRegistry.address,
-      abi: projectRegistry.abi,
-      functionName: "registerProject",
-    });
+  // const { write, data, error, isError, isLoading, isSuccess } =
+  //   useContractWrite({
+  //     address: projectRegistry.address,
+  //     abi: projectRegistry.abi,
+  //     functionName: "registerProject",
+  //   });
 
-  const ipfsJsonUpload = async () => {
-    try {
-      const response = await fetch("/api/ipfs", {
-        method: "POST",
-        body: JSON.stringify(formState),
-        headers: {
-          "content-type": "application/json",
-        },
-      });
-      const json = await response.json();
-      if (json?.IpfsHash) {
-        return Promise.resolve(json.IpfsHash);
-      } else {
-        return Promise.reject("No ipfshash returned");
-      }
-    } catch (err) {
-      console.error(err);
-      return Promise.reject(err);
-    }
-  };
+  // const ipfsJsonUpload = async () => {
+  //   try {
+  //     const response = await fetch("/api/ipfs", {
+  //       method: "POST",
+  //       body: JSON.stringify(formState),
+  //       headers: {
+  //         "content-type": "application/json",
+  //       },
+  //     });
+  //     const json = await response.json();
+  //     if (json?.IpfsHash) {
+  //       return Promise.resolve(json.IpfsHash);
+  //     } else {
+  //       return Promise.reject("No ipfshash returned");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     return Promise.reject(err);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success("Successfully Created a Project!");
-    } else if (isError && error) {
-      toast.error((error.cause as ErrorCause).metaMessages[0]);
-    }
-  }, [isLoading, isSuccess, isError]);
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     toast.success("Successfully Created a Pool!");
+  //   } else if (isError && error) {
+  //     toast.error((error.cause as ErrorCause).metaMessages[0]);
+  //   }
+  // }, [isLoading, isSuccess, isError]);
 
   return (
     <>
@@ -124,7 +130,7 @@ export default function CreatePool() {
                   handleChange={handleChange}
                   value={formState.name}
                   type="text"
-                  placeholder="My project name"
+                  placeholder="My pool name"
                   required
                 />
               </div>
@@ -135,16 +141,19 @@ export default function CreatePool() {
                   handleChange={handleChange}
                   value={formState.description}
                   type="textarea"
-                  rows={3}
-                  placeholder="Project description..."
+                  rows={4}
+                  placeholder="Pool description..."
                   required
                 />
               </div>
-              <div className="col-span-full">
-                <InputImage
-                  label="Cover photo"
-                  name="fileHash"
+              <div className="sm:col-span-4">
+                <InputText
+                  label="Governance token address"
+                  name="governanceToken"
                   handleChange={handleChange}
+                  value={formState.governanceToken}
+                  type="text"
+                  placeholder="Governance token contract address..."
                   required
                 />
               </div>
@@ -154,9 +163,72 @@ export default function CreatePool() {
                   label="Funding token"
                   name="fundingToken"
                   handleChange={handleChange}
-                  value={formState.fundingToken}
                   required
                 />
+              </div>
+              <div className="sm:col-span-4">
+                <InputSwitch
+                  label="Multisig pool with Gnosis Safe"
+                  name="isMultiSig"
+                  handleChange={handleChange}
+                  value={formState.isMultiSig}
+                />
+                <AnimatePresence>
+                  {formState.isMultiSig && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="sm:col-span-4 flex flex-col gap-2 mt-2"
+                    >
+                      <div className="my-2">
+                        <InputText
+                          label="Wallet address"
+                          name="multiSigOwners"
+                          handleChange={handleChange}
+                          value={formState.multiSigOwners[0]}
+                          type="text"
+                          placeholder="Wallet address..."
+                          required
+                        />
+                      </div>
+                      <div className="my-2">
+                        <InputText
+                          label="Wallet address"
+                          name="multiSigOwners"
+                          handleChange={handleChange}
+                          value={formState.multiSigOwners[1]}
+                          type="text"
+                          placeholder="Wallet address 2..."
+                          required
+                        />
+                      </div>
+                      <div className="my-2">
+                        <InputText
+                          label="Wallet address"
+                          name="multiSigOwners"
+                          handleChange={handleChange}
+                          value={formState.multiSigOwners[2]}
+                          type="text"
+                          placeholder="Wallet address 3..."
+                          required
+                        />
+                      </div>
+                      <div className="my-2">
+                        <InputText
+                          label="Signatures required"
+                          name="sigsRequired"
+                          handleChange={handleChange}
+                          value={formState.sigsRequired}
+                          type="number"
+                          placeholder="My pool name"
+                          required
+                        />
+                      </div>
+                      {/* <div className="border-b mt-2"></div> */}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>

@@ -3,7 +3,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 // TODO: move func to utils folder
-function classNames(...classes: any[]) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -16,21 +16,14 @@ interface InputFormProps {
   list: List[];
   name: string;
   label?: string;
-  value: string | number;
-  handleChange: (value: string | number, name: string) => void;
+  handleChange: (value: string, name: string) => void;
   required?: boolean;
-}
-
-interface Selected {
-  id: number;
-  name: string;
 }
 
 export default function InputSelect({
   list,
   name,
   label = undefined,
-  value,
   handleChange,
   required = false,
 }: InputFormProps) {
@@ -49,7 +42,7 @@ export default function InputSelect({
           {label && (
             <Listbox.Label
               htmlFor={name}
-              className="block text-sm font-medium leading-6 "
+              className="block"
             >
               {label}
               {required && " *"}
