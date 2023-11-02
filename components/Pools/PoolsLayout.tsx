@@ -8,6 +8,7 @@ import {
   ArrowUpIcon,
 } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import PoolCard from "./PoolCard";
 
 const navigation = [
   { name: "Home", href: "#" },
@@ -128,6 +129,12 @@ export const PoolsLayout = ({ pools }: { pools: Pool[] }) => {
   const [history, setHistory] = useState(false);
   return (
     <>
+      <PoolCard
+        name="ChainLink"
+        fundingToken="CHP"
+        governanceToken="ETHx"
+        owner="0x5BE8Bb ..Aa85Ad0Fa4dE3"
+      />
       {/* //TODO: chekc mobile version */}
       {/* <main className="absolute inset-x-0 top-0 z-50 flex h-16 border-b border-gray-900/10">
         <Dialog
@@ -196,7 +203,7 @@ export const PoolsLayout = ({ pools }: { pools: Pool[] }) => {
                       <div className="flex-none self-end pr-6">
                         <div className="flex flex-col items-center space-y-4">
                           <p className="sr-only">Funding Token</p>
-                          <p className="rounded-md bg-green-50 px-2 py-1 text-xs font-bold text-blue-600 ring-1 ring-inset ring-green-600/20">
+                          <p className="rounded-md bg-green-50 px-2 py-1 text-xs font-bold text-red-600 ring-1 ring-inset ring-green-600/20">
                             {pool.govToken}
                           </p>
                           <p className="rounded-md bg-green-50 px-2 py-1 text-xs font-bold text-blue-600 ring-1 ring-inset ring-green-600/20">
