@@ -1,7 +1,8 @@
 import React from "react";
+import { extractColor } from "@/utils";
 
 interface PoolCardProps {
-  name: string;
+  name?: string;
   owner: string;
   fundingToken: string;
   governanceToken: string;
@@ -15,15 +16,14 @@ const PoolCard: React.FC<PoolCardProps> = ({
   governanceToken,
   onDepositClick,
 }) => {
-  const extractColor = (hexStr: string) => `#${hexStr.substring(2, 8)}`;
-  const color = extractColor("0x4BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3");
+  const imgBgColor = extractColor("0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3");
 
   return (
     <>
       <div className="rounded-2xl overflow-hidden hover:shadow-sm hover:shadow-[#00FF9D] cursor-pointer">
         <div className="bg-[#0C0C0E] rounded-lg shadow">
           <div
-            className={`min-h-[170px] bg-gradient-to-r from-cyan-600 to-[${color}]`}
+            className={`min-h-[170px] bg-gradient-to-r from-cyan-600 to-[${imgBgColor}]`}
           ></div>
           {/* Image Here */}
           <div className="px-8 py-7">

@@ -25,12 +25,12 @@ export default function Pools(): React.ReactElement {
     <>
       <ul
         role="list"
-        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 w-full justify-center"
+        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 w-full justify-center p-2 lg:p-0"
       >
         {pools.map((pool) => (
           <li
             key={pool.name}
-            className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-surface  overflow-hidden"
+            className="col-span-1 flex flex-col rounded-lg overflow-hidden"
           >
             <div className="flex flex-1 flex-col p-1">
               <PoolCard {...pool} />
