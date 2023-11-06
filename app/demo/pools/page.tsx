@@ -1,42 +1,68 @@
 import React from "react";
 import PoolCard from "@/components/Pools/PoolCard";
-export default function Pools(): React.ReactElement {
-  const pools = [
-    {
-      name: "Pool Name #1",
-      owner: "0x5B...0Fa4dE3",
-      fundingToken: "ETHx",
-      governanceToken: "ETH",
-    },
-    {
-      name: "Pool Name #2",
-      owner: "0x5B...0Taj93",
-      fundingToken: "DAIx",
-      governanceToken: "ETH",
-    },
-    {
-      name: "Pool Name #3",
-      owner: "0x5B...HHHHb3",
-      fundingToken: "USDCx",
-      governanceToken: "ETH",
-    },
-  ];
+import Link from "next/link";
+import { getUrqlClient } from "@/services/urqlService";
+
+const poolsQuery = `
+  query {
+    osmoticPools(first: 10) {
+      id
+      maxActiveProjects
+      address
+      owner
+      mimeToken {
+        name
+        symbol
+      }
+      poolProjects(first: 10) {
+        id
+      }
+    }
+  }
+`;
+const poolQuery = `
+      query ($id: ID!) {
+        osmoticPool(id: $id ) {
+          id
+        }
+      }
+    `;
+
+const getAllPools = async () => {
+  const projectsQueryResult = await getUrqlClient().query(poolsQuery, {});
+  return projectsQueryResult.data;
+};
+
+export default async function Pools() {
+  const poolsQuery = await getAllPools();
+
   return (
     <>
       <ul
         role="list"
         className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 w-full justify-center p-2 lg:p-0"
       >
-        {pools.map((pool) => (
-          <li
-            key={pool.name}
-            className="col-span-1 flex flex-col rounded-lg overflow-hidden"
-          >
-            <div className="flex flex-1 flex-col p-1">
-              <PoolCard {...pool} />
-            </div>
-          </li>
-        ))}
+        {poolsQuery.osmoticPools.map(
+          (pool: {
+            name: string;
+            id: string;
+            owner: string;
+            address: string;
+            fundingToken: string;
+            governanceToken: string;
+          }) => (
+            <li
+              key={pool.name}
+              className="col-span-1 flex flex-col rounded-lg overflow-hidden"
+            >
+              <Link href={`/demo/pools/${pool.id}`}>
+                <div className="flex flex-1 flex-col p-1">
+                  <PoolCard {...pool} />
+                </div>
+              </Link>
+            </li>
+          )
+        )}
       </ul>
     </>
   );
