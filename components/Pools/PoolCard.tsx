@@ -1,6 +1,7 @@
 import React from "react";
 import { extractColor } from "@/utils";
 import { PoolCardProps, PoolProps } from "@/types";
+import Balance from "@/components/Balance";
 
 const PoolCard = ({ pool }: PoolProps) => {
   const bgColor = extractColor(pool?.address || "");
@@ -28,14 +29,14 @@ const PoolCard = ({ pool }: PoolProps) => {
             <div className="mb-8 text-center">
               <h5 className="text-xs text-grey_light">
                 Governance Token:{" "}
-                <span className="inline-flex items-center rounded-md bg-pink-400/10 px-2 py-1 text-xs font-medium text-pink-400 ring-1 ring-inset ring-pink-400/20 ml-2">
+                <span className="inline-flex items-center rounded-md bg-pink-400/10 px-2 py-1 text-xs font-medium text-secondary ring-1 ring-inset ring-pink-400/20 ml-2">
                   {pool?.mimeToken.name}
                 </span>
               </h5>
             </div>
             <div className="">
               <button className="inline-flex  px-3 py-2 text-md font-bold text-background bg-primary rounded-lg w-full items-center justify-center">
-                ${randomNumber}
+                <Balance address={pool?.address} />
                 <span className="h-4 w-4 border-2 rounded-full ml-2 border-slate-900"></span>
               </button>
             </div>
