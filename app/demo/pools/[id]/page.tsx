@@ -1,11 +1,296 @@
 import { NextPage } from "next";
+import { getUrqlClient } from "@/services/urqlService";
+import { PoolCardProps } from "@/types";
+import { Link } from "@/components/Link";
 
-interface Params {
+//TODO: create Querys folder for all queries and move this to it
+const poolQuery = `
+      query ($id: ID!) {
+        osmoticPool(id: $id ) {
+          id
+          owner
+          maxActiveProjects
+          address
+          mimeToken {
+            name
+            symbol
+          }
+          poolProjects(first: 10) {
+            id
+            active
+            flowLastRate
+            flowLastTime
+            currentRound
+          }
+        }
+      }
+    `;
+
+type PoolIdProps = {
   id: string;
+};
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
 }
 
-const PoolId: NextPage<{ params: Params }> = ({ params }) => {
-  return <div className="">{params.id}</div>;
-};
+export default async function PoolId({ params }: { params: PoolIdProps }) {
+  // Logic to get pool data
+  const poolQueryResult = await getUrqlClient().query(poolQuery, {
+    id: params.id,
+  });
+  const pool = poolQueryResult.data.osmoticPool;
+  const poolStats = [
+    { name: "Treasury", value: "20000", unit: "usdc" },
+    { name: "Total Streamed", value: "3400", unit: "usdc" },
+    { name: "Current Active Projects", value: pool.poolProjects.length },
+    { name: "Max Active Projects", value: pool.maxActiveProjects },
+  ];
 
-export default PoolId;
+  //helper function to get last 4 letters of pool id used for pool "name"
+  function getLastFourLetters(poolId: string): string {
+    return poolId.slice(-4);
+  }
+  const poolName = getLastFourLetters(pool.id);
+
+  return (
+    <>
+      <div className="w-full">
+        <div className="">
+          <main>
+            <header>
+              {/* Heading */}
+              <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10 px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8 rounded-xl">
+                <div>
+                  <div className="flex items-center gap-x-3">
+                    <div className="flex-none rounded-full bg-green-400/10 p-1 text-green-400">
+                      <div className="h-2 w-2 rounded-full bg-current" />
+                    </div>
+                    <h1 className="flex gap-x-3 text-base leading-7">
+                      <span className="font-semibold text-4xl">
+                        Pool Name {""}
+                        <span className="text-primary ml-2"> #{poolName}</span>
+                      </span>
+
+                      <span className="font-semibold text-white"></span>
+                    </h1>
+                  </div>
+                  <p className="mt-2 text-md leading-6 text-gray-400">
+                    Dashboard
+                  </p>
+                </div>
+                <div>
+                  <span className="inline-flex items-center rounded-md bg-pink-400/10 px-2 py-1 text-xs font-medium text-pink-400 ring-1 ring-inset ring-pink-400/20 ml-2">
+                    {pool?.mimeToken.name}
+                  </span>
+                  <span className="inline-flex items-center rounded-md bg-pink-400/10 px-2 py-1 text-xs font-medium text-pink-400 ring-1 ring-inset ring-pink-400/20 ml-2">
+                    {pool?.mimeToken.symbol}
+                  </span>
+                </div>
+              </div>
+              {/* poolOwner / Address */}
+              <div className="flex flex-col lg:flex-row my-4 bg-background rounded-xl justify-between px-4 py-4 sm:px-6 lg:px-8">
+                <div className="p-2 rounded-lg hover:scale-105 hover:bg-surface transition-transform ease-in-out duration-200">
+                  <span className="text-slate-400">contract address</span>{" "}
+                  <p className="text-clip overflow-hidden max-w-content text-primary font-mono">
+                    {" "}
+                    0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3
+                  </p>
+                </div>
+                <div className="p-2 rounded-lg hover:scale-105 hover:bg-surface transition-transform ease-in-out duration-200">
+                  <span className="text-slate-400">owner</span>{" "}
+                  <p className="text-clip overflow-hidden max-w-content text-primary font-mono">
+                    {" "}
+                    0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3
+                  </p>
+                </div>
+              </div>
+              {/* poolStats */}
+              <div className="grid grid-cols-1 bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-4 ">
+                {poolStats.map((stat, statIdx) => (
+                  <div
+                    key={stat.name}
+                    className={classNames(
+                      statIdx % 2 === 1 ? "sm:" : statIdx === 2 ? "" : "",
+                      "rounded-xl py-6 px-4 sm:px-6 lg:px-8 hover:bg-gray-700/20 transition-all ease-in-out duration-150"
+                    )}
+                  >
+                    <p className="text-sm font-medium leading-6 text-gray-400">
+                      {stat.name}
+                    </p>
+                    <p className="mt-2 flex items-baseline gap-x-2">
+                      <span className="text-4xl font-semibold tracking-tight text-white">
+                        {stat.value}
+                      </span>
+                      {stat.unit ? (
+                        <span className="text-sm text-gray-400">
+                          {stat.unit}
+                        </span>
+                      ) : null}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </header>
+
+            {/* tabs */}
+
+            {/* project list */}
+            <div className="pt-11">
+              <div className="flex items-center justify-between">
+                <h2 className="px-4 text-base font-semibold leading-7 text-white sm:px-6 lg:px-8">
+                  Current Pool Projects
+                </h2>
+                <h3 className="text-base px-4">Round - 0</h3>
+              </div>
+              <table className="mt-6 w-full whitespace-nowrap text-left">
+                <colgroup>
+                  <col className="w-full sm:w-4/12" />
+                  <col className="lg:w-4/12" />
+                  <col className="lg:w-2/12" />
+                  <col className="lg:w-1/12" />
+                  <col className="lg:w-1/12" />
+                </colgroup>
+                <thead className="border-b border-slate-800 text-sm leading-6 text-white">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
+                    >
+                      Project
+                    </th>
+                    <th
+                      scope="col"
+                      className="hidden py-2 pl-0 pr-8 font-semibold sm:table-cell"
+                    >
+                      Address
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-2 pl-0 pr-4 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20"
+                    >
+                      Status
+                    </th>
+                    <th
+                      scope="col"
+                      className="hidden py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
+                    >
+                      FlowlasTime
+                    </th>
+                    <th
+                      scope="col"
+                      className="hidden py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
+                    >
+                      Flow Last Rate
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {activityItems.map((item) => (
+                    <tr key={item.commit}>
+                      <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
+                        <div className="flex items-center gap-x-4">
+                          <img
+                            src={item.user.imageUrl}
+                            alt=""
+                            className="h-8 w-8 rounded-full bg-gray-800"
+                          />
+                          <div className="truncate text-sm font-medium leading-6 text-white">
+                            {item.user.name}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
+                        <div className="flex gap-x-3">
+                          <div className="font-mono text-sm leading-6 text-gray-400">
+                            {item.commit}
+                          </div>
+                          <span className="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20">
+                            {item.branch}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
+                        <div className="flex items-center justify-end gap-x-2 sm:justify-start">
+                          <time
+                            className="text-gray-400 sm:hidden"
+                            dateTime={item.dateTime}
+                          >
+                            {item.date}
+                          </time>
+                          <div
+                            className={classNames(
+                              statuses[item.status],
+                              "flex-none rounded-full p-1"
+                            )}
+                          >
+                            <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                          </div>
+                          <div className="hidden text-white sm:block">
+                            {item.status}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-gray-400 md:table-cell lg:pr-20">
+                        {item.duration}
+                      </td>
+                      <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-400 sm:table-cell sm:pr-6 lg:pr-8">
+                        <time dateTime={item.dateTime}>{item.date}</time>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </main>
+        </div>
+      </div>
+    </>
+  );
+}
+
+const statuses = {
+  Active: "text-green-400 bg-green-400/10",
+  Error: "text-rose-400 bg-rose-400/10",
+};
+const activityItems = [
+  {
+    user: {
+      name: "Project #1",
+      imageUrl:
+        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    },
+    commit: "2d89f0c8",
+    branch: "main",
+    status: "Active",
+    duration: "25s",
+    date: "45 minutes ago",
+    dateTime: "2023-01-23T11:00",
+  },
+  {
+    user: {
+      name: "Project #2",
+      imageUrl:
+        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    },
+    commit: "2d89f0c8",
+    branch: "main",
+    status: "Active",
+    duration: "25s",
+    date: "45 minutes ago",
+    dateTime: "2023-01-23T11:00",
+  },
+  {
+    user: {
+      name: "Project #3",
+      imageUrl:
+        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    },
+    commit: "2d89f0c8",
+    branch: "main",
+    status: "Active",
+    duration: "25s",
+    date: "45 minutes ago",
+    dateTime: "2023-01-23T11:00",
+  },
+  // More items...
+];
