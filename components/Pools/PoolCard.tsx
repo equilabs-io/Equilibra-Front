@@ -5,14 +5,18 @@ import Balance from "@/components/Balance";
 
 const PoolCard = ({ pool }: PoolProps) => {
   const bgColor = extractColor(pool?.address || "");
-  const randomNumber = Math.floor(Math.random() * 10000 + 8000);
 
   return (
     <>
       <div className="rounded-2xl overflow-hidden hover:border-2 hover:border-primary cursor-pointer transition-all ease-in duration-150">
         <div className="bg-[#0C0C0E] rounded-lg shadow">
-          <div className={`min-h-[170px] w-full bg-surface`}></div>
-          {/* Image Here */}
+          <div className={`max-h-[170px] w-full bg-surface`}>
+            {/* Image */}
+            <img
+              src={`https://effigy.im/a/${pool?.address}`}
+              className="w-full max-h-[170px] object-cover overflow-hidden blur-sm hover:blur-none"
+            />
+          </div>
           <div className="px-8 py-7">
             <div className=" mb-5">
               <h3 className="text-2xl font-bold text-primary text-ellipsis overflow-hidden">
