@@ -1,35 +1,44 @@
 import { getUrqlClient } from "@/services/urqlService";
-import { get } from "http";
 
 const participantSupportQuery = `
     query ($participant: String!) {
         poolProjectParticipantSupports(first: 100, where: {participant: $participant}) {
             id    
-           
             support
         }
     }
 `;
+type IndexFunc = (str: string, char: string) => number;
+
+//helper function to get the last 4 chars of a string
+function getFourChars(str: string, indexFunc: IndexFunc): string {
+  const lastDashIndex = indexFunc(str, "-");
+  const fourChars = str.substring(lastDashIndex - 4, lastDashIndex);
+  return fourChars;
+}
+//helper function to get the string before the first dash
+function getBeforeFirstDash(str: string): string {
+  const firstDashIndex = str.indexOf("-");
+  if (firstDashIndex === -1) {
+    return str;
+  }
+  return str.substring(0, firstDashIndex);
+}
+
 export default async function ProfileDashboard() {
   const address = "0x5be8bb8d7923879c3ddc9c551c5aa85ad0fa4de3";
 
-  const participantSupport = await getUrqlClient().query(
+  const participantQueryResult = await getUrqlClient().query(
     participantSupportQuery,
     { participant: address }
   );
 
-  //participant - staker - contributor - supporter, support to projects
+  //participant support to projects data []
   const participantSupports =
-    participantSupport.data.poolProjectParticipantSupports;
+    participantQueryResult.data.poolProjectParticipantSupports;
 
-  type IndexFunc = (str: string, char: string) => number;
+  console.log(participantSupports);
 
-  //helper function to get the last 4 chars of a string
-  function getFourChars(str: string, indexFunc: IndexFunc): string {
-    const lastDashIndex = indexFunc(str, "-");
-    const fourChars = str.substring(lastDashIndex - 4, lastDashIndex);
-    return fourChars;
-  }
   const projects = [
     {
       id: 1,
@@ -55,30 +64,17 @@ export default async function ProfileDashboard() {
       <div className="w-full min-h-screen px-4 py-8 sm:px-6 lg:px-8 space-y-10">
         <header>
           <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10  sm:flex-row sm:items-center">
-            Eth address: {address}
+            <img
+              className="rounded-full"
+              src="https://effigy.im/a/0x5be8bb8d7923879c3ddc9c551c5aa85ad0fa4de3.png"
+              height={100}
+              width={100}
+            />
           </div>
         </header>
-        <Wrapper>
-          <ProjectSupport projects={projects} />
+        <Wrapper label="Supported Projects">
+          <ParticipantProjectSupport projects={participantSupports} />
         </Wrapper>
-        {/* <Wrapper label="Supported Projects">
-          {participantSupports.map((support: any) => (
-            <>
-              <div
-                className="space-y-2 flex justify-between border-b-[1px] border-surface rounded-lg p-4]"
-                key={support.id}
-              >
-                <div className="">
-                  id: {getFourChars(support.id, (str) => str.lastIndexOf("-"))}
-                </div>
-                <div className="">
-                  pool: {getFourChars(support.id, (str) => str.indexOf("-"))}
-                </div>
-                <div>{support.support}</div>
-              </div>
-            </>
-          ))}
-        </Wrapper> */}
       </div>
     </>
   );
@@ -101,7 +97,7 @@ const Wrapper = ({ label = "Projects", children }: WrapperProps) => {
   );
 };
 
-export function ProjectSupport({ projects }: any) {
+export function ParticipantProjectSupport({ projects }: any) {
   return (
     <div className="">
       <div className="sm:flex sm:items-center">
@@ -152,16 +148,25 @@ export function ProjectSupport({ projects }: any) {
             {projects?.map((project) => (
               <tr key={project.id} className="border-b border-slate-800">
                 <td className="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
-                  <div className="font-medium text-gray-300">project id</div>
+                  <div className="font-medium text-gray-300">
+                    <span className="text-gray-500">id: </span>
+                    <span className="text-lg text-primary">
+                      {getFourChars(project.id, (str) => str.lastIndexOf("-"))}
+                    </span>
+                  </div>
                 </td>
                 <td className="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">
-                  pool id
+                  <span className="text-lg text-primary">
+                    #{getFourChars(project.id, (str) => str.indexOf("-"))}
+                  </span>
                 </td>
                 <td className="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">
-                  something
+                  #####
                 </td>
                 <td className="py-5 pl-3 pr-4 text-right text-sm text-gray-500 sm:pr-0">
-                  amount support
+                  <span className="inline-flex items-center justify-center rounded-full px-2 py-0.5 text-md font-medium text-secondary ring-1 ring-inset ring-gray-500/90 min-w-[50px] ">
+                    {project.support}
+                  </span>
                 </td>
               </tr>
             ))}
