@@ -93,7 +93,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear().toString();
-    return `${day}/${month}/${year}`;
+    return `${day} / ${month} / ${year}`;
   }
   //
   // const activityItems = [
@@ -160,14 +160,14 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                       </p>
                     </Link>
                   </span>
-                  <span className="inline-flex items-center rounded-md bg-pink-100/10 px-2 py-1 text-xs font-medium text-secondary ring-1 ring-inset ring-pink-400/20 ml-2">
+                  {/* <span className="inline-flex items-center rounded-md bg-pink-100/10 px-2 py-1 text-xs font-medium text-secondary ring-1 ring-inset ring-pink-400/20 ml-2">
                     {pool?.mimeToken.symbol}
-                  </span>
+                  </span> */}
                 </div>
               </div>
               {/* contract address / owner address */}
               <div className="flex flex-col lg:flex-row my-4 bg-background rounded-xl justify-between px-4 py-4 sm:px-6 lg:px-8">
-                <div className="p-2 rounded-lg hover:scale-105 hover:bg-surface transition-transform ease-in-out duration-200">
+                <div className="p-2 rounded-lg hover:bg-surface transition-transform ease-in-out duration-200">
                   <span className="text-slate-400">contract address</span>{" "}
                   <Link
                     href={`https://goerli.etherscan.io/address/${pool?.address}`}
@@ -178,7 +178,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                     </p>
                   </Link>
                 </div>
-                <div className="p-2 rounded-lg hover:scale-105 hover:bg-surface transition-transform ease-in-out duration-200">
+                <div className="p-2 rounded-lg hover:bg-surface transition-transform ease-in-out duration-200">
                   <span className="text-slate-400">owner</span>{" "}
                   <p className="text-clip overflow-hidden max-w-content text-primary font-mono">
                     {pool?.owner}

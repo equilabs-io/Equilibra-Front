@@ -9,7 +9,7 @@ const PoolCard = ({ pool }: PoolProps) => {
 
   return (
     <>
-      <div className="rounded-2xl overflow-hidden hover:shadow-sm hover:shadow-[#00FF9D] cursor-pointer">
+      <div className="rounded-2xl overflow-hidden hover:border-2 hover:border-primary cursor-pointer transition-all ease-in duration-150">
         <div className="bg-[#0C0C0E] rounded-lg shadow">
           <div className={`min-h-[170px] w-full bg-surface`}></div>
           {/* Image Here */}
