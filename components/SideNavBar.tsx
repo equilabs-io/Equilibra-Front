@@ -127,7 +127,7 @@ export default function SideNavBar() {
                 </li>
               ))}
             </ul>
-            <div className="pt-6 lg:hidden justify-center flex">
+            <div className="pt-6 justify-center flex">
               <w3m-button label="Connect Wallet" size="md" />
             </div>
           </div>
