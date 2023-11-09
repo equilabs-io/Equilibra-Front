@@ -1,9 +1,6 @@
 "use client";
-import { Disclosure } from "@headlessui/react";
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { EquilibraLogo } from "@/assets";
 import { navItems } from "@/constants/navigation";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -18,7 +15,6 @@ export default function SideNavBar() {
     .substring(currentPath.lastIndexOf("/") + 1)
     .slice(0, -1);
 
-  console.log(currentPath);
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -44,12 +40,6 @@ export default function SideNavBar() {
         } transition-all duration-700`}
       >
         <div className="flex justify-between h-16 shrink-0 items-center">
-          {/* <Link href="/demo/projects">
-            <span className="sr-only">Equilibra</span>
-            <div className="h-8 w-auto px-1 ">
-              <EquilibraLogo styles="text-primary" />
-            </div>
-          </Link> */}
           <button
             type="button"
             className="inline-flex items-center justify-center rounded-md lg:hidden"
@@ -61,92 +51,42 @@ export default function SideNavBar() {
         </div>
         <nav className="flex flex-1 flex-col justify-between ">
           <div className="divide-y divide-grey_mdark">
-            <ul role="list" className="-mx-2 space-y-1 mb-4">
+            <ul role="list" className="-mx-2 space-y-2 ">
               {navItems.map((item) => (
-                <li key={item.name}>
-                  {!item.children ? (
-                    <a
-                      href={item.href}
-                      className={classNames(
-                        item.current
-                          ? "bg-grey_dark"
-                          : "hover:bg-grey_dark hover:text-white",
-                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-mono text-grey_light"
-                      )}
-                    >
-                      <item.icon
-                        className="h-6 w-6 shrink-0 text-grey_light group-hover:text-white"
-                        aria-hidden="true"
-                      />
-                      {item.name}
-                    </a>
-                  ) : (
-                    <Disclosure as="div">
-                      {({ open }) => (
-                        <>
-                          <Disclosure.Button
-                            className={classNames(
-                              item.current
-                                ? "bg-grey_dark"
-                                : "hover:bg-grey_dark hover:text-white",
-                              "group flex items-center w-full text-left rounded-md p-2 gap-x-3 text-sm leading-6 font-mono text-grey_lightn"
-                            )}
-                          >
-                            <item.icon
-                              className="h-6 w-6 shrink-0 text-grey_light group-hover:text-white"
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                            <ChevronRightIcon
-                              className={classNames(
-                                open
-                                  ? "rotate-90 text-grey_light "
-                                  : "text-grey_light",
-                                "ml-auto h-5 w-5 shrink-0 group-hover:text-white"
-                              )}
-                              aria-hidden="true"
-                            />
-                          </Disclosure.Button>
-                          <Disclosure.Panel as="ul" className="mt-1 px-2">
-                            {item.children.map((subItem) => (
-                              <li key={subItem.name}>
-                                {/* 44px */}
-                                <Disclosure.Button
-                                  as="a"
-                                  href={subItem.href}
-                                  className={classNames(
-                                    subItem.current
-                                      ? "bg-grey_dark"
-                                      : "hover:bg-grey_dark hover:text-white",
-                                    "block rounded-md py-2 pr-2 pl-9 text-sm leading-6 text-grey_light"
-                                  )}
-                                >
-                                  {subItem.name}
-                                </Disclosure.Button>
-                              </li>
-                            ))}
-                          </Disclosure.Panel>
-                        </>
-                      )}
-                    </Disclosure>
-                  )}
+                <li key={item.name} className="flex items-center group">
+                  <a
+                    href={item.href}
+                    className={classNames(
+                      item.current ? "bg-grey_dark" : "hover:bg-surface",
+                      "flex gap-x-3 rounded-md p-4 text-lg leading-6 font-mono text-grey_light w-full "
+                    )}
+                  >
+                    <item.icon
+                      className="h-6 w-6 shrink-0 text-grey_light group-hover:text-primary"
+                      aria-hidden="true"
+                    />
+                    {item.name}
+                  </a>
                 </li>
               ))}
             </ul>
             <div className="pt-6 justify-center flex">
               {/* <w3m-button label="Connect Wallet" size="md" /> */}
-              {nextUrlPath.includes("pool" as string | "project" as any) && (
-                <div className="border-2 px-4 py-2 rounded-xl min-h-[300px] flex items-center justify-center">
+              {nextUrlPath.includes("pool" as string | "project" as string) && (
+                <div className="w-full min-h-[50vh] flex items-center justify-start">
                   <Link
                     href={`/demo/create-${nextUrlPath}`}
-                    className="border-2 font-mono"
+                    className="font-mono w-full text-center text-3xl rounded-md px-4 py-2 "
                   >
-                    CREATE NEW {nextUrlPath.toUpperCase()}
+                    <button className="px-6 py-2 font-medium bg-surface w-fit transition-all shadow-[-3px_3px_0px_white] hover:shadow-none hover:translate-x-[-3px] hover:translate-y-[3px]">
+                      CREATE NEW {nextUrlPath.toUpperCase()}
+                    </button>
                   </Link>
                 </div>
               )}
             </div>
           </div>
+          {/* Documentation button */}
           <ul role="list" className="-mx-2 space-y-1 mb-2">
             <li>
               <a
@@ -155,7 +95,7 @@ export default function SideNavBar() {
                   false
                     ? "bg-grey_dark"
                     : "hover:bg-grey_dark hover:text-white",
-                  "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-grey_light"
+                  "group flex gap-x-3 rounded-md p-4 text-md leading-6 font-mono text-grey_light"
                 )}
               >
                 <ClipboardDocumentCheckIcon
