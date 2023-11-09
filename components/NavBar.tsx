@@ -9,7 +9,6 @@ import { EquilibraLogo } from "@/assets";
 import useDocumentScroll from "@/hooks/useDocumentScroll";
 
 export default function NavBar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showNav, setShowNav] = useState(false);
 
   const { currentScrollTop, previousScrollTop } = useDocumentScroll();
@@ -24,65 +23,26 @@ export default function NavBar() {
 
   return (
     <nav
-      className={`sticky flex transition-all duration-300 ease-in-out z-20 justify-center p-4 ${
+      className={`sticky flex transition-all duration-300 ease-in-out z-20 justify-center p-4 mb-8 ${
         showNav ? "top-0" : "top-[-92px]"
       }`}
     >
-      <div className="w-fit flex gap-8 items-center justify-between rounded-full py-2.5 pr-2.5 pl-3 bg-surface border-solid border-2 border-grey_mdark shadow-xl">
-        {/* Wallet Connect Button */}
-        <div className="hidden lg:flex">
-          <w3m-button balance="show" size="md" label="CONNECT WALLET" />
-        </div>
-        {/* Mobile Open Button */}
-        <div className="flex lg:hidden">
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-md p-2.5"
-            onClick={() => setMobileMenuOpen(true)}
-          >
-            <span className="sr-only">Open main menu</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-          </button>
+      <div className="w-fit flex gap-8 items-center justify-between rounded-full px-3 py-2.5 pr-4 bg-surface shadow-xl min-w-[30vh] lg:min-w-[50vh]">
+        <Link href="/demo">
+          <span className="sr-only">Equilibra Logo</span>
+          <div className="h-8 w-auto px-1 ">
+            <EquilibraLogo styles="text-primary" />
+          </div>
+        </Link>
+        <div>
+          <span className="sr-only">Connect Wallert</span>
+
+          <div className="justify-center flex">
+            <w3m-button label="Connect Wallet" size="md" />
+          </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {/* TODO: add animation and styles to Dialog*/}
-      <Dialog
-        as="div"
-        className="lg:hiddenNav"
-        open={mobileMenuOpen}
-        onClose={setMobileMenuOpen}
-      >
-        <div className="fixed inset-0 z-10" />
-        <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-background px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-grey_mdark">
-          <div className="flex items-center justify-between">
-            <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Equilibra</span>
-              <div className="h-8 w-auto">
-                {/* <EquilibraLogo styles="text-primary" /> */}
-              </div>
-            </a>
-            <button
-              type="button"
-              className="-m-2.5 rounded-md p-2.5 text-white"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <span className="sr-only">Close menu</span>
-              <XMarkIcon className="h-6 w-6" aria-hiddenNav="true" />
-            </button>
-          </div>
-          <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-grey_mdark">
-              <div className="space-y-2 py-6">
-              </div>
-              <div className="py-6">
-                <w3m-button label="Connect Wallet" />
-              </div>
-            </div>
-          </div>
-        </Dialog.Panel>
-      </Dialog>
+      {/* Mobile Open Button */}
     </nav>
   );
 }

@@ -10,12 +10,12 @@ const Balance = ({ address }: BalanceProps) => {
     address: address,
     token: "0x5943F705aBb6834Cad767e6E4bB258Bc48D9C947",
     chainId: 5,
-    onSuccess(data) {
-      console.log("Success", data);
-    },
-    onError(error) {
-      console.log("Error fetching balance", error);
-    },
+    // onSuccess(data) {
+    //   console.log("Success", data);
+    // },
+    // onError(error) {
+    //   console.log("Error fetching balance", error);
+    // },
   });
   const { data, isError, isLoading } = balance;
 

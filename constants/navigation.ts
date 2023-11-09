@@ -42,5 +42,10 @@ export const navItems = [
       { name: "View all", href: "/demo/projects", current: false },
     ],
   },
-  { name: "Profile", href: "", icon: UserCircleIcon, current: false },
+  {
+    name: "Profile",
+    href: "/demo/dashboard",
+    icon: UserCircleIcon,
+    current: false,
+  },
 ];
