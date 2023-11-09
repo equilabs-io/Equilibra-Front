@@ -75,3 +75,35 @@ input {
   line-height: 1.4;
   letter-spacing: 0.5px;
 }
+
+.loader {
+  border: 2px solid;
+  border-color: transparent var(--color-primary);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+
+  animation: rotation 2s linear infinite;
+}
+.loader::after {
+  content: "";
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 24px solid;
+  border-color: transparent rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
