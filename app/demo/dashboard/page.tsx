@@ -1,4 +1,5 @@
 import { getUrqlClient } from "@/services/urqlService";
+import { ProfileHeader } from "@/components/ProfileHeader";
 
 const participantSupportQuery = `
     query ($participant: String!) {
@@ -37,41 +38,10 @@ export default async function ProfileDashboard() {
   const participantSupports =
     participantQueryResult.data.poolProjectParticipantSupports;
 
-  console.log(participantSupports);
-
-  const projects = [
-    {
-      id: 1,
-      name: "Logo redesign",
-      description: "New logo and digital asset playbook.",
-      hours: "20.0",
-      rate: "$100.00",
-      price: "$2,000.00",
-    },
-    {
-      id: 1,
-      name: "Logo redesign",
-      description: "New logo and digital asset playbook.",
-      hours: "20.0",
-      rate: "$100.00",
-      price: "$2,000.00",
-    },
-    // More projects...
-  ];
-
   return (
     <>
-      <div className="w-full min-h-screen px-4 py-8 sm:px-6 lg:px-8 space-y-10">
-        <header>
-          <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10  sm:flex-row sm:items-center">
-            <img
-              className="rounded-full"
-              src="https://effigy.im/a/0x5be8bb8d7923879c3ddc9c551c5aa85ad0fa4de3.png"
-              height={100}
-              width={100}
-            />
-          </div>
-        </header>
+      <div className="w-full min-h-screen px-4 py-8 sm:px-6 lg:px-8 space-y-20">
+        <ProfileHeader />
         <Wrapper label="Supported Projects">
           <ParticipantProjectSupport projects={participantSupports} />
         </Wrapper>

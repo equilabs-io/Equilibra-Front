@@ -11,6 +11,8 @@ function classNames(...classes: string[]) {
 }
 export default function SideNavBar() {
   const currentPath = usePathname();
+
+  //helper to go to the next url path via the
   const nextUrlPath = currentPath
     .substring(currentPath.lastIndexOf("/") + 1)
     .slice(0, -1);
