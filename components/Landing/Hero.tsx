@@ -29,8 +29,9 @@ export const Hero: React.FC = () => {
         <div className={`w-full absolute top-0 p-6 flex justify-end`}>
           <CustomButton
             text="Launch Demo"
-            link="/demo/projects"
+            link="/demo"
             type="button"
+            styles="text-lg font-mono bg-surface text-primary rounded-full px-4 py-2 transition-all duration-200 hover:text-white"
           />
         </div>
         <div className="flex flex-col md:flex-row items-center space-x-4">
