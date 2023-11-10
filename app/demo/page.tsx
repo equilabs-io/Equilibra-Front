@@ -5,7 +5,7 @@ import { FirstConnect } from "@/components/FirstConnect";
 export default function App() {
   return (
     <>
-      {/* <FirstConnect></FirstConnect> */}
+      <FirstConnect />
       {/* <WorkInProgress /> */}
     </>
   );

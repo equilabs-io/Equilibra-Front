@@ -1,6 +1,7 @@
 import React from "react";
 import PoolCard from "@/components/Pools/PoolCard";
 import Link from "next/link";
+import { CreateNew } from "@/components/CreateNew";
 import { getUrqlClient } from "@/services/urqlService";
 import { PoolCardProps } from "@/types";
 
@@ -35,6 +36,7 @@ export default async function Pools() {
 
   return (
     <>
+      <CreateNew label="pool" />
       <ul
         role="list"
         className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 w-full justify-center p-2 lg:p-0"
