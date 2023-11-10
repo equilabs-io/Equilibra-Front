@@ -35,10 +35,10 @@ export default function NavBar() {
           </div>
         </Link>
         <div>
-          <span className="sr-only">Connect Wallert</span>
+          <span className="sr-only">Connect Wallet</span>
 
           <div className="justify-center flex">
-            <w3m-button label="Connect Wallet" size="md" />
+            <w3m-button balance="hide" label="Connect Wallet" size="md" />
           </div>
         </div>
       </div>

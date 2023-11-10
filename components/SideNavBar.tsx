@@ -2,7 +2,6 @@
 import { ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 import { navItems } from "@/constants/navigation";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
 import { useAccount } from "wagmi";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -11,7 +10,7 @@ function classNames(...classes: string[]) {
 }
 export default function SideNavBar() {
   // TODO: check isConnected state not manteining when reload page
-  //const { isConnected } = useAccount({});
+  const { isConnected } = useAccount({});
   //const currentPath = usePathname();
 
   //helper to go to the next url path via the
@@ -58,8 +57,8 @@ export default function SideNavBar() {
           className={`flex flex-1 flex-col justify-between
           } `}
         >
-          <div className="divide-y divide-grey_mdark">
-            <ul role="list" className="-mx-2 space-y-2 ">
+          <div className="divide-y divide-grey_mdark mt-8">
+            <ul role="list" className="-mx-2 space-y-2">
               {navItems.map((item) => (
                 <li key={item.name} className="flex items-center group">
                   <a
@@ -69,7 +68,7 @@ export default function SideNavBar() {
 
                       //TODO: example here
                       // isConnected ? "text-secondary" : "text-grey_light",
-                      "flex gap-x-3 rounded-md p-4 text-lg leading-6 font-mono text-grey_light w-full "
+                      "flex gap-x-3 rounded-md px-2 py-4 text-lg leading-6 font-mono text-grey_light w-full"
                     )}
                   >
                     <item.icon
@@ -81,21 +80,6 @@ export default function SideNavBar() {
                 </li>
               ))}
             </ul>
-            <div className="pt-6 justify-center flex">
-              {/* <w3m-button label="Connect Wallet" size="md" /> */}
-              {/* {nextUrlPath.includes("pool" as string | "project" as string) && (
-                <div className="w-full min-h-[50vh] flex items-center justify-start">
-                  <Link
-                    href={`/demo/create-${nextUrlPath}`}
-                    className="font-mono w-full text-center text-3xl rounded-md px-4 py-2 "
-                  >
-                    <button className="px-6 py-2 font-medium bg-surface w-fit transition-all shadow-[-3px_3px_0px_white] hover:shadow-none hover:translate-x-[-3px] hover:translate-y-[3px]">
-                      CREATE NEW {nextUrlPath.toUpperCase()}
-                    </button>
-                  </Link>
-                </div>
-              )} */}
-            </div>
           </div>
 
           {/* Documentation button */}
@@ -120,11 +104,6 @@ export default function SideNavBar() {
           </ul>
         </nav>
       </div>
-      {/* <div
-        className={`fixed top-0 left-0 bg-background opacity-80 h-[600px] w-full ${
-          menuOpen ? "z-5" : "z-[-1]"
-        } transition-all duration-200`}
-      ></div> */}
     </>
   );
 }

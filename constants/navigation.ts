@@ -1,8 +1,6 @@
 import {
   ClipboardDocumentListIcon,
-  ChartPieIcon,
   UserCircleIcon,
-  FolderIcon,
   HomeIcon,
   RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
@@ -29,23 +27,15 @@ export const navItems = [
     href: "/demo/pools",
     icon: RectangleGroupIcon,
     current: false,
-    // children: [
-    //   { name: "Create Pool", href: "/demo/create-pool", current: false },
-    //   { name: "View all", href: "/demo/pools", current: false },
-    // ],
   },
   {
     name: "Projects",
     href: "/demo/projects",
     icon: ClipboardDocumentListIcon,
     current: false,
-    // children: [
-    //   { name: "Create Project", href: "/demo/create-project", current: false },
-    //   { name: "View all", href: "/demo/projects", current: false },
-    // ],
   },
   {
-    name: "Profile",
+    name: "Dashboard",
     href: "/demo/dashboard",
     icon: UserCircleIcon,
     current: false,
