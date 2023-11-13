@@ -51,7 +51,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
       value: <Balance address={pool?.address} />,
       unit: "ETHx",
     },
-    { name: "Total Streamed", value: "0.0005", unit: "ETHx" },
+    { name: "Total Streamed", value: "0.005", unit: "ETHx" },
     { name: "Current Listed Projects", value: pool?.poolProjects.length },
     { name: "Max Active Projects", value: pool?.maxActiveProjects },
   ];
@@ -62,7 +62,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
   };
 
   //helper function to get last 4 letters of pool id used for pool "name and project name"
-  function getLastFourLetters(poolId: string, places = 4): string {
+  function getLastFourLetters(poolId: string, places = 6): string {
     return poolId?.slice(-places);
   }
   //pool name
@@ -128,68 +128,111 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
   // ];
   return (
     <>
-      <div className="w-full">
-        <div className="">
-          <main>
-            <header>
-              {/* Heading */}
-              <div className="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-700/10 px-4 py-8 sm:flex-row sm:items-center sm:px-6 lg:px-8 rounded-xl">
-                <div>
-                  <div className="flex items-center gap-x-3">
-                    <div className="flex-none rounded-full bg-green-400/10 p-1 text-green-400 border-2 border-primary_var">
-                      <img
-                        src={`https://effigy.im/a/${pool?.address}`}
-                        className="object-cover overflow-hidden h-6 w-6 rounded-full"
-                      />
-                    </div>
-                    <h1 className="flex gap-x-3 text-base leading-7">
-                      <span className="font-semibold text-4xl">
-                        Pool {""}
-                        <span className="text-primary ml-2"> #{poolName}</span>
-                      </span>
-
-                      <span className="font-semibold text-white"></span>
-                    </h1>
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-0">
+        <div className="w-full px-4 space-y-8">
+          <header>
+            {/* Heading */}
+            <div className="rounded-xl w-full">
+              <div>
+                <div className="w-full max-h-[160px]">
+                  <div className="flex-none rounded-full bg-green-400/10 p-1 text-green-400">
+                    <img
+                      src={`https://effigy.im/a/${pool?.address}`}
+                      className="object-cover overflow-hidden w-full h-[full] max-h-[160px] rounded-xl"
+                    />
                   </div>
                 </div>
-                <div>
-                  <span className="inline-flex items-center rounded-md bg-pink-100/10 px-2 py-1 text-xs font-medium  ring-1 ring-inset ring-pink-400/20 ml-2">
-                    <Link
-                      href={`https://goerli.etherscan.io/address/${pool?.mimeToken.address}`}
-                      isExternal
-                    >
-                      <p className="text-clip overflow-hidden max-w-content text-secondary">
-                        {pool?.mimeToken.name}
-                      </p>
-                    </Link>
-                  </span>
-                  {/* <span className="inline-flex items-center rounded-md bg-pink-100/10 px-2 py-1 text-xs font-medium text-secondary ring-1 ring-inset ring-pink-400/20 ml-2">
+              </div>
+              <div>
+                {/* govToken - mimetoken symbol */}
+
+                {/* <span className="inline-flex items-center rounded-md bg-pink-100/10 px-2 py-1 text-xs font-medium text-secondary ring-1 ring-inset ring-pink-400/20 ml-2">
                     {pool?.mimeToken.symbol}
                   </span> */}
-                </div>
               </div>
-              {/* contract address / owner address */}
-              <div className="flex flex-col lg:flex-row my-4 bg-background rounded-xl justify-between px-4 py-4 sm:px-6 lg:px-8">
+            </div>
+            {/* contract address / owner address */}
+
+            {/* poolStats */}
+            {/* <div className="grid grid-cols-1 bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-4">
+              {poolStats.map((stat, statIdx) => (
+                <div
+                  key={stat.name}
+                  className={classNames(
+                    statIdx % 2 === 1 ? "sm:" : statIdx === 2 ? "" : "",
+                    "rounded-xl py-6 px-4 sm:px-6 lg:px-8 hover:bg-gray-700/20 transition-all ease-in-out duration-150"
+                  )}
+                >
+                  <p className="text-sm font-medium leading-6 text-gray-400">
+                    {stat.name}
+                  </p>
+                  <p className="mt-2 flex items-baseline gap-x-2">
+                    <span className="text-4xl font-semibold tracking-tight text-white">
+                      {stat.value}
+                    </span>
+                    {stat.unit ? (
+                      <span className="text-sm text-gray-400">{stat.unit}</span>
+                    ) : null}
+                  </p>
+                </div>
+              ))}
+            </div> */}
+          </header>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 ">
+            <div className="min-h-[100px]  col-span-2 p-4 space-y-8">
+              <div className=" flex justify-between">
+                <h1 className="flex gap-x-3 text-base leading-7">
+                  <span className="font-semibold text-4xl">
+                    POOL {""}
+                    <span className="text-primary ml-2">... {poolName}</span>
+                  </span>
+                </h1>
+                <span className="inline-flex items-center rounded-md bg-pink-100/10 px-4 py-1 text-xs font-medium">
+                  <Link
+                    href={`https://goerli.etherscan.io/address/${pool?.mimeToken.address}`}
+                    isExternal
+                  >
+                    <p className="text-clip overflow-hidden max-w-content text-secondary">
+                      Governance: {pool?.mimeToken.name}
+                    </p>
+                  </Link>
+                </span>
+              </div>
+              <div className="py-4 text-justify">
+                <p>
+                  Testing text for demo purpose. Lorem ipsum dolor sit amet
+                  consectetur adipisicing elit. Molestiae a, nihil quis modi,
+                  porro sed nostrum accusantium facere error, dolore asperiores?
+                  Aliquam maxime, delectus architecto voluptates beatae iste
+                  corporis non.
+                </p>
+              </div>
+              <div className="flex flex-col my-4 bg-background rounded-xl justify-between py-4 ">
                 <div className="p-2 rounded-lg hover:bg-surface transition-transform ease-in-out duration-200">
-                  <span className="text-slate-400">contract address</span>{" "}
+                  {/* <span className="text-slate-900 font-mono">
+                    contract address
+                  </span>{" "} */}
                   <Link
                     href={`https://goerli.etherscan.io/address/${pool?.address}`}
                     isExternal
                   >
-                    <p className="text-clip overflow-hidden max-w-content text-secondary font-mono">
+                    <p className="font-mono mt-0">
+                      <span className="text-primary">contract address: </span>{" "}
                       {pool?.address}
                     </p>
                   </Link>
                 </div>
                 <div className="p-2 rounded-lg hover:bg-surface transition-transform ease-in-out duration-200">
-                  <span className="text-slate-400">owner</span>{" "}
-                  <p className="text-clip overflow-hidden max-w-content text-primary font-mono">
+                  {/* <span className="text-slate-900 font-mono">owner</span>{" "} */}
+                  <p className="font-mono mt-0">
+                    <span className="text-primary">owner: </span>
                     {pool?.owner}
                   </p>
                 </div>
               </div>
-              {/* poolStats */}
-              <div className="grid grid-cols-1 bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-4 ">
+            </div>
+            <div className=" border-red-300">
+              <div className="grid grid-cols-1 bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-2">
                 {poolStats.map((stat, statIdx) => (
                   <div
                     key={stat.name}
@@ -214,111 +257,111 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                   </div>
                 ))}
               </div>
-            </header>
+            </div>
+          </div>
 
-            {/* project list */}
-            <div className="pt-11">
-              <div className="flex items-center justify-between">
-                <h2 className="px-4 text-base font-semibold leading-7 text-white sm:px-6 lg:px-8">
-                  Current Pool Projects
-                </h2>
-                <h3 className="text-base px-4">Round - 0</h3>
-              </div>
-              <table className="mt-6 w-full whitespace-nowrap text-left">
-                <colgroup>
-                  <col className="w-full sm:w-4/12" />
-                  <col className="lg:w-4/12" />
-                  <col className="lg:w-2/12" />
-                  <col className="lg:w-1/12" />
-                  <col className="lg:w-1/12" />
-                </colgroup>
-                <thead className="border-b border-slate-800 text-sm leading-6 text-white">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
-                    >
-                      Project Id
-                    </th>
-                    <th
-                      scope="col"
-                      className="hidden py-2 pl-0 pr-8 font-semibold sm:table-cell"
-                    >
-                      Address
-                    </th>
-                    <th
-                      scope="col"
-                      className="py-2 pl-0 pr-4 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20"
-                    >
-                      Status
-                    </th>
-                    <th
-                      scope="col"
-                      className="hidden py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
-                    >
-                      Flow Last Rate
-                    </th>
-                    <th
-                      scope="col"
-                      className="hidden py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
-                    >
-                      Flow Last Time
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800">
-                  {allPoolsProjects.map((item) => (
-                    <tr key={item.id}>
-                      <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
-                        <div className="flex items-center gap-x-4">
-                          {/* <img
+          {/* project list */}
+          <div className="pt-11">
+            <div className="flex items-center justify-between">
+              <h2 className="px-4 text-base font-semibold leading-7 text-white sm:px-6 lg:px-8">
+                Current Pool Projects
+              </h2>
+              <h3 className="text-base px-4">Round - 0</h3>
+            </div>
+            <table className="mt-6 w-full whitespace-nowrap text-left">
+              <colgroup>
+                <col className="w-full sm:w-4/12" />
+                <col className="lg:w-4/12" />
+                <col className="lg:w-2/12" />
+                <col className="lg:w-1/12" />
+                <col className="lg:w-1/12" />
+              </colgroup>
+              <thead className="border-b border-slate-800 text-sm leading-6 text-white">
+                <tr>
+                  <th
+                    scope="col"
+                    className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
+                  >
+                    Project Id
+                  </th>
+                  <th
+                    scope="col"
+                    className="hidden py-2 pl-0 pr-8 font-semibold sm:table-cell"
+                  >
+                    Address
+                  </th>
+                  <th
+                    scope="col"
+                    className="py-2 pl-0 pr-4 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20"
+                  >
+                    Status
+                  </th>
+                  <th
+                    scope="col"
+                    className="hidden py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
+                  >
+                    Flow Last Rate
+                  </th>
+                  <th
+                    scope="col"
+                    className="hidden py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
+                  >
+                    Flow Last Time
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {allPoolsProjects.map((item) => (
+                  <tr key={item.id}>
+                    <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
+                      <div className="flex items-center gap-x-4">
+                        {/* <img
                             src={item.user.imageUrl}
                             alt=""
                             className="h-8 w-8 rounded-full bg-gray-800"
                           /> */}
-                          <div className="truncate text-sm font-medium leading-6 text-white">
-                            Project{" "}
-                            <span className="ml-2 text-primary">{item.id}</span>
-                          </div>
+                        <div className="truncate text-sm font-medium leading-6 text-white">
+                          Project{" "}
+                          <span className="ml-2 text-primary">{item.id}</span>
                         </div>
-                      </td>
-                      <td className="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
-                        <div className="flex gap-x-3">
-                          <div className="font-mono text-sm leading-6 text-gray-400">
-                            0x1234...
-                          </div>
-                          {/* <span className="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"></span> */}
+                      </div>
+                    </td>
+                    <td className="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
+                      <div className="flex gap-x-3">
+                        <div className="font-mono text-sm leading-6 text-gray-400">
+                          0x1234...
                         </div>
-                      </td>
-                      <td className="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
-                        <div className="flex items-center justify-end gap-x-2 sm:justify-start">
-                          <div
-                            className={classNames(
-                              statuses[item.active ? "Active" : "Inactive"],
-                              "flex-none rounded-full p-1"
-                            )}
-                          >
-                            <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                          </div>
-                          <div className="hidden text-white sm:block">
-                            {item.active ? "Active" : "Inactive"}
-                          </div>
+                        {/* <span className="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"></span> */}
+                      </div>
+                    </td>
+                    <td className="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
+                      <div className="flex items-center justify-end gap-x-2 sm:justify-start">
+                        <div
+                          className={classNames(
+                            statuses[item.active ? "Active" : "Inactive"],
+                            "flex-none rounded-full p-1"
+                          )}
+                        >
+                          <div className="h-1.5 w-1.5 rounded-full bg-current" />
                         </div>
-                      </td>
-                      <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-gray-400 md:table-cell lg:pr-20">
-                        {item.flowLastRate}
-                      </td>
-                      <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-400 sm:table-cell sm:pr-6 lg:pr-8">
-                        <time dateTime={item.flowLastTime}>
-                          {formatDate(item.flowLastTime)}
-                        </time>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </main>
+                        <div className="hidden text-white sm:block">
+                          {item.active ? "Active" : "Inactive"}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-gray-400 md:table-cell lg:pr-20">
+                      {item.flowLastRate}
+                    </td>
+                    <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-400 sm:table-cell sm:pr-6 lg:pr-8">
+                      <time dateTime={item.flowLastTime}>
+                        {formatDate(item.flowLastTime)}
+                      </time>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>

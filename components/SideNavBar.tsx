@@ -1,8 +1,9 @@
 "use client";
-import { ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
-import { navItems } from "@/constants/navigation";
 import { useState } from "react";
+import { navItems } from "@/constants/navigation";
 import { useAccount } from "wagmi";
+import { usePathname } from "next/navigation";
+import { ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 function classNames(...classes: string[]) {
@@ -11,7 +12,7 @@ function classNames(...classes: string[]) {
 export default function SideNavBar() {
   // TODO: check isConnected state not manteining when reload page
   const { isConnected } = useAccount({});
-  //const currentPath = usePathname();
+  const currentPath = usePathname();
 
   //helper to go to the next url path via the
   // const nextUrlPath = currentPath
@@ -65,10 +66,11 @@ export default function SideNavBar() {
                     href={item.href}
                     className={classNames(
                       item.current ? "bg-grey_dark" : "hover:bg-surface",
-
+                      currentPath === item.href &&
+                        "bg-surface border-2 border-primary transition-all duration-500 ease-in",
                       //TODO: example here
                       // isConnected ? "text-secondary" : "text-grey_light",
-                      "flex gap-x-3 rounded-md px-2 py-4 text-lg leading-6 font-mono text-grey_light w-full"
+                      "flex gap-x-3 rounded-full px-4 py-4 text-lg leading-6 font-mono text-grey_light w-full"
                     )}
                   >
                     <item.icon
