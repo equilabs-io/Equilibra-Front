@@ -23,16 +23,13 @@ const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
 
 export default function Support() {
   const { address: participant } = useAccount();
+
   const [participantSupports, setParticipantSupports] = useState([]);
-  const [value1, setValue1] = useState<number | undefined>();
-  const [value2, setValue2] = useState<number | undefined>();
   const [values, setValues] = useState([
-    { id: 1, value: 10 },
-    { id: 2, value: 20 },
+    { id: 1, value: 0 },
+    { id: 2, value: 0 },
   ]);
   const [maxValue, setMaxValue] = useState(350);
-  const [currentValue, setCurrentValue] = useState<number>();
-  const [sliderValue, setSliderValue] = useState(0);
 
   // const { data }: any = useContractRead({
   //   address: "",
@@ -49,30 +46,6 @@ export default function Support() {
     return id;
   }
 
-  const handleSupportChange = (index, value) => {
-    setParticipantSupports((prevState) => {
-      const newState = [...prevState];
-      newState[index].support = value;
-      return newState;
-    });
-  };
-
-  const handleSupportIncrement = (index) => {
-    setParticipantSupports((prevState) => {
-      const newState = [...prevState];
-      newState[index].support++;
-      return newState;
-    });
-  };
-
-  const handleSupportDecrement = (index) => {
-    setParticipantSupports((prevState) => {
-      const newState = [...prevState];
-      newState[index].support--;
-      return newState;
-    });
-  };
-
   useEffect(() => {
     const participantSupportQuery = `
         query ($participant: String!) {
@@ -86,7 +59,11 @@ export default function Support() {
       const result = await getUrqlClient().query(participantSupportQuery, {
         participant,
       });
-      setParticipantSupports(result.data.poolProjectParticipantSupports);
+
+      // result.data.poolProjectParticipantSupports.map((_support: any) =>
+      //   console.log(_support)
+      // );
+
       setValues([
         {
           id: 7,
@@ -97,32 +74,49 @@ export default function Support() {
           value: +result.data.poolProjectParticipantSupports[5].support,
         },
       ]);
-      setValue1(+result.data.poolProjectParticipantSupports[4].support);
-      setValue2(+result.data.poolProjectParticipantSupports[5].support);
     };
 
     fetchParticipantSupports();
-  }, [participant]);
+  }, []);
 
   console.log(values);
 
-  let currentSlidersValue = [
-    [7, value1],
-    [8, value2],
-  ];
+  let actualCurrentValue = values.reduce((acc, curr) => acc + curr.value, 0);
 
-  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value);
-    if (e.target.id === "range1") {
-      if (newValue + (value2 ?? 0) <= maxValue) {
-        setValue1(newValue);
-      }
-    } else if (e.target.id === "range2") {
-      if (newValue + (value1 ?? 0) <= maxValue) {
-        setValue2(newValue);
-      }
+  const handleValueChange = (index: number, newValue: number) => {
+    // Update the corresponding value in the values array
+    setValues((prevValues) => {
+      const updatedValues = [...prevValues];
+      updatedValues[index] = { ...updatedValues[index], value: newValue };
+      return updatedValues;
+    });
+
+    // Update the actualCurrentValue
+    const newCurrentValue = values.reduce((acc, curr) => acc + curr.value, 0);
+  };
+
+  const resetToInitialState = () => {
+    setValues([
+      { id: 1, value: 100 },
+      { id: 2, value: 200 },
+    ]);
+    setMaxValue(350);
+    // Reset any other state variables you might have
+  };
+
+  const handleResetValues = () => {
+    if (isMaxValueReached) {
+      resetToInitialState();
     }
   };
+  //Array to store the values before submiting transaction later
+  let checkoutValues: number[] = [];
+  const generateCheckoutArray = () => {
+    return values.map((value) => (checkoutValues = [value.id, value.value]));
+  };
+  //
+
+  const isMaxValueReached = actualCurrentValue === maxValue;
 
   return (
     <>
@@ -132,23 +126,30 @@ export default function Support() {
           <p>
             You can give support with your tokens to the projects you selected
           </p>
-          <div className="max-w-max mt-2 space-y-2">
-            <p className="">Your Balances:</p>
-            <span className="mr-2 text-2xl font-mono">{maxValue}</span>
-            <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary_var">
-              FTK
-            </span>
-            <div>
-              <span className="mr-2 text-2xl font-mono">{currentValue}</span>
+          <div className="mt-2 w-full flex items-center">
+            <div className="space-y-2">
+              <p className="">Your Balances:</p>
+              <span className="mr-2 text-2xl font-mono">{maxValue}</span>
               <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary">
-                FTK STAKED
+                FTK
               </span>
+              <div>
+                <span className="mr-2 text-2xl font-mono">
+                  {actualCurrentValue}
+                </span>
+                <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary">
+                  FTK already staked
+                </span>
+              </div>
+            </div>
+            <div className="flex-1 flex justify-end">
+              <DonutChart
+                maxValue={maxValue}
+                currentValue={actualCurrentValue}
+              />
             </div>
           </div>
         </div>
-        {values.map((value, index) => (
-          <h2>to be continued ...</h2>
-        ))}
 
         {/* <div>
           <DonutChart maxValue={maxValue} currentValue={currentValue} />
@@ -192,85 +193,78 @@ export default function Support() {
             step={1}
           />
         </div> */}
-
+        <p></p>
         <ul
           role="list"
-          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2"
         >
-          {participantSupports?.slice(4, 6).map((project, index) => (
-            <li
-              key={project.id}
-              className="col-span-1 divide-y divide-gray-200 rounded-lg bg-background border shadow"
-            >
-              <div className="flex w-full items-center justify-between space-x-6 p-6">
-                <div className="">
+          {values.map((value, index) => (
+            <>
+              <li
+                key={value.id}
+                className="col-span-1 divide-y divide-gray-200 rounded-lg bg-background shadow-md hover:shadow-slate-500 cursor-pointer transition-all duration-300 ease-in-out"
+              >
+                <div className="px-4 py-2">
                   <label
                     htmlFor="medium-range"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="mb-2 text-md font-mono text-gray-900 dark:text-white flex items-center justify-evenly"
                   >
-                    <span className="text-lg text-primary">
-                      {getFourChars(project.id, (str) => str.lastIndexOf("-"))}
-                    </span>{" "}
-                    : {project.support}
+                    id: {value.id}
+                    <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-medium text-white ring-1 ring-inset ring-gray-800 font-mono text-2xl">
+                      <svg
+                        className="h-1.5 w-1.5 fill-green-400"
+                        viewBox="0 0 6 6"
+                        aria-hidden="true"
+                      >
+                        <circle cx={3} cy={3} r={3} />
+                      </svg>
+                      {value.value}
+                    </span>
                   </label>
-
                   <input
                     type="range"
                     id={`range${index + 1}`}
+                    disabled={isMaxValueReached}
                     name={`range${index + 1}`}
                     min="0"
                     max={maxValue}
-                    value={value2}
-                    onChange={handleValueChange}
+                    value={value.value}
+                    onChange={(e) =>
+                      handleValueChange(index, parseInt(e.target.value))
+                    }
                     className="disabled:opacity-50 w-full h-2 mb-6 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                     step={10}
                   />
                 </div>
-                {/* <div className="flex-1 truncate">
-                  <div className="flex items-center space-x-3">
-                    <h3 className="truncate text-sm font-medium text-gray-400">
-                      id:
-                      <span className="text-lg text-primary">
-                        {getFourChars(project.id, (str) =>
-                          str.lastIndexOf("-")
-                        )}
-                      </span>
-                    </h3>
-                    <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1 text-lg font-medium text-secondary ring-1 ring-inset ring--600/20">
-                      {project.support}
-                    </span>
-                  </div>
-                  <p className="mt-1 truncate text-sm text-gray-500"></p>
-                </div>
-                <img
-                  className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
-                  src={`https://effigy.im/a/0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3.png`}
-                  alt=""
-                /> */}
-              </div>
-              <div>
-                {/* <div className="-mt-px flex divide-x divide-gray-200">
-                  <div className="flex w-0 flex-1">
-                    <button
-                      onClick={() => handleSupportIncrement(index)}
-                      className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
-                    >
-                      Add
-                    </button>
-                  </div>
-                  <div className="-ml-px flex w-0 flex-1">
-                    <button
-                      onClick={() => handleSupportDecrement(index)}
-                      className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div> */}
-              </div>
-            </li>
+              </li>
+            </>
           ))}
+          {/* Reset button for all disabled inputs */}
         </ul>
+        {isMaxValueReached && (
+          <>
+            <div className="flex">
+              <span className="border-2 p-2 border-red-400 rounded-md">
+                You reach the maximum support value of {maxValue}, please
+                checkout or reset and try again
+              </span>
+              <button
+                onClick={handleResetValues}
+                className="bg-secondary text-white px-4 py-2 rounded-md ml-4 "
+              >
+                Reset All Values
+              </button>
+            </div>
+          </>
+        )}
+        <div className="mt-24">
+          <button
+            onClick={() => console.log(generateCheckoutArray())}
+            className="text-primary px-4 py-4 rounded-md  w-full border border-primary hover:bg-primary  hover:text-black transition-all  duration-200 ease-in-out font-semibold"
+          >
+            Checkout
+          </button>
+        </div>
       </div>
     </>
   );
@@ -282,9 +276,9 @@ interface DonutChartProps {
 }
 
 const DonutChart = ({ maxValue, currentValue }: DonutChartProps) => {
-  const radius = 50;
-  const strokeWidth = 10;
-  const circumference = 1.8 * Math.PI * radius;
+  const radius = 80;
+  const strokeWidth = 40;
+  const circumference = 1.5 * Math.PI * radius;
   const percentage = (currentValue / maxValue) * 100;
   const offset = circumference - (percentage / 100) * circumference;
   const strokeDasharray =
@@ -322,7 +316,9 @@ const DonutChart = ({ maxValue, currentValue }: DonutChartProps) => {
         cy={radius}
         r={radius - strokeWidth / 2}
         fill="transparent"
-        stroke={percentage >= 50 ? "#3b82f6" : "var(--color-primary)"}
+        stroke={
+          percentage >= 50 ? "var(--color-secondary)" : "var(--color-primary)"
+        }
         strokeWidth={strokeWidth}
         strokeDasharray={strokeDasharray}
         strokeDashoffset={offset}
@@ -333,9 +329,11 @@ const DonutChart = ({ maxValue, currentValue }: DonutChartProps) => {
           x={radius}
           y={radius + 10}
           textAnchor="middle"
-          fontSize="16px"
+          fontSize="24px"
           fontWeight="bold"
-          fill={percentage >= 50 ? "#3b82f6" : "var(--color-primary)"}
+          fill={
+            percentage >= 50 ? "var(--color-secondary)" : "var(--color-primary)"
+          }
         >
           {percentage.toFixed(0)}%
         </text>
@@ -407,3 +405,77 @@ const DonutChart = ({ maxValue, currentValue }: DonutChartProps) => {
 //   </li>
 // ))}
 // </ul>
+
+// {participantSupports?.slice(4, 6).map((project, index) => (
+//   <li
+//     key={project.id}
+//     className="col-span-1 divide-y divide-gray-200 rounded-lg bg-background border shadow"
+//   >
+//     <div className="flex w-full items-center justify-between space-x-6 p-6">
+//       <div className="">
+//         <label
+//           htmlFor="medium-range"
+//           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+//         >
+//           <span className="text-lg text-primary">
+//             {getFourChars(project.id, (str) => str.lastIndexOf("-"))}
+//           </span>{" "}
+//           : {project.support}
+//         </label>
+
+//         <input
+//           type="range"
+//           id={`range${index + 1}`}
+//           name={`range${index + 1}`}
+//           min="0"
+//           max={maxValue}
+//           value={project[0]?.support}
+//           onChange={handleValueChange}
+//           className="disabled:opacity-50 w-full h-2 mb-6 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+//           step={10}
+//         />
+//       </div>
+//       {/* <div className="flex-1 truncate">
+//         <div className="flex items-center space-x-3">
+//           <h3 className="truncate text-sm font-medium text-gray-400">
+//             id:
+//             <span className="text-lg text-primary">
+//               {getFourChars(project.id, (str) =>
+//                 str.lastIndexOf("-")
+//               )}
+//             </span>
+//           </h3>
+//           <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1 text-lg font-medium text-secondary ring-1 ring-inset ring--600/20">
+//             {project.support}
+//           </span>
+//         </div>
+//         <p className="mt-1 truncate text-sm text-gray-500"></p>
+//       </div>
+//       <img
+//         className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
+//         src={`https://effigy.im/a/0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3.png`}
+//         alt=""
+//       /> */}
+//     </div>
+//     <div>
+//       {/* <div className="-mt-px flex divide-x divide-gray-200">
+//         <div className="flex w-0 flex-1">
+//           <button
+//             onClick={() => handleSupportIncrement(index)}
+//             className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
+//           >
+//             Add
+//           </button>
+//         </div>
+//         <div className="-ml-px flex w-0 flex-1">
+//           <button
+//             onClick={() => handleSupportDecrement(index)}
+//             className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-400"
+//           >
+//             Remove
+//           </button>
+//         </div>
+//       </div> */}
+//     </div>
+//   </li>
+// ))}
