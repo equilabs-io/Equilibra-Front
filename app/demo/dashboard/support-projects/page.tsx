@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 
 import { useAccount, useContractRead } from "wagmi";
 import { getUrqlClient } from "@/services/urqlService";
 import * as ABI from "@/constants/abis/MimeToken.json";
 import * as OWNABLE_ABI from "@/constants/abis/OwnableList.json";
+import { get } from "http";
 
 const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
   id
@@ -23,6 +24,14 @@ const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
 export default function Support() {
   const { address: participant } = useAccount();
   const [participantSupports, setParticipantSupports] = useState([]);
+  const [value1, setValue1] = useState<number | undefined>();
+  const [value2, setValue2] = useState<number | undefined>();
+  const [values, setValues] = useState([
+    { id: 1, value: 10 },
+    { id: 2, value: 20 },
+  ]);
+  const [maxValue, setMaxValue] = useState(350);
+  const [currentValue, setCurrentValue] = useState<number>();
   const [sliderValue, setSliderValue] = useState(0);
 
   // const { data }: any = useContractRead({
@@ -39,12 +48,6 @@ export default function Support() {
     const id = fourChars.substring(0, 1);
     return id;
   }
-
-  console.log(participantSupports[0]?.support?.toString());
-
-  // console.log(
-  //   getFourChars(participantSupports[0].id, (str) => str.lastIndexOf("-"))
-  // );
 
   const handleSupportChange = (index, value) => {
     setParticipantSupports((prevState) => {
@@ -84,41 +87,46 @@ export default function Support() {
         participant,
       });
       setParticipantSupports(result.data.poolProjectParticipantSupports);
+      setValues([
+        {
+          id: 7,
+          value: +result.data.poolProjectParticipantSupports[4].support,
+        },
+        {
+          id: 8,
+          value: +result.data.poolProjectParticipantSupports[5].support,
+        },
+      ]);
+      setValue1(+result.data.poolProjectParticipantSupports[4].support);
+      setValue2(+result.data.poolProjectParticipantSupports[5].support);
     };
 
     fetchParticipantSupports();
   }, [participant]);
 
-  const [value1, setValue1] = useState(100);
-  const [value2, setValue2] = useState(200);
-  const [maxValue, setMaxValue] = useState(350);
-  const [currentValue, setCurrentValue] = useState(value1 + value2);
+  console.log(values);
 
   let currentSlidersValue = [
     [7, value1],
     [8, value2],
   ];
 
-  const handleValueChange = (e) => {
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(e.target.value);
     if (e.target.id === "range1") {
-      if (newValue + value2 <= maxValue) {
+      if (newValue + (value2 ?? 0) <= maxValue) {
         setValue1(newValue);
       }
     } else if (e.target.id === "range2") {
-      if (newValue + value1 <= maxValue) {
+      if (newValue + (value1 ?? 0) <= maxValue) {
         setValue2(newValue);
       }
     }
   };
 
-  useEffect(() => {
-    setCurrentValue(value1 + value2);
-  }, [value1, value2]);
-
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6 px-6">
         <h2 className="text-primary">My support List</h2>
         <div>
           <p>
@@ -131,17 +139,21 @@ export default function Support() {
               FTK
             </span>
             <div>
-              <span className="mr-2 text-2xl font-mono"> {currentValue}</span>
+              <span className="mr-2 text-2xl font-mono">{currentValue}</span>
               <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary">
                 FTK STAKED
               </span>
             </div>
           </div>
         </div>
+        {values.map((value, index) => (
+          <h2>to be continued ...</h2>
+        ))}
+
         {/* <div>
           <DonutChart maxValue={maxValue} currentValue={currentValue} />
         </div> */}
-        <div className="">
+        {/* <div className="">
           <label
             htmlFor="medium-range"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -179,19 +191,42 @@ export default function Support() {
             className="disabled:opacity-50 w-full h-2 mb-6 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
             step={1}
           />
-        </div>
+        </div> */}
 
         <ul
           role="list"
           className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {participantSupports.slice(4, 6).map((project, index) => (
+          {participantSupports?.slice(4, 6).map((project, index) => (
             <li
               key={project.id}
               className="col-span-1 divide-y divide-gray-200 rounded-lg bg-background border shadow"
             >
               <div className="flex w-full items-center justify-between space-x-6 p-6">
-                <div className="flex-1 truncate">
+                <div className="">
+                  <label
+                    htmlFor="medium-range"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    <span className="text-lg text-primary">
+                      {getFourChars(project.id, (str) => str.lastIndexOf("-"))}
+                    </span>{" "}
+                    : {project.support}
+                  </label>
+
+                  <input
+                    type="range"
+                    id={`range${index + 1}`}
+                    name={`range${index + 1}`}
+                    min="0"
+                    max={maxValue}
+                    value={value2}
+                    onChange={handleValueChange}
+                    className="disabled:opacity-50 w-full h-2 mb-6 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                    step={10}
+                  />
+                </div>
+                {/* <div className="flex-1 truncate">
                   <div className="flex items-center space-x-3">
                     <h3 className="truncate text-sm font-medium text-gray-400">
                       id:
@@ -211,7 +246,7 @@ export default function Support() {
                   className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
                   src={`https://effigy.im/a/0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3.png`}
                   alt=""
-                />
+                /> */}
               </div>
               <div>
                 {/* <div className="-mt-px flex divide-x divide-gray-200">
