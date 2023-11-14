@@ -41,7 +41,7 @@ const PoolCard = ({ pool }: PoolProps) => {
             <div className="">
               <button className="inline-flex  px-3 py-2 text-md font-bold text-background bg-primary rounded-lg w-full items-center justify-center">
                 <Balance address={pool?.address} />
-                <span className="h-4 w-4 border-2 rounded-full ml-2 border-slate-900"></span>
+                {/* <span className="h-4 w-4 border-2 rounded-full ml-2 border-slate-900"></span> */}
               </button>
             </div>
           </div>

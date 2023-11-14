@@ -48,7 +48,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
   const poolStats = [
     {
       name: "Treasury",
-      value: <Balance address={pool?.address} />,
+      value: <Balance address={pool?.address} symbol={false} />,
       unit: "ETHx",
     },
     { name: "Total Streamed", value: "0.005", unit: "ETHx" },
@@ -138,7 +138,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                   <div className="flex-none rounded-full bg-green-400/10 p-1 text-green-400">
                     <img
                       src={`https://effigy.im/a/${pool?.address}`}
-                      className="object-cover overflow-hidden w-full h-[full] max-h-[160px] rounded-xl"
+                      className="object-cover overflow-hidden w-full h-[full] max-h-[160px] rounded-t-2xl"
                     />
                   </div>
                 </div>
@@ -163,7 +163,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                     "rounded-xl py-6 px-4 sm:px-6 lg:px-8 hover:bg-gray-700/20 transition-all ease-in-out duration-150"
                   )}
                 >
-                  <p className="text-sm font-medium leading-6 text-gray-400">
+                  <p className="text-sm font-medium leading-6 text-gray-300">
                     {stat.name}
                   </p>
                   <p className="mt-2 flex items-baseline gap-x-2">
@@ -171,7 +171,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                       {stat.value}
                     </span>
                     {stat.unit ? (
-                      <span className="text-sm text-gray-400">{stat.unit}</span>
+                      <span className="text-sm text-gray-300">{stat.unit}</span>
                     ) : null}
                   </p>
                 </div>
@@ -179,12 +179,12 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
             </div> */}
           </header>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 ">
-            <div className="min-h-[100px]  col-span-2 p-4 space-y-8">
+            <div className="min-h-[100px]  col-span-2 p-4 space-y-4">
               <div className=" flex justify-between">
                 <h1 className="flex gap-x-3 text-base leading-7">
                   <span className="font-semibold text-4xl">
                     POOL {""}
-                    <span className="text-primary ml-2">... {poolName}</span>
+                    <span className="text-primary ml-2">{poolName}</span>
                   </span>
                 </h1>
                 <span className="inline-flex items-center rounded-md bg-pink-100/10 px-4 py-1 text-xs font-medium">
@@ -192,13 +192,13 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                     href={`https://goerli.etherscan.io/address/${pool?.mimeToken.address}`}
                     isExternal
                   >
-                    <p className="text-clip overflow-hidden max-w-content text-secondary">
+                    <p className="text-clip overflow-hidden max-w-content text-primary_var">
                       Governance: {pool?.mimeToken.name}
                     </p>
                   </Link>
                 </span>
               </div>
-              <div className="py-4 text-justify">
+              <div className="py-4 text-justify text-gray-300">
                 <p>
                   Testing text for demo purpose. Lorem ipsum dolor sit amet
                   consectetur adipisicing elit. Molestiae a, nihil quis modi,
@@ -216,16 +216,16 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                     href={`https://goerli.etherscan.io/address/${pool?.address}`}
                     isExternal
                   >
-                    <p className="font-mono mt-0">
-                      <span className="text-primary">contract address: </span>{" "}
+                    <p className="font-mono mt-0 text-gray-300">
+                      <span className="text-gray-400">contract address: </span>{" "}
                       {pool?.address}
                     </p>
                   </Link>
                 </div>
                 <div className="p-2 rounded-lg hover:bg-surface transition-transform ease-in-out duration-200">
                   {/* <span className="text-slate-900 font-mono">owner</span>{" "} */}
-                  <p className="font-mono mt-0">
-                    <span className="text-primary">owner: </span>
+                  <p className="font-mono mt-0 text-gray-300">
+                    <span className="text-gray-400">owner: </span>
                     {pool?.owner}
                   </p>
                 </div>
@@ -241,7 +241,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                       "rounded-xl py-6 px-4 sm:px-6 lg:px-8 hover:bg-gray-700/20 transition-all ease-in-out duration-150"
                     )}
                   >
-                    <p className="text-sm font-medium leading-6 text-gray-400">
+                    <p className="text-sm font-medium leading-6 text-gray-300">
                       {stat.name}
                     </p>
                     <p className="mt-2 flex items-baseline gap-x-2">
@@ -249,7 +249,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                         {stat.value}
                       </span>
                       {stat.unit ? (
-                        <span className="text-sm text-gray-400">
+                        <span className="text-sm text-gray-300">
                           {stat.unit}
                         </span>
                       ) : null}
@@ -328,10 +328,10 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                     </td>
                     <td className="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
                       <div className="flex gap-x-3">
-                        <div className="font-mono text-sm leading-6 text-gray-400">
+                        <div className="font-mono text-sm leading-6 text-gray-300">
                           0x1234...
                         </div>
-                        {/* <span className="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"></span> */}
+                        {/* <span className="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-300 ring-1 ring-inset ring-gray-400/20"></span> */}
                       </div>
                     </td>
                     <td className="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
@@ -349,10 +349,10 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                         </div>
                       </div>
                     </td>
-                    <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-gray-400 md:table-cell lg:pr-20">
+                    <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-gray-300 md:table-cell lg:pr-20">
                       {item.flowLastRate}
                     </td>
-                    <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-400 sm:table-cell sm:pr-6 lg:pr-8">
+                    <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-300 sm:table-cell sm:pr-6 lg:pr-8">
                       <time dateTime={item.flowLastTime}>
                         {formatDate(item.flowLastTime)}
                       </time>

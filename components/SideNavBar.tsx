@@ -58,7 +58,7 @@ export default function SideNavBar() {
           className={`flex flex-1 flex-col justify-between
           } `}
         >
-          <div className="divide-y divide-grey_mdark mt-8">
+          <div className="divide-y divide-grey_mdark mt-8 sm:max-w-full lg:max-w-[200px]">
             <ul role="list" className="-mx-2 space-y-2">
               {navItems.map((item) => (
                 <li key={item.name} className="flex items-center group">
@@ -66,7 +66,8 @@ export default function SideNavBar() {
                     href={item.href}
                     className={classNames(
                       item.current ? "bg-grey_dark" : "hover:bg-surface",
-                      currentPath === item.href &&
+                      currentPath.includes(item.href) &&
+                        item.href !== "/demo" &&
                         "bg-surface border-2 border-primary transition-all duration-500 ease-in",
                       //TODO: example here
                       // isConnected ? "text-secondary" : "text-grey_light",

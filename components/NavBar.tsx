@@ -17,7 +17,8 @@ export default function NavBar() {
     if (currentScrollTop > previousScrollTop) {
       setShowNav(false);
     } else {
-      setShowNav(true);
+      //TODO: put it in false so not to show the nav bar when scrolling up
+      setShowNav(false);
     }
   }, [currentScrollTop, previousScrollTop]);
 
@@ -27,7 +28,7 @@ export default function NavBar() {
         showNav ? "top-0" : "top-[-92px]"
       }`}
     >
-      <div className="w-fit flex gap-8 items-center justify-between rounded-full px-3 py-2.5 pr-4 bg-surface shadow-xl min-w-[30vh] lg:min-w-[50vh]">
+      <div className="w-fit flex gap-8 items-center justify-between rounded-full px-3 py-2.5 pr-4 bg-background shadow-xl min-w-[30vh] lg:min-w-[50vh]">
         <Link href="/demo">
           <span className="sr-only">Equilibra Logo</span>
           <div className="h-8 w-auto px-1 ">
@@ -36,7 +37,6 @@ export default function NavBar() {
         </Link>
         <div>
           <span className="sr-only">Connect Wallet</span>
-
           <div className="justify-center flex">
             <w3m-button balance="hide" label="Connect Wallet" size="md" />
           </div>
