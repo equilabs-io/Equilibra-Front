@@ -10,18 +10,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="flex relative">
         <SideNavBar />
         <div
-          className={`max-w-6x flex-auto flex flex-col min-h-screen  mt-11 lg:mt-0 lg:ml-[280px]
-          `}
+          className="max-w-6x flex-auto flex flex-col min-h-screen mt-11 lg:mt-0 lg:ml-[280px]
+          "
         >
           <NavBar />
-          {/* <NavBar/> */}
           <div className="flex flex-col justify-between flex-auto">
-            <main className="mx-auto w-full max-w-7xl items-start justify-between py-6 lg:px-6">
+            <main className="mx-auto w-full max-w-7xl items-start justify-between py-6 lg:px-6 ">
               {/* {isConnected ? children : <FirstConnect />} */}
               {children}
             </main>
           </div>
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </div>
     </>

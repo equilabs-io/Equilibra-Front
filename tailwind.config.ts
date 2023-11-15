@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sora)"],
+        mono: ["var(--font-roboto-mono)"],
+      },
       colors: {
         primary: "var(--color-primary)",
         primary_var: "var(--color-primary-var)",

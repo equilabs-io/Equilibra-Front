@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useState, useRef, use } from "react";
 
-import { useAccount, useContractRead } from "wagmi";
+import { useAccount, useContractRead, useContractWrite } from "wagmi";
+import { useDebounce } from "@/hooks/useDebounce";
 import { getUrqlClient } from "@/services/urqlService";
 import * as ABI from "@/constants/abis/MimeToken.json";
-import * as OWNABLE_ABI from "@/constants/abis/OwnableList.json";
+import POOL_ABI from "@/constants/abis/Pool.json";
 import { get } from "http";
+import { id } from "ethers/lib/utils";
+import { Rhodium_Libre } from "next/font/google";
 
 const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
   id
@@ -24,12 +27,30 @@ const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
 export default function Support() {
   const { address: participant } = useAccount();
 
+  const { data, isLoading, isSuccess, write } = useContractWrite({
+    address: "0xDC66c3c481540dC737212A582880EC2D441BDc54",
+    abi: POOL_ABI,
+    functionName: "supportProjects",
+    args: [
+      [
+        [7, 20],
+        [8, 10],
+      ],
+    ],
+    onError(error) {
+      console.log(error);
+    },
+  });
+
   const [participantSupports, setParticipantSupports] = useState([]);
   const [values, setValues] = useState([
     { id: 1, value: 0 },
     { id: 2, value: 0 },
   ]);
   const [maxValue, setMaxValue] = useState(350);
+
+  const [hasValueChanged, setHasValueChanged] = useState(false);
+  const previousValuesRef = useRef<{ id: number; value: number }[]>([]);
 
   // const { data }: any = useContractRead({
   //   address: "",
@@ -79,8 +100,6 @@ export default function Support() {
     fetchParticipantSupports();
   }, []);
 
-  console.log(values);
-
   let actualCurrentValue = values.reduce((acc, curr) => acc + curr.value, 0);
 
   const handleValueChange = (index: number, newValue: number) => {
@@ -109,12 +128,25 @@ export default function Support() {
       resetToInitialState();
     }
   };
+
+  useEffect(() => {
+    // Update previousValuesRef whenever values change
+    previousValuesRef.current = values.map((valuesss) => {
+      return { id: valuesss.id, value: valuesss.value };
+    });
+  }, [values]);
+
   //Array to store the values before submiting transaction later
   let checkoutValues: number[] = [];
   const generateCheckoutArray = () => {
-    return values.map((value) => (checkoutValues = [value.id, value.value]));
+    checkoutValues = [];
+    values.forEach((value, index) => {
+      if (value.value === previousValuesRef.current[index].value) {
+        checkoutValues.push([value.id, value.value]);
+      }
+    });
+    return checkoutValues;
   };
-  //
 
   const isMaxValueReached = actualCurrentValue === maxValue;
 
@@ -150,6 +182,14 @@ export default function Support() {
             </div>
           </div>
         </div>
+        {/* //! testting sending support throw interface */}
+        {/* <div>
+          <button onClick={() => write?.()} className="border-2 w-full p-2">
+            SEND TRANSACTION
+          </button>
+          {isLoading && <div>Check Wallet</div>}
+          {isSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
+        </div> */}
 
         {/* <div>
           <DonutChart maxValue={maxValue} currentValue={currentValue} />
@@ -232,7 +272,7 @@ export default function Support() {
                     onChange={(e) =>
                       handleValueChange(index, parseInt(e.target.value))
                     }
-                    className="disabled:opacity-50 w-full h-2 mb-6 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                    className="appearance-none bg-transparent w-full cursor-pointer [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-[20px] [&::-webkit-slider-thumb]:w-[20px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
                     step={10}
                   />
                 </div>
