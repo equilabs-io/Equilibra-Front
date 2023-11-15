@@ -54,11 +54,7 @@ export default function SideNavBar() {
             <XMarkIcon className="h-8 w-8" aria-hidden="true" />
           </button>
         </div>
-        {/* NAV */}
-        <nav
-          className={`
-          flex-1 flex-col justify-between border-2 `}
-        >
+        <nav className={`flex flex-1 flex-col justify-between border-2 `}>
           <h2 className={"border h-10 w-full"}></h2>
           <div className="divide-y divide-grey_mdark mt-8 sm:max-w-full lg:max-w-[200px]">
             <ul role="list" className="-mx-2 space-y-2">

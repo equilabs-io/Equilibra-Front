@@ -28,7 +28,7 @@ export default function NavBar() {
         showNav ? "top-0" : "top-[-92px]"
       }`}
     >
-      <div className="w-fit flex gap-8 items-center justify-between rounded-full px-3 py-2.5 pr-4 bg-black/20 shadow-xl min-w-[30vh] lg:min-w-[50vh]">
+      <div className="w-fit flex gap-8 items-center justify-between rounded-full px-3 py-2.5 pr-4 shadow-xl min-w-[30vh] lg:min-w-[50vh]">
         <Link href="/demo">
           <span className="sr-only">Equilibra Logo</span>
           <div className="h-8 w-auto px-1 ">
