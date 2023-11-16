@@ -1,14 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Link } from "./Link";
-import { NavItem } from "./DropDownMenu";
-import { Dialog } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { oldNavs } from "@/constants/navigation";
-import { EquilibraLogo } from "@/assets";
 import useDocumentScroll from "@/hooks/useDocumentScroll";
+import { motion } from "framer-motion";
+import { Link } from "./Link";
+import { EquilibraLogo } from "@/assets";
 
-export default function NavBar() {
+export default function TopNavBar() {
   const [showNav, setShowNav] = useState(false);
 
   const { currentScrollTop, previousScrollTop } = useDocumentScroll();
@@ -17,13 +14,15 @@ export default function NavBar() {
     if (currentScrollTop > previousScrollTop) {
       setShowNav(false);
     } else {
-      //TODO: put it in false so not to show the nav bar when scrolling up
-      setShowNav(false);
+      setShowNav(true);
     }
   }, [currentScrollTop, previousScrollTop]);
 
   return (
-    <nav
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.2 }}
       className={`sticky flex transition-all duration-300 ease-in-out z-20 justify-center p-4 ${
         showNav ? "top-0" : "top-[-92px]"
       }`}
@@ -43,6 +42,6 @@ export default function NavBar() {
         </div>
       </div>
       {/* Mobile Open Button */}
-    </nav>
+    </motion.nav>
   );
 }

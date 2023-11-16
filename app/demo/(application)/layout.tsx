@@ -5,15 +5,15 @@ import { redirect } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAccount } from "wagmi";
 import SideNavBar from "@/components/SideNavBar";
-import NavBar from "@/components/NavBar";
+import TopNavBar from "@/components/TopNavBar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   //TODO! CHECK if isMounted goes here ?? or another  component page ??, it is use to fix hydration error when using wagmi hooks
 
   const { isConnected, isDisconnected } = useAccount();
-  const isMounted = useIsMounted();
 
   //TODO! check if this is the right place to redirect
+  const isMounted = useIsMounted();
   if (!isMounted) {
     return null;
   }
@@ -25,22 +25,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     // <div className="max-w-6x flex-auto flex flex-col relative min-h-screen">
     <>
-      <motion.div className="flex relative border-2">
+      <motion.div className="flex relative">
         <SideNavBar />
-        <motion.div
+        <div
           className="max-w-6x flex-auto flex flex-col min-h-screen mt-11 lg:mt-0 lg:ml-[280px]
           "
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2 }}
         >
-          <NavBar />
+          <TopNavBar />
           <div className="flex flex-col justify-between flex-auto">
-            <main className="mx-auto w-full max-w-7xl items-start justify-between py-6 lg:px-6">
+            <motion.main
+              className="mx-auto w-full max-w-7xl items-start justify-between py-6 lg:px-6"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+            >
               {children}
-            </main>
+            </motion.main>
           </div>
-        </motion.div>
+        </div>
       </motion.div>
     </>
   );
