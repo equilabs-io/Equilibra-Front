@@ -52,7 +52,7 @@ export default function SideNavBar() {
           className={`flex flex-1 flex-col justify-between`}
           initial={{ opacity: 0, x: -100 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.4 }}
         >
           <div className="divide-y divide-grey_mdark mt-8 sm:max-w-full lg:max-w-[200px]">
             <ul role="list" className="-mx-2 space-y-2">

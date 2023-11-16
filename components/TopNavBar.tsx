@@ -22,7 +22,7 @@ export default function TopNavBar({ compact = false }) {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.4 }}
       className={`sticky flex transition-all duration-300 ease-in-out z-20 bg-background justify-center p-4 ${
         showNav ? "top-0" : "top-[-92px]"
       }`}

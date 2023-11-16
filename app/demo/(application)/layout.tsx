@@ -37,7 +37,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               className="mx-auto w-full max-w-7xl items-start justify-between my-6 px-2"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.5 }}
             >
               {children}
             </motion.main>

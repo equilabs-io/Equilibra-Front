@@ -1,11 +1,12 @@
 "use client";
 import React, { useState, useEffect, FormEvent } from "react";
-import InputText from "@/components/Form/InputText";
-import InputImage from "@/components/Form/InputImage";
-import { toast } from "react-toastify";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useContractWrite } from "wagmi";
 import { ethers } from "ethers";
+import { Tab } from "@headlessui/react";
+import InputText from "@/components/Form/InputText";
+import InputImage from "@/components/Form/InputImage";
+import { toast } from "react-toastify";
 import InputSelect from "@/components/Form/InputSelect";
 import CustomButton from "@/components/CustomButton";
 import InputSwitch from "@/components/Form/InputSwitch";
@@ -28,6 +29,110 @@ const tokens = [
 ];
 
 export default function CreatePool() {
+  // const { write, data, error, isError, isLoading, isSuccess } =
+  //   useContractWrite({
+  //     address: projectRegistry.address,
+  //     abi: projectRegistry.abi,
+  //     functionName: "registerProject",
+  //   });
+
+  // const ipfsJsonUpload = async () => {
+  //   try {
+  //     const response = await fetch("/api/ipfs", {
+  //       method: "POST",
+  //       body: JSON.stringify(formState),
+  //       headers: {
+  //         "content-type": "application/json",
+  //       },
+  //     });
+  //     const json = await response.json();
+  //     if (json?.IpfsHash) {
+  //       return Promise.resolve(json.IpfsHash);
+  //     } else {
+  //       return Promise.reject("No ipfshash returned");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     return Promise.reject(err);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     toast.success("Successfully Created a Pool!");
+  //   } else if (isError && error) {
+  //     toast.error((error.cause as ErrorCause).metaMessages[0]);
+  //   }
+  // }, [isLoading, isSuccess, isError]);
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(" ");
+  }
+  let [categories] = useState([
+    {
+      name: "Info",
+      component: <Form />,
+    },
+    {
+      name: "Projects",
+      component: <h1>hello world</h1>,
+    },
+    {
+      name: "Funding",
+      component: <h1>hello world</h1>,
+    },
+  ]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  console.log(selectedIndex);
+
+  return (
+    <div className="w-full  px-2 py-0 sm:px-0 space-y-4">
+      <Tab.Group selectedIndex={selectedIndex}>
+        <Tab.List className="flex space-x-1  bg-blue-900/10 p-1">
+          {categories.map((category, index) => (
+            <Tab
+              onClick={() => setSelectedIndex(index)}
+              as={motion.button}
+              key={category.name}
+              className={({ selected }) =>
+                classNames(
+                  "w-full rounded-lg py-6 text-md font-mono leading-5 relative",
+                  "ring-white/60 ring-offset-none focus:outline-none focus:ring-none",
+                  selected
+                    ? "text-primary shadow font-semibold "
+                    : "text-slate-400 hover:bg-white/[0.12] hover:text-white"
+                )
+              }
+            >
+              {selectedIndex === index && (
+                <motion.div
+                  layoutId="pool"
+                  className="border-2 rounded-full border-primary w-full h-full absolute top-0 left-0"
+                ></motion.div>
+              )}
+              {category.name}
+            </Tab>
+          ))}
+        </Tab.List>
+        <Tab.Panels className="mt-2">
+          {categories.map((component, idx) => (
+            <Tab.Panel
+              key={idx}
+              className={classNames(
+                "rounded-xl bg-background p-3",
+                "ring-offset-none focus:outline-none focus:ring-none"
+              )}
+            >
+              {component.component}
+            </Tab.Panel>
+          ))}
+        </Tab.Panels>
+      </Tab.Group>
+    </div>
+  );
+}
+
+const Form = () => {
   const [formState, setFormState] = useState<FormState>({
     description: "",
     fundingToken: "",
@@ -76,49 +181,10 @@ export default function CreatePool() {
     //   console.error("Error:", error);
     // });
   };
-
-  // const debouncedBeneficiary = useDebounce(beneficiary);
-
-  // const { write, data, error, isError, isLoading, isSuccess } =
-  //   useContractWrite({
-  //     address: projectRegistry.address,
-  //     abi: projectRegistry.abi,
-  //     functionName: "registerProject",
-  //   });
-
-  // const ipfsJsonUpload = async () => {
-  //   try {
-  //     const response = await fetch("/api/ipfs", {
-  //       method: "POST",
-  //       body: JSON.stringify(formState),
-  //       headers: {
-  //         "content-type": "application/json",
-  //       },
-  //     });
-  //     const json = await response.json();
-  //     if (json?.IpfsHash) {
-  //       return Promise.resolve(json.IpfsHash);
-  //     } else {
-  //       return Promise.reject("No ipfshash returned");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     return Promise.reject(err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (isSuccess) {
-  //     toast.success("Successfully Created a Pool!");
-  //   } else if (isError && error) {
-  //     toast.error((error.cause as ErrorCause).metaMessages[0]);
-  //   }
-  // }, [isLoading, isSuccess, isError]);
-
   return (
     <>
       <form
-        className="mx-auto w-full max-w-2xl p-6 rounded-lg bg-surface shadow"
+        className="mx-auto w-full max-w-2xl p-6 rounded-lg bg-surface shadow border-2"
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-12">
@@ -244,4 +310,4 @@ export default function CreatePool() {
       </form>
     </>
   );
-}
+};

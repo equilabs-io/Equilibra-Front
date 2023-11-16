@@ -21,7 +21,7 @@ export const FirstConnect = () => {
           className="flex-1 items-center justify-center flex"
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.5 }}
         >
           <div className="flex flex-col items-center justify-center space-y-8 sm:mt-0 flex-1 ">
             <GlobeAltIcon className="h-14 w-14 text-primary" />

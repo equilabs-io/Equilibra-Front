@@ -1,5 +1,4 @@
 import React from "react";
-import { CreateNew } from "@/components/CreateNew";
 import ProjectCard from "@/components/ProjectCard";
 import { getProjects } from "@/services/getProjectsService";
 
@@ -7,7 +6,6 @@ export default async function Projects() {
   const projects = await getProjects();
   return (
     <>
-      <CreateNew label="project" />
       <div className="w-full flex flex-col justify-center items-center gap-8 xl:gap-16 rounded-lg px-6">
         <div className="w-full max-w-[1440px] pb-8">
           <h2 className="sr-only">projects</h2>
