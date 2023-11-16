@@ -107,7 +107,7 @@ export default function CreatePool() {
               {selectedIndex === index && (
                 <motion.div
                   layoutId="pool"
-                  className="border-2 rounded-full border-primary w-full h-full absolute top-0 left-0"
+                  className="border-b-2 border-primary w-full h-full absolute top-0 left-0"
                 ></motion.div>
               )}
               {category.name}
@@ -117,6 +117,11 @@ export default function CreatePool() {
         <Tab.Panels className="mt-2">
           {categories.map((component, idx) => (
             <Tab.Panel
+              as={motion.div}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
               key={idx}
               className={classNames(
                 "rounded-xl bg-background p-3",
@@ -184,12 +189,11 @@ const Form = () => {
   return (
     <>
       <form
-        className="mx-auto w-full max-w-2xl p-6 rounded-lg bg-surface shadow border-2"
+        className="mx-auto w-full rounded-lg"
         onSubmit={(e) => handleSubmit(e)}
       >
-        <div className="space-y-12">
+        <div className="space-y-2">
           <div className="border-b pb-12">
-            <h2>Create a pool</h2>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <InputText
