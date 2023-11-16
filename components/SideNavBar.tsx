@@ -13,6 +13,7 @@ function classNames(...classes: string[]) {
 export default function SideNavBar() {
   const currentPath = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedID, setSelectedID] = useState<null | number>(0);
 
   return (
     <>
@@ -55,24 +56,34 @@ export default function SideNavBar() {
         >
           <div className="divide-y divide-grey_mdark mt-8 sm:max-w-full lg:max-w-[200px]">
             <ul role="list" className="-mx-2 space-y-2">
-              {navItems.map((item) => (
-                <li key={item.name} className="flex items-center group">
+              {navItems.map((item, index) => (
+                <li
+                  key={item.name}
+                  className="flex items-center group relative"
+                >
+                  {selectedID === index && (
+                    <motion.div
+                      layoutId="underline"
+                      className="border-2 border-primary rounded-full w-full h-full absolute top-0 left-0 "
+                    ></motion.div>
+                  )}
                   <Link
                     href={item.href}
+                    onClick={() => setSelectedID(index)}
                     className={classNames(
-                      item.current ? "bg-grey_dark" : "hover:bg-surface ",
-                      currentPath.includes(item.href) &&
-                        "bg-surface border-2 border-primary",
-
+                      item.current
+                        ? "bg-grey_dark"
+                        : "hover:bg-surface transition-all duration-300 ease-linear ",
                       "flex gap-x-3 rounded-full px-4 py-4 text-lg leading-6 font-mono text-grey_light w-full"
                     )}
                   >
                     <item.icon
-                      className={`h-6 w-6 shrink-0 text-grey_light group-hover:text-primary ${
+                      className={`h-6 w-6 shrink-0 text-grey_light group-hover:text-primary tranistion-all duration-200 ease-linear ${
                         currentPath.includes(item.href) && "text-primary"
                       }`}
                       aria-hidden="true"
                     />
+
                     {item.name}
                   </Link>
                 </li>
