@@ -34,7 +34,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <TopNavBar />
           <div className="flex flex-col justify-between flex-auto">
             <motion.main
-              className="mx-auto w-full max-w-7xl items-start justify-between py-6 lg:px-6"
+              className="mx-auto w-full max-w-7xl items-start justify-between my-6 px-2"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2 }}

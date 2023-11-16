@@ -15,7 +15,7 @@ export const Link: React.FC<LinkProps> = function ({
   isExternal = false,
 }) {
   return (
-    <div className="truncate flex items-center justify-centers">
+    <div className="truncate flex items-center justify-center">
       <NextLink
         href={href}
         target={isExternal ? "_blank" : "_self"}
