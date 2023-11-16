@@ -1,9 +1,15 @@
-export default async function Home() {
+"use client";
+import { useIsMounted } from "@/hooks/useIsMounted";
+export default function Home() {
+  const isMounted = useIsMounted();
+  if (!isMounted) {
+    return null;
+  }
   return (
     <>
-      <h1>HOME</h1>
-      <h1>HOME</h1>
-      <h1>HOME</h1>
+      <div className="flex flex-col justify-between flex-auto font-mono">
+        <h1>OMG</h1>
+      </div>
     </>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { navItems } from "@/constants/navigation";
-import { useAccount } from "wagmi";
 import { usePathname } from "next/navigation";
 import { ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -10,15 +10,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 export default function SideNavBar() {
-  // TODO: check isConnected state not manteining when reload page
-  const { isConnected } = useAccount({});
   const currentPath = usePathname();
-
-  //helper to go to the next url path via the
-  // const nextUrlPath = currentPath
-  //   .substring(currentPath.lastIndexOf("/") + 1)
-  //   .slice(0, -1);
-
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -54,13 +46,12 @@ export default function SideNavBar() {
             <XMarkIcon className="h-8 w-8" aria-hidden="true" />
           </button>
         </div>
-        <nav className={`flex flex-1 flex-col justify-between border-2 `}>
-          <h2 className={"border h-10 w-full"}></h2>
+        <nav className={`flex flex-1 flex-col justify-between`}>
           <div className="divide-y divide-grey_mdark mt-8 sm:max-w-full lg:max-w-[200px]">
             <ul role="list" className="-mx-2 space-y-2">
               {navItems.map((item) => (
                 <li key={item.name} className="flex items-center group">
-                  <a
+                  <Link
                     href={item.href}
                     className={classNames(
                       item.current ? "bg-grey_dark" : "hover:bg-surface",
@@ -77,7 +68,7 @@ export default function SideNavBar() {
                       aria-hidden="true"
                     />
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

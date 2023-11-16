@@ -30,7 +30,6 @@ const getAllPools = async () => {
 
 export default async function Pools() {
   //TODO: erase this TimeOut, just for testing loading state
-  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const poolsQuery = await getAllPools();
 

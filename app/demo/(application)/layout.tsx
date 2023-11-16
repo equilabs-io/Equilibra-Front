@@ -1,13 +1,15 @@
 "use client";
 import React from "react";
 import { useIsMounted } from "@/hooks/useIsMounted";
-
+import { redirect } from "next/navigation";
+import { useAccount } from "wagmi";
 import SideNavBar from "@/components/SideNavBar";
 import NavBar from "@/components/NavBar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   //TODO! CHECK if isMounted goes here ?? or another  component page ??, it is use to fix hydration error when using wagmi hooks
 
+  const { isConnected, isDisconnected } = useAccount();
   const isMounted = useIsMounted();
 
   if (!isMounted) {
