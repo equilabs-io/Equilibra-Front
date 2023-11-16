@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { navItems } from "@/constants/navigation";
+import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -46,7 +47,12 @@ export default function SideNavBar() {
             <XMarkIcon className="h-8 w-8" aria-hidden="true" />
           </button>
         </div>
-        <nav className={`flex flex-1 flex-col justify-between`}>
+        <motion.nav
+          className={`flex flex-1 flex-col justify-between`}
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           <div className="divide-y divide-grey_mdark mt-8 sm:max-w-full lg:max-w-[200px]">
             <ul role="list" className="-mx-2 space-y-2">
               {navItems.map((item) => (
@@ -54,17 +60,17 @@ export default function SideNavBar() {
                   <Link
                     href={item.href}
                     className={classNames(
-                      item.current ? "bg-grey_dark" : "hover:bg-surface",
+                      item.current ? "bg-grey_dark" : "hover:bg-surface ",
                       currentPath.includes(item.href) &&
-                        item.href !== "/demo" &&
-                        "bg-surface border-2 border-primary transition-all duration-500 ease-in",
-                      //TODO: example here
-                      // isConnected ? "text-secondary" : "text-grey_light",
+                        "bg-surface border-2 border-primary",
+
                       "flex gap-x-3 rounded-full px-4 py-4 text-lg leading-6 font-mono text-grey_light w-full"
                     )}
                   >
                     <item.icon
-                      className="h-6 w-6 shrink-0 text-grey_light group-hover:text-primary"
+                      className={`h-6 w-6 shrink-0 text-grey_light group-hover:text-primary ${
+                        currentPath.includes(item.href) && "text-primary"
+                      }`}
                       aria-hidden="true"
                     />
                     {item.name}
@@ -94,7 +100,7 @@ export default function SideNavBar() {
               </a>
             </li>
           </ul>
-        </nav>
+        </motion.nav>
       </div>
     </>
   );

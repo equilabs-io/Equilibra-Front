@@ -18,7 +18,7 @@ export const FirstConnect = () => {
       className="min-h-screen flex flex-col"
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.3 }}
     >
       <NavBar />
       <div className="flex flex-col items-center justify-center space-y-8 sm:mt-0 flex-1 ">
