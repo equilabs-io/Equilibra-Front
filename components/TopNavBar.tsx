@@ -7,7 +7,7 @@ import Link from "next/link";
 import { EquilibraLogo } from "@/assets";
 
 export default function TopNavBar() {
-  const [showNav, setShowNav] = useState(false);
+  const [showNav, setShowNav] = useState(true);
   const [selectedID, setSelectedID] = useState<null | number>(0);
 
   const { currentScrollTop, previousScrollTop } = useDocumentScroll();
@@ -26,7 +26,7 @@ export default function TopNavBar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.4 }}
       className={`sticky top-0 flex z-50 bg-background justify-center py-4 ${
-        showNav ? "top-0 transition-all duration-200 ease-in" : "top-[-92px]"
+        showNav ? "top-0  transition-all duration-200 ease-in" : "top-[-92px]"
       }`}
     >
       <div className="container m-auto px-6 md:px-12 lg:px-7">
@@ -92,6 +92,12 @@ export default function TopNavBar() {
                       className="block md:px-3 group py-2"
                       onClick={() => setSelectedID(index)}
                     >
+                      {selectedID === index && (
+                        <motion.div
+                          layoutId="underline"
+                          className="border-2 border-primary rounded-full w-full h-full absolute top-0 left-0 "
+                        ></motion.div>
+                      )}
                       <div
                         className="relative
                                             before:absolute before:-inset-2 before:w-full before:h-0.5 before:origin-left  before:mx-auto before:mt-auto before:rounded-full before:bg-primary_var before:transition before:scale-x-0 group-hover:before:scale-x-100"
