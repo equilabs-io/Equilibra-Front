@@ -22,10 +22,11 @@ interface FormState {
 }
 
 const tokens = [
-  { id: 1, name: "USDC" },
-  { id: 2, name: "USDT" },
-  { id: 3, name: "DAI" },
-  { id: 4, name: "ETH" },
+  {
+    name: "Super Fake DAI",
+    symbol: "DAIx",
+    address: "0x4e17a5e14331038a580c84172386f1bc2461f647",
+  },
 ];
 
 export default function CreatePool() {
@@ -238,7 +239,7 @@ const Form = () => {
                   required
                 />
               </div>
-              <div className="sm:col-span-4">
+              {/* <div className="sm:col-span-4">
                 <InputSwitch
                   label="Multisig pool with Gnosis Safe"
                   name="isMultiSig"
@@ -301,10 +302,10 @@ const Form = () => {
                         />
                       </div>
                       {/* <div className="border-b mt-2"></div> */}
-                    </motion.div>
+              {/* </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

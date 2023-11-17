@@ -8,8 +8,9 @@ function classNames(...classes: string[]) {
 }
 
 interface List {
-  id: number;
   name: string;
+  symbol: string;
+  address: string;
 }
 
 interface InputFormProps {
@@ -40,10 +41,7 @@ export default function InputSelect({
       {({ open }) => (
         <>
           {label && (
-            <Listbox.Label
-              htmlFor={name}
-              className="block"
-            >
+            <Listbox.Label htmlFor={name} className="block">
               {label}
               {required && " *"}
             </Listbox.Label>
