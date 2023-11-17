@@ -26,9 +26,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     // <div className="max-w-6x flex-auto flex flex-col relative min-h-screen">
     <>
       <motion.div className="flex relative">
-        <SideNavBar />
+        {/* <SideNavBar /> */}
         <div
-          className="max-w-6x flex-auto flex flex-col min-h-screen mt-11 lg:mt-0 lg:ml-[280px]
+          className="max-w-6x flex-auto flex flex-col min-h-screen mt-11 lg:mt-0
           "
         >
           <TopNavBar />
