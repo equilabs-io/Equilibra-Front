@@ -6,11 +6,18 @@
   --color-primary: #00eab4;
   --color-primary-var: #009775;
   --color-secondary: #ff9f00;
-  --color-text-secondary: #bdbdbd;
-  --color-white: #e2e8f0;
-  --color-background: #030712;
+  /* new color text-secondary */
+  --color-text-secondary: #bfc1de;
+  /* new color whit */
+  --color-white: #fafafa;
+  --color-background: #1a1b29;
+  /* --color-background: #111827; */
+  /* --color-background: #030712; */
   /* --color-background: #161919; */
-  --color-surface: #161919;
+  --color-surface: #1f1f32;
+  /* new color hihglight */
+  --color-highlight: #36385b;
+  /* --color-surface: #161919; */
   --color-surface-secondary: #322922;
   --color-grey-light: #808886;
   --color-grey-mlight: #5b6361;

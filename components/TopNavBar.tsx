@@ -25,7 +25,7 @@ export default function TopNavBar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.4 }}
-      className={`sticky top-0 flex z-50 bg-background justify-center py-4 ${
+      className={`sticky top-0 flex z-50 justify-center py-4  ${
         showNav ? "top-0  transition-all duration-200 ease-in" : "top-[-92px]"
       }`}
     >
@@ -84,7 +84,7 @@ export default function TopNavBar() {
 
             <div className="block w-full h-full md:h-auto">
               {/* NavLinks */}
-              <ul className="space-y-8 tracking-wide font-medium md:flex md:space-y-0">
+              <ul className="space-y-8 tracking-wide font-medium md:flex md:space-y-0 ">
                 {navItems.map((item, index) => (
                   <li key={item.name} className="block md:px-3 group relative ">
                     <Link
@@ -92,12 +92,14 @@ export default function TopNavBar() {
                       className="block md:px-3 group py-2"
                       onClick={() => setSelectedID(index)}
                     >
-                      {selectedID === index && (
+                      {/* border anim with layoutId */}
+
+                      {/* {selectedID === index && (
                         <motion.div
                           layoutId="underline"
                           className="border-2 border-primary rounded-full w-full h-full absolute top-0 left-0 "
                         ></motion.div>
-                      )}
+                      )} */}
                       <div
                         className="relative
                                             before:absolute before:-inset-2 before:w-full before:h-0.5 before:origin-left  before:mx-auto before:mt-auto before:rounded-full before:bg-primary_var before:transition before:scale-x-0 group-hover:before:scale-x-100"
