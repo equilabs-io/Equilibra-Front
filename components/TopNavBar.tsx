@@ -25,7 +25,7 @@ export default function TopNavBar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.4 }}
-      className={`sticky top-0 flex z-50 justify-center py-4  ${
+      className={`sticky top-0 flex z-50 justify-center py-4 bg-background  ${
         showNav ? "top-0  transition-all duration-200 ease-in" : "top-[-92px]"
       }`}
     >
@@ -86,7 +86,7 @@ export default function TopNavBar() {
               {/* NavLinks */}
               <ul className="space-y-8 tracking-wide font-medium md:flex md:space-y-0 ">
                 {navItems.map((item, index) => (
-                  <li key={item.name} className="block md:px-3 group relative ">
+                  <li key={item.name} className="block md:px-3 group relative">
                     <Link
                       href={`${item.href}`}
                       className="block md:px-3 group py-2"
@@ -104,7 +104,7 @@ export default function TopNavBar() {
                         className="relative
                                             before:absolute before:-inset-2 before:w-full before:h-0.5 before:origin-left  before:mx-auto before:mt-auto before:rounded-full before:bg-primary_var before:transition before:scale-x-0 group-hover:before:scale-x-100"
                       >
-                        <span className="transition group-hover:text-primary ">
+                        <span className="transition group-hover:text-primary text-xl ">
                           {item.name}
                         </span>
                       </div>
