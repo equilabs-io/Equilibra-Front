@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import CustomButton from "./CustomButton";
@@ -8,6 +9,8 @@ interface Project {
   beneficiary: string;
   contentHash: string;
   content: any;
+  flowLastRate: number[];
+  flowLastTime: number[];
   __typename: string;
 }
 
@@ -20,7 +23,15 @@ interface Content {
 }
 
 export default function ProjectCard({ project }: { project: Project }) {
-  const { id, admin, beneficiary, contentHash, content } = project;
+  const {
+    id,
+    admin,
+    beneficiary,
+    contentHash,
+    content,
+    flowLastRate,
+    flowLastTime,
+  } = project;
 
   const { description, link, fileHash, name, category } = content;
 
@@ -42,7 +53,7 @@ export default function ProjectCard({ project }: { project: Project }) {
             </span>
           </div>
         )}
-        {content?.fileHash && (
+        {/* {content?.fileHash ? (
           <Image
             src={`${process.env.PINATA_GATEWAY_URL}${fileHash}`}
             alt="project img"
@@ -50,7 +61,11 @@ export default function ProjectCard({ project }: { project: Project }) {
             width={300}
             className="h-full w-full object-cover object-center"
           />
-        )}
+        ) : (
+          <span className="text-2xl font-bold text-textSecondary">
+            No Image
+          </span>
+        )} */}
       </div>
       <div className="flex flex-1 flex-col p-4 bg-surface -mt-[50px] group-hover:mt-0 transition-all duration-200 ease-out">
         <h3 className="truncate mb-1">{name ? name : "-no name-"}</h3>
@@ -64,7 +79,7 @@ export default function ProjectCard({ project }: { project: Project }) {
 
         <div className="bg-highlight p-2 flex justify-between items-center">
           <span className="font-bold text-textSecondary">Streaming:</span>{" "}
-          <span className="text-xl font-mono">150</span>
+          <span className="text-xl font-mono">{"none"}</span>
         </div>
 
         <div className="bg-highlight p-2 flex justify-between items-center">
