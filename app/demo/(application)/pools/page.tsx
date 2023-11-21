@@ -1,6 +1,7 @@
 import React from "react";
-import PoolCard from "@/components/Pools/PoolCard";
 import Link from "next/link";
+import PoolCard from "@/components/Pools/PoolCard";
+import { InsideHeader } from "@/components/InsideHeader";
 import { getUrqlClient } from "@/services/urqlService";
 import { PoolCardProps } from "@/types";
 
@@ -34,9 +35,13 @@ export default async function Pools() {
 
   return (
     <>
+      <InsideHeader
+        title="Dive Into the Funding Ocean"
+        description="Collect and distribute funds while supporting various projects. Create a more equitable and effective crowdfunding ecosystem within your decentralized community."
+      />
       <ul
         role="list"
-        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 w-full justify-center p-2 lg:p-0"
+        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 w-full justify-center p-2 lg:p-0 mt-36"
       >
         {poolsQuery.osmoticPools.map((pool: PoolCardProps, index: number) => (
           <li

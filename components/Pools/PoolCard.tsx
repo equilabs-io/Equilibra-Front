@@ -8,21 +8,21 @@ const PoolCard = ({ pool }: PoolProps) => {
 
   return (
     <>
-      <div className="rounded-2xl overflow-hidden hover:border-2 hover:border-primary cursor-pointer transition-all ease-in duration-150">
+      <div className="rounded-2xl overflow-hidden  cursor-pointer transition-all ease-in duration-150 group hover:scale-105">
         <div className="bg-surface rounded-lg shadow">
           <div className={`max-h-[170px] w-full bg-surface`}>
             {/* Image */}
             <img
               src={`https://effigy.im/a/${pool?.address}`}
-              className="w-full max-h-[170px] object-cover overflow-hidden blur-sm hover:blur-none"
+              className="w-full max-h-[170px] object-cover overflow-hidden blur-sm group-hover:blur-none transition-all ease-in duration-150"
             />
           </div>
           <div className="px-8 py-7">
             <div className=" mb-5">
-              <h3 className="text-2xl font-bold text-primary text-ellipsis overflow-hidden">
+              <h3 className="text-xs font-bold text-textSecondary text-ellipsis overflow-hidden">
                 {pool?.address}
               </h3>
-              <p className="text-xs text-grey_light">@poolName - {bgColor}</p>
+              <p className="text-lg text-primary">poolName - {bgColor}</p>
             </div>
 
             <p className="mb-4 font-thin text-xs  text-grey_light">

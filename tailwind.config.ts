@@ -18,6 +18,7 @@ const config: Config = {
         secondary: "var(--color-secondary)",
         background: "var(--color-background)",
         surface: "var(--color-surface)",
+        surface_var: "var(--color-surface-var)",
         highlight: "var(--color-highlight)",
         surface_secondary: "var(--color-surface-secondary)",
         textSecondary: "var(--color-text-secondary)",

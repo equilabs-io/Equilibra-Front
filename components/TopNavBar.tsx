@@ -89,7 +89,9 @@ export default function TopNavBar() {
                   <li key={item.name} className="block md:px-3 group relative">
                     <Link
                       href={`${item.href}`}
-                      className="block md:px-3 group py-2"
+                      className={`block md:px-3 group py-2 ${
+                        selectedID === index && "text-primary"
+                      }`}
                       onClick={() => setSelectedID(index)}
                     >
                       {/* border anim with layoutId */}
