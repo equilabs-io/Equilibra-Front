@@ -84,8 +84,6 @@ export default function CreatePool() {
   ]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  console.log(selectedIndex);
-
   return (
     <div className="w-full  px-2 py-0 sm:px-0 space-y-4">
       <Tab.Group selectedIndex={selectedIndex}>
@@ -165,7 +163,6 @@ const Form = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formState);
     // const ipfsUpload = ipfsJsonUpload();
 
     // toast

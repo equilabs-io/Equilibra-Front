@@ -6,9 +6,6 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { getUrqlClient } from "@/services/urqlService";
 import * as ABI from "@/constants/abis/MimeToken.json";
 import POOL_ABI from "@/constants/abis/Pool.json";
-import { get } from "http";
-import { id } from "ethers/lib/utils";
-import { Rhodium_Libre } from "next/font/google";
 
 const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
   id

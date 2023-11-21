@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 
 const projectsQuery = `
   query {
-    projects(skip: 2, first: 5) {
+    projects(skip: 2, first: 10) {
         admin
         id
         beneficiary

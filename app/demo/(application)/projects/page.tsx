@@ -3,21 +3,56 @@ import ProjectCard from "@/components/ProjectCard";
 import Link from "next/link";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { getProjects } from "@/services/getProjectsService";
+import { getUrqlClient } from "@/services/urqlService";
+
+const projectsQuery = `
+  query {
+      poolProjectSupports {
+        poolProject {
+          id
+          flowLastRate
+        }
+      }   
+  }
+`;
 
 export default async function Projects() {
+  const getAllProjectsFlowLastRate = async () => {
+    const projectsQueryResult = await getUrqlClient().query(projectsQuery, {});
+    return projectsQueryResult.data;
+  };
+  function getStringAfterFirstDash(str: string): string {
+    const index = str.indexOf("-");
+    if (index !== -1) {
+      return str.slice(index + 1);
+    }
+    return "";
+  }
   const projects = await getProjects();
 
-  // Function to add a { key: "random" } property to each project
-  const addKeyToProjects = () => {
+  const allProjectsFlowRate = await getAllProjectsFlowLastRate();
+
+  const addFlowLastRateToProjects = (projects: Project[]) => {
     return projects.map((project) => {
-      return { ...project, key: "random" };
+      const id = project.id;
+      const flowLastRate = allProjectsFlowRate.poolProjectSupports.find(
+        (support) => support.poolProject.id === id
+      )?.poolProject.flowLastRate;
+      return {
+        ...project,
+        flowRate: flowLastRate || 0,
+      };
     });
   };
 
-  const projectsWithKey = addKeyToProjects();
+  const id = projects[0].id;
+  const compare = getStringAfterFirstDash(
+    allProjectsFlowRate.poolProjectSupports[0].poolProject.id
+  );
+  console.log(id, compare);
+  const projectsWithFlowRate = addFlowLastRateToProjects(projects);
+  console.log(projectsWithFlowRate);
 
-  // Rest of the code
-  console.log(projectsWithKey);
   return (
     <>
       <Example />
@@ -25,7 +60,7 @@ export default async function Projects() {
         <div className="w-full max-w-[1440px] pb-8">
           <h2 className="sr-only">projects</h2>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(310px,1fr))] gap-6 md:grid-cols-[repeat(auto-fit,minmax(360px,1fr))]">
-            {projectsWithKey?.map((project, id) => {
+            {projects?.map((project, id) => {
               if (project)
                 return (
                   <div key={id}>
