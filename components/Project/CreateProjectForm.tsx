@@ -87,8 +87,16 @@ export default function CreateProjectForm({
     useContractWrite({
       address: projectRegistry.address,
       abi: projectRegistry.abi,
-      functionName: "updateProject",
+      functionName: "registerProject",
     });
+
+  //TODO: remove this, use to check if the contract is working
+  if (data) {
+    console.log(data);
+  }
+  if (error) {
+    console.log(error);
+  }
 
   const ipfsJsonUpload = async () => {
     try {
@@ -122,12 +130,12 @@ export default function CreateProjectForm({
   return (
     <>
       <form
-        className="mx-auto w-full max-w-3xl p-6 rounded-lg bg-surface"
+        className="mx-auto w-full max-w-5xl p-6 rounded-lg bg-surface"
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-12">
           <div className="pb-12">
-            <h2>Create a project</h2>
+            <h4>Fill the form to create a project</h4>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <InputText

@@ -46,7 +46,7 @@ export default function ProjectCard({ project }: { project: Project }) {
   }
 
   return (
-    <section className="group relative flex flex-col p-2 overflow-hidden rounded-lg bg-surface hover:shadow-md hover:shadow-highlight  opacity-75">
+    <section className="group relative flex flex-col p-2 overflow-hidden rounded-lg bg-surface hover:shadow-md hover:shadow-highlight">
       <div className="bg-white sm:aspect-none group-hover:opacity-100 h-[180px] ">
         {category && (
           <div className="flex flex-1 flex-col justify-end m-2 absolute top-2 left-2">

@@ -37,7 +37,7 @@ export default async function Pools() {
     <>
       <InsideHeader
         title="Dive Into the Funding Ocean"
-        description="Collect and distribute funds while supporting various projects. Create a more equitable and effective crowdfunding ecosystem within your decentralized community."
+        description="Distribute funds while supporting various projects. Create a more equitable and effective crowdfunding ecosystem within your decentralized community."
         href="./create-pool"
       />
       <ul

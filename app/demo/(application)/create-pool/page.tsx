@@ -65,7 +65,7 @@ export default function CreatePool() {
   //     toast.error((error.cause as ErrorCause).metaMessages[0]);
   //   }
   // }, [isLoading, isSuccess, isError]);
-  function classNames(...classes) {
+  function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
   }
   let [categories] = useState([
@@ -74,12 +74,12 @@ export default function CreatePool() {
       component: <Form />,
     },
     {
-      name: "Projects",
-      component: <h1>hello world</h1>,
+      name: "Add Projects",
+      component: <AddProjectList />,
     },
     {
-      name: "Funding",
-      component: <h1>hello world</h1>,
+      name: "Fund",
+      component: <AddFunds />,
     },
   ]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -95,7 +95,7 @@ export default function CreatePool() {
               key={category.name}
               className={({ selected }) =>
                 classNames(
-                  "w-full rounded-lg py-6 text-lg tracking-wider leading-5 relative",
+                  "w-full rounded-lg py-6 text-sm lg:text-lg tracking-wider leading-5 relative",
                   "ring-white/60 ring-offset-none focus:outline-none focus:ring-none",
                   selected
                     ? "text-primary shadow font-semibold "
@@ -186,12 +186,14 @@ const Form = () => {
   };
   return (
     <>
+      {/* TODO: new logic */}
+      <h4>Fill the form to create a pool</h4>
       <form
-        className="mx-auto w-full rounded-lg"
+        className="mx-auto w-full rounded-lg max-h-[600px] overflow-y-auto"
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-2">
-          <div className="border-b pb-12">
+          <div className="pb-12">
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <InputText
@@ -200,11 +202,10 @@ const Form = () => {
                   handleChange={handleChange}
                   value={formState.name}
                   type="text"
-                  placeholder="My pool name"
-                  required
+                  placeholder="What's your pool name?"
                 />
               </div>
-              <div className="col-span-full">
+              <div className="sm:col-span-4 md:col-span-5">
                 <InputText
                   label="Description"
                   name="description"
@@ -213,7 +214,6 @@ const Form = () => {
                   type="textarea"
                   rows={4}
                   placeholder="Pool description..."
-                  required
                 />
               </div>
               <div className="sm:col-span-4">
@@ -228,11 +228,44 @@ const Form = () => {
                 />
               </div>
               <div className="sm:col-span-4">
+                <InputText
+                  label="List address"
+                  name="governanceToken"
+                  handleChange={handleChange}
+                  //value={formState.governanceToken}
+                  type="text"
+                  placeholder="Governance token contract address..."
+                  required
+                />
+              </div>
+              <div className="sm:col-span-4">
+                <InputText
+                  label="Minimun Stake"
+                  name="governanceToken"
+                  handleChange={handleChange}
+                  // value={formState.governanceToken}
+                  type="number"
+                  placeholder="Example 4%..."
+                  required
+                />
+              </div>
+              <div className="sm:col-span-4">
                 <InputSelect
                   list={tokens}
                   label="Funding token"
                   name="fundingToken"
                   handleChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="sm:col-span-4">
+                <InputText
+                  label="Max streaming per month"
+                  name="governanceToken"
+                  handleChange={handleChange}
+                  //value={formState.governanceToken}
+                  type="number"
+                  placeholder="Example 5%..."
                   required
                 />
               </div>
@@ -306,10 +339,56 @@ const Form = () => {
             </div>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-end gap-x-6">
-          <CustomButton text="Create pool" type="submit" />
+        <div className="flex items-center justify-center gap-x-6">
+          <CustomButton text="Create pool" type="submit" styles="" />
         </div>
       </form>
+    </>
+  );
+};
+
+const AddProjectList = () => {
+  return (
+    <>
+      {/* TODO: add projects and logic  */}
+      <h4>
+        Select the projects you would like to be elegible bt the community
+      </h4>
+    </>
+  );
+};
+
+const AddFunds = () => {
+  return (
+    <>
+      <h4>How much do you want to add to the pool?</h4>
+      <div className="w-full h-[600px] flex flex-col space-y-8 items-center justify-center">
+        <div>
+          <label htmlFor="price" className="sr-only">
+            Fund
+          </label>
+          <div className="relative mt-2 h-64 w-64 rounded-full shadow-sm ">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <span className="text-gray-500 sm:text-sm">$</span>
+            </div>
+            <input
+              type="text"
+              name="price"
+              id="price"
+              className="block w-full h-full  bg-surface rounded-full border-0 py-1.5 pl-7 pr-12 placeholder:text-gray-400 sm:text-sm md:text-2xl sm:leading-6 text-center ring-1 ring-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-surface_var"
+              placeholder="0.00"
+              aria-describedby="price-currency"
+            />
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+              <span className="text-primary sm:text-sm" id="price-currency">
+                DAIx
+              </span>
+            </div>
+          </div>
+        </div>
+        {/* TODO!: logic */}
+        <button>Deposit</button>
+      </div>
     </>
   );
 };

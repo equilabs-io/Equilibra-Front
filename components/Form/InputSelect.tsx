@@ -41,13 +41,13 @@ export default function InputSelect({
       {({ open }) => (
         <>
           {label && (
-            <Listbox.Label htmlFor={name} className="block">
+            <Listbox.Label htmlFor={name} className="block text-textSecondary">
               {label}
               {required && " *"}
             </Listbox.Label>
           )}
           <div className="relative mt-2">
-            <Listbox.Button className="relative cursor-pointer w-full rounded-md bg-grey_dark py-1.5 pl-3 pr-10 text-left text-white shadow-sm ring-1 ring-inset ring-grey_mlight focus:outline-none focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6">
+            <Listbox.Button className="relative cursor-pointer w-full rounded-md bg-surface py-1.5 pl-3 pr-10 text-left text-textSecondary shadow-sm ring-1 ring-inset ring-grey_mlight focus:outline-none focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6">
               <span className="block truncate">{selected.name}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon

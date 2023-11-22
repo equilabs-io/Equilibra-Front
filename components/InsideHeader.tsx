@@ -43,10 +43,10 @@ export const InsideHeader = ({
             </div>
           </div>
         </main>
-        <div className=" w-full h-10 rounded-full flex items-center justify-center border border-highlight">
-          Search
-        </div>
       </header>
+      <div className=" w-full h-10 rounded-full flex items-center justify-center border border-highlight">
+        Search
+      </div>
     </>
   );
 };
