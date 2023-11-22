@@ -65,7 +65,8 @@ export default async function Projects() {
     <>
       <InsideHeader
         title="The Next Web3 Giants"
-        description=" Bring your community to the next level by supporting your favorite proyects"
+        description="Bring your community to the next level by supporting your favorite proyects"
+        href="./create-project"
       />
       <div className="w-full flex flex-col justify-center items-center gap-8 xl:gap-16 rounded-lg px-6 mt-44">
         <div className="w-full max-w-[1440px] pb-8">

@@ -1,14 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { navItems } from "@/constants/navigation";
+import { usePathname } from "next/navigation";
 import useDocumentScroll from "@/hooks/useDocumentScroll";
-import { motion } from "framer-motion";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { navItems } from "@/constants/navigation";
 import { EquilibraLogo } from "@/assets";
 
 export default function TopNavBar() {
   const [showNav, setShowNav] = useState(true);
-  const [selectedID, setSelectedID] = useState<null | number>(0);
+  const [selectedID, setSelectedID] = useState<null | number>(2);
+  const pathname = usePathname();
 
   const { currentScrollTop, previousScrollTop } = useDocumentScroll();
 
@@ -85,34 +87,38 @@ export default function TopNavBar() {
             <div className="block w-full h-full md:h-auto">
               {/* NavLinks */}
               <ul className="space-y-8 tracking-wide font-medium md:flex md:space-y-0 ">
-                {navItems.map((item, index) => (
-                  <li key={item.name} className="block md:px-3 group relative">
-                    <Link
-                      href={`${item.href}`}
-                      className={`block md:px-3 group py-2 ${
-                        selectedID === index && "text-primary"
-                      }`}
-                      onClick={() => setSelectedID(index)}
+                {pathname !== "/demo" &&
+                  navItems.map((item, index) => (
+                    <li
+                      key={item.name}
+                      className="block md:px-3 group relative"
                     >
-                      {/* border anim with layoutId */}
+                      <Link
+                        href={`${item.href}`}
+                        className={`block md:px-3 group py-2 ${
+                          selectedID === index && "text-primary"
+                        }`}
+                        onClick={() => setSelectedID(index)}
+                      >
+                        {/* border anim with layoutId */}
 
-                      {/* {selectedID === index && (
+                        {/* {selectedID === index && (
                         <motion.div
                           layoutId="underline"
                           className="border-2 border-primary rounded-full w-full h-full absolute top-0 left-0 "
                         ></motion.div>
                       )} */}
-                      <div
-                        className="relative
+                        <div
+                          className="relative
                                             before:absolute before:-inset-2 before:w-full before:h-0.5 before:origin-left  before:mx-auto before:mt-auto before:rounded-full before:bg-primary_var before:transition before:scale-x-0 group-hover:before:scale-x-100"
-                      >
-                        <span className="transition group-hover:text-primary text-xl ">
-                          {item.name}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
+                        >
+                          <span className="transition group-hover:text-primary text-xl ">
+                            {item.name}
+                          </span>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
               </ul>
             </div>
 

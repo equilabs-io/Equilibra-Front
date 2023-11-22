@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import InputSelect from "@/components/Form/InputSelect";
 import CustomButton from "@/components/CustomButton";
 import InputSwitch from "@/components/Form/InputSwitch";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 interface FormState {
   description: string;
   fundingToken: string;
@@ -87,7 +87,7 @@ export default function CreatePool() {
   return (
     <div className="w-full  px-2 py-0 sm:px-0 space-y-4">
       <Tab.Group selectedIndex={selectedIndex}>
-        <Tab.List className="flex space-x-1  bg-blue-900/10 p-1">
+        <Tab.List className="flex space-x-1  bg-surface p-1">
           {categories.map((category, index) => (
             <Tab
               onClick={() => setSelectedIndex(index)}
@@ -95,11 +95,11 @@ export default function CreatePool() {
               key={category.name}
               className={({ selected }) =>
                 classNames(
-                  "w-full rounded-lg py-6 text-md font-mono leading-5 relative",
+                  "w-full rounded-lg py-6 text-lg tracking-wider leading-5 relative",
                   "ring-white/60 ring-offset-none focus:outline-none focus:ring-none",
                   selected
                     ? "text-primary shadow font-semibold "
-                    : "text-slate-400 hover:bg-white/[0.12] hover:text-white"
+                    : "text-textSecondary hover:bg-white/[0.12] hover:text-white"
                 )
               }
             >

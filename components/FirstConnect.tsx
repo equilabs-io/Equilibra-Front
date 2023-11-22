@@ -10,7 +10,7 @@ import { GlobeAltIcon } from "@heroicons/react/24/outline";
 export const FirstConnect = () => {
   const { isConnected } = useAccount({});
   if (isConnected) {
-    redirect("/demo/home");
+    redirect("/demo/projects");
   }
 
   return (

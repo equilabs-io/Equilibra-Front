@@ -35,17 +35,18 @@ export default function Home() {
   return (
     <>
       <main className="flex flex-col justify-between flex-auto space-y-16">
-        <div className="flex flex-col space-y-4 max-w-2xl">
+        <h3>See if is necessary this page</h3>
+        {/* <div className="flex flex-col space-y-4 max-w-2xl">
           <h2 className="text-primary">Get involved:</h2>
           <p className="text-lg font-mono">
             Bring your community ecosystem to the next level by creating its own
             Pool & Supporting your favorite Proyects
           </p>
-        </div>
+        </div> */}
         <div className="w-full space-y-10">
-          {homeContentInfo.map((info) => (
+          {/* {homeContentInfo.map((info) => (
             <HomeContent info={info} key={info.label} />
-          ))}
+          ))} */}
         </div>
       </main>
     </>
