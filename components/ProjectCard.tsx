@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import CustomButton from "./CustomButton";
+import { Link } from "./Link";
 
 interface Project {
   id: string;
@@ -66,8 +67,10 @@ export default function ProjectCard({ project }: { project: Project }) {
         )) ||
           ""}
       </div>
-      <div className="flex flex-1 flex-col p-4 bg-surface -mt-[50px] group-hover:mt-0 transition-all duration-200 ease-out">
-        <h3 className="truncate mb-1">{name ? name : "-no name-"}</h3>
+      <div className="flex flex-1 flex-col p-4 bg-surface transition-all duration-200 ease-out">
+        <Link href={`/demo/projects/${id}`}>
+          <h3 className="truncate mb-1">{name ? name : "-no name-"}</h3>
+        </Link>
         <p className="mb-0 line-clamp-3 text-textSecondary font-thin min-h-[75px]">
           {description}
         </p>
