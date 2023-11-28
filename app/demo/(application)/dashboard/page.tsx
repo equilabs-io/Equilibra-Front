@@ -1,7 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 import { useAccount } from "wagmi";
 import Link from "next/link";
+import { SupporProjects } from "@/components/SupporProjects";
 import { getUrqlClient } from "@/services/urqlService";
 import { ProfileHeader } from "@/components/ProfileHeader";
 import { Disclosure } from "@headlessui/react";
@@ -65,29 +68,12 @@ export default function ProfileDashboard({}) {
   // //participant support to projects data []
   // const participantSupports =
   //   participantQueryResult.data.poolProjectParticipantSupports;
-
   return (
     <>
       <div className="w-full min-h-screen px-4 py-8 sm:px-6 lg:px-8 space-y-20">
         <ProfileHeader />
-        <div className="border-2 py-2 text-center rounded-full sticky top-2 bg-background hover:border-primary transition-all ease-in duration-150 z-20">
-          <Link
-            href="./dashboard/support-projects"
-            className="text-4xl font-mono"
-          >
-            SUPPORT PROJECTS
-          </Link>
-          <div>
-            <span className="text-slate-500 text-xs">
-              click here to cliam your voting power & support your favorite
-              projects
-            </span>
-          </div>
-        </div>
-        <Wrapper label="Supported Projects">
-          <ParticipantProjectSupport projects={participantSupports} />
-        </Wrapper>
-        <Disclousure />
+        {/* <Disclousure /> */}
+        <MyModal />
         <Wrapper label="Pools"></Wrapper>
       </div>
     </>
@@ -111,112 +97,6 @@ const Wrapper = ({ label = "Projects", children }: WrapperProps) => {
     </>
   );
 };
-
-export function ParticipantProjectSupport({ projects }: any) {
-  return (
-    <div className="">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          {/* <p className="mt-2 text-sm text-gray-300">
-            participant project Support{" "}
-            <time dateTime="2022-08-01"> November 8, 2023</time>
-          </p> */}
-        </div>
-      </div>
-      <div className=" flow-root sm:mx-0">
-        {projects?.length === 0 ? (
-          <h3>not supporting anything</h3>
-        ) : (
-          <table className="min-w-full">
-            <colgroup>
-              <col className="w-full sm:w-1/2" />
-              <col className="sm:w-1/6" />
-              <col className="sm:w-1/6" />
-              <col className="sm:w-1/6" />
-            </colgroup>
-            <thead className="border-b border-slate-700 text-gray-300">
-              <tr>
-                <th
-                  scope="col"
-                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-300 sm:pl-0"
-                >
-                  Project
-                </th>
-                <th
-                  scope="col"
-                  className="hidden px-3 py-3.5 text-right text-sm font-semibold text-gray-300 sm:table-cell"
-                >
-                  Pool
-                </th>
-                <th
-                  scope="col"
-                  className="hidden px-3 py-3.5 text-right text-sm font-semibold text-gray-300 sm:table-cell"
-                >
-                  Somenthing
-                </th>
-                <th
-                  scope="col"
-                  className="py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-gray-300 sm:pr-0"
-                >
-                  Support
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {projects?.map((project) => (
-                <tr key={project.id} className="border-b border-slate-800">
-                  <td className="max-w-0 py-5 pl-4 pr-3 text-sm sm:pl-0">
-                    <div className="font-medium text-gray-300">
-                      <span className="text-gray-500">id: </span>
-                      <span className="text-lg text-primary">
-                        {getFourChars(project.id, (str) =>
-                          str.lastIndexOf("-")
-                        )}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">
-                    <span className="text-lg text-primary">
-                      #{getFourChars(project.id, (str) => str.indexOf("-"))}
-                    </span>
-                  </td>
-                  <td className="hidden px-3 py-5 text-right text-sm text-gray-500 sm:table-cell">
-                    #####
-                  </td>
-                  <td className="py-5 pl-3 pr-4 text-right text-sm text-gray-500 sm:pr-0">
-                    <span className="inline-flex items-center justify-center rounded-full px-2 py-0.5 text-md font-medium text-secondary ring-1 ring-inset ring-gray-500/90 min-w-[50px] ">
-                      {project.support}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th
-                  scope="row"
-                  colSpan={3}
-                  className="hidden pl-4 pr-3 pt-4 text-right text-sm font-semibold text-gray-300 sm:table-cell sm:pl-0"
-                >
-                  Total Support
-                </th>
-                <th
-                  scope="row"
-                  className="pl-4 pr-3 pt-4 text-left text-sm font-semibold text-gray-300 sm:hidden"
-                >
-                  Total Support
-                </th>
-                <td className="pl-3 pr-4 pt-4 text-right text-sm font-semibold text-gray-300 sm:pr-0">
-                  total
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        )}
-      </div>
-    </div>
-  );
-}
 
 const Disclousure = () => {
   return (
@@ -260,5 +140,74 @@ const Disclousure = () => {
         </Disclosure>
       </div>
     </div>
+  );
+};
+
+const MyModal = () => {
+  let [isOpen, setIsOpen] = useState(false);
+  const [word, setWord] = useState("hello");
+
+  function closeModal() {
+    setIsOpen(false);
+    setWord("goodbye");
+  }
+
+  function openModal() {
+    setIsOpen(true);
+    setWord("helloToYou");
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={openModal}
+        className="rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+      >
+        Modal test
+      </button>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-[50vw] transform overflow-hidden rounded-2xl bg-surface p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-surface_var"
+                  >
+                    {""}
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <SupporProjects pool={word} />
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
   );
 };

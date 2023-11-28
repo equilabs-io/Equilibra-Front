@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef, use } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import { useDebounce } from "@/hooks/useDebounce";
