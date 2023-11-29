@@ -10,16 +10,7 @@ import { ProfileHeader } from "@/components/ProfileHeader";
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 
-const participantSupportQuery = `
-    query ($participant: String!) {
-        poolProjectParticipantSupports(first: 100, where: {participant: $participant}) {
-            id    
-            support
-        }
-    }
-`;
 type IndexFunc = (str: string, char: string) => number;
-
 //helper function to get the last 4 chars of a string
 function getFourChars(str: string, indexFunc: IndexFunc): string {
   const lastDashIndex = indexFunc(str, "-");
@@ -38,8 +29,37 @@ function getBeforeFirstDash(str: string): string {
 export default function ProfileDashboard({}) {
   const { address: participant } = useAccount();
   const [participantSupports, setParticipantSupports] = useState([]);
+  const [queryPoolbyOwner, setQueryPoolbyOwner] = useState([]);
 
   useEffect(() => {
+    const queryPoolbyOwner = `
+    query ($owner: String!) {
+        osmoticPools(
+            first: 100
+            where: {owner: $owner}
+          ) {
+            address
+            mimeToken {
+              name
+              symbol
+            }
+            poolProjects(first: 10) {
+                id
+                poolProjectSupports {
+                  support
+                  poolProjectParticipantsSupports {
+                    support
+                    participant
+                  }
+                }
+                currentRound
+                active
+                flowLastRate
+              }
+          }
+    }
+    
+    `;
     const participantSupportQuery = `
         query ($participant: String!) {
           poolProjectParticipantSupports(first: 100, where: {participant: $participant}) {
@@ -50,14 +70,25 @@ export default function ProfileDashboard({}) {
       `;
 
     const fetchParticipantSupports = async () => {
+      //Get the participant supports
       const result = await getUrqlClient().query(participantSupportQuery, {
         participant,
       });
       setParticipantSupports(result.data.poolProjectParticipantSupports);
     };
+    // get the pool by owner
+    const fetchPoolbyOwner = async () => {
+      const result = await getUrqlClient().query(queryPoolbyOwner, {
+        owner: participant,
+      });
+      setQueryPoolbyOwner(result.data.osmoticPools);
+    };
 
     fetchParticipantSupports();
+    fetchPoolbyOwner();
   }, [participant]);
+
+  console.log(participantSupports);
 
   //TODO: logic if it is a server component
   // const address = "0x5be8bb8d7923879c3ddc9c551c5aa85ad0fa4de3";
@@ -72,9 +103,19 @@ export default function ProfileDashboard({}) {
     <>
       <div className="w-full min-h-screen px-4 py-8 sm:px-6 lg:px-8 space-y-20">
         <ProfileHeader />
-        {/* <Disclousure /> */}
-        <MyModal />
-        <Wrapper label="Pools"></Wrapper>
+        <Disclousure />
+        <Wrapper label="Pools">
+          <div className="flex flex-col w-full space-y-2">
+            {queryPoolbyOwner.length > 0 &&
+              queryPoolbyOwner.slice(-2)?.map((pool, idx) => (
+                <>
+                  <div key={idx}>
+                    <MyModal pool={pool} />
+                  </div>
+                </>
+              ))}
+          </div>
+        </Wrapper>
       </div>
     </>
   );
@@ -100,41 +141,38 @@ const Wrapper = ({ label = "Projects", children }: WrapperProps) => {
 
 const Disclousure = () => {
   return (
-    <div className="w-full px-4 pt-16">
-      <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2">
-        <Disclosure>
+    <div className="w-full">
+      <div className="mx-auto w-full rounded-2xl bg-surface p-2">
+        <Disclosure defaultOpen={true}>
           {({ open }) => (
             <>
-              <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500/75">
+              <Disclosure.Button className="flex w-full justify-between rounded-lg bg-surface_var px-4 py-2 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500/75">
                 <span>What is your refund policy?</span>
                 <ChevronUpIcon
-                  className={`${
+                  className={`transition-all duration-200 ease-in ${
                     open ? "rotate-180 transform" : ""
                   } h-5 w-5 text-purple-500`}
                 />
               </Disclosure.Button>
-              <Disclosure.Panel className="px-4 pb-2 pt-4 text-sm text-gray-500">
-                If you are unhappy with your purchase for any reason, email us
-                within 90 days and we will refund you in full, no questions
-                asked.
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure>
-        <Disclosure as="div" className="mt-2">
-          {({ open }) => (
-            <>
-              <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500/75">
-                <span>Do you offer technical support?</span>
-                <ChevronUpIcon
-                  className={`${
-                    open ? "rotate-180 transform" : ""
-                  } h-5 w-5 text-purple-500`}
-                />
-              </Disclosure.Button>
-              <Disclosure.Panel className="px-4 pb-2 pt-4 text-sm text-gray-500">
-                No.
-              </Disclosure.Panel>
+              <Transition
+                appear={true}
+                show={open}
+                enter="transition duration-200 ease-out"
+                enterFrom="transform scale-95 opacity-0"
+                enterTo="transform scale-100 opacity-100"
+                leave="transition duration-75 ease-out"
+                leaveFrom="transform scale-200 opacity-100"
+                leaveTo="transform scale-95 opacity-0"
+              >
+                <Disclosure.Panel
+                  static
+                  className="px-4 pb-2 pt-4 text-sm text-gray-500"
+                >
+                  If you are unhappy with your purchase for any reason, email us
+                  within 90 days and we will refund you in full, no questions
+                  asked.
+                </Disclosure.Panel>
+              </Transition>
             </>
           )}
         </Disclosure>
@@ -143,9 +181,10 @@ const Disclousure = () => {
   );
 };
 
-const MyModal = () => {
+const MyModal = ({ ...props }: any) => {
   let [isOpen, setIsOpen] = useState(false);
   const [word, setWord] = useState("hello");
+  const { pool } = props;
 
   function closeModal() {
     setIsOpen(false);
@@ -162,9 +201,9 @@ const MyModal = () => {
       <button
         type="button"
         onClick={openModal}
-        className="rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+        className="rounded-md bg-surface px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
       >
-        Modal test
+        {pool?.address}
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -178,7 +217,7 @@ const MyModal = () => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/25" />
+            <div className="fixed inset-0 bg-background" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -192,7 +231,7 @@ const MyModal = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-[50vw] transform overflow-hidden rounded-2xl bg-surface p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-[60vw] transform overflow-hidden rounded-2xl bg-surface p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-surface_var"
@@ -200,7 +239,7 @@ const MyModal = () => {
                     {""}
                   </Dialog.Title>
                   <div className="mt-2">
-                    <SupporProjects pool={word} />
+                    <SupporProjects pool={pool.address} />
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -209,5 +248,64 @@ const MyModal = () => {
         </Dialog>
       </Transition>
     </>
+  );
+};
+
+const CountdownTimer = () => {
+  // Set the end date and time for the countdown
+  const countdownDate = new Date("December 10, 2023").getTime();
+
+  const calculateTimeLeft = () => {
+    const now = new Date().getTime();
+    const difference = countdownDate - now;
+
+    if (difference <= 0) {
+      // Timer has expired
+      return {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      };
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    return {
+      days,
+      hours,
+      minutes,
+      seconds,
+    };
+  };
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    // Clear the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, [timeLeft]);
+
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="text-center">
+        <div className="text-4xl font-bold text-gray-800 mb-2">
+          Countdown Timer
+        </div>
+        <div className="text-2xl text-gray-600">
+          {timeLeft.days} Days {timeLeft.hours} Hours {timeLeft.minutes} Minutes{" "}
+          {timeLeft.seconds} Seconds
+        </div>
+      </div>
+    </div>
   );
 };

@@ -6,6 +6,9 @@ import { DonutChart } from "./DonutChart";
 import { getUrqlClient } from "@/services/urqlService";
 import * as ABI from "@/constants/abis/MimeToken.json";
 import POOL_ABI from "@/constants/abis/Pool.json";
+import { Fragment } from "react";
+import { Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
     id
@@ -21,19 +24,20 @@ const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
     }
   }`;
 
-export const SupporProjects = ({ pool }: { pool: string }) => {
+export const SupporProjects = ({ pool }: any) => {
   const { address: participant } = useAccount();
 
   //TODO! Info to show in the dashboard:
-  //Pool: ListName - projects - support - total support - percentage of support
+  //Pool: ListName - projects - support - total support - percentage of support - currentRound and time to end
   //MimeToken: name, symbol, balance, total supply
   //Participant: address, Mimetoken balance, Staked balance, percentage of support
+
   //Checkout - difference between new support and previous support
 
   //Send Transaction:
-  //Loading state:
-  //Success state:
-  //Error state:
+  //Loading state: ??
+  //Success state: ??
+  //Error state: ??
 
   //!contractWrite
   const { data, isLoading, isSuccess, write } = useContractWrite({
@@ -59,12 +63,14 @@ export const SupporProjects = ({ pool }: { pool: string }) => {
 
   const [participantSupports, setParticipantSupports] = useState([]);
   const [values, setValues] = useState([
-    { id: 1, value: 0 },
-    { id: 2, value: 0 },
+    { id: 1, value: 0, static: 0 },
+    { id: 2, value: 0, static: 0 },
   ]);
   const [maxValue, setMaxValue] = useState(350);
   const [hasValueChanged, setHasValueChanged] = useState(false);
-  const previousValuesRef = useRef<{ id: number; value: number }[]>([]);
+  const previousValuesRef = useRef<
+    { id: number; value: number; static: number }[]
+  >([]);
 
   function getFourChars(str: string, indexFunc: any): string {
     if (!str) return "";
@@ -92,10 +98,12 @@ export const SupporProjects = ({ pool }: { pool: string }) => {
         {
           id: 7,
           value: +result.data.poolProjectParticipantSupports[4].support,
+          static: +result.data.poolProjectParticipantSupports[4].support,
         },
         {
           id: 8,
           value: +result.data.poolProjectParticipantSupports[5].support,
+          static: +result.data.poolProjectParticipantSupports[5].support,
         },
       ]);
     };
@@ -134,19 +142,19 @@ export const SupporProjects = ({ pool }: { pool: string }) => {
   };
 
   useEffect(() => {
-    // Update previousValuesRef whenever values change
+    //TODO: delete
     previousValuesRef.current = values.map((valuesss) => {
       return { id: valuesss.id, value: valuesss.value };
     });
   }, [values]);
 
-  //Array to store the values before submiting transaction later
-  let checkoutValues: number[] = [];
+  //Array to store the values before submiting transaction
+  let checkoutValues: any = [];
   const generateCheckoutArray = () => {
-    checkoutValues = [];
     values.forEach((value, index) => {
-      if (value.value === previousValuesRef.current[index].value) {
-        checkoutValues.push([value.id, value.value]);
+      const difference = value.value - value.static;
+      if (difference !== 0) {
+        checkoutValues.push([value.id, difference]);
       }
     });
     return checkoutValues;
@@ -154,10 +162,49 @@ export const SupporProjects = ({ pool }: { pool: string }) => {
 
   const isMaxValueReached = actualCurrentValue === maxValue;
 
+  const [open, setOpen] = useState(false);
   return (
     <>
       <div className="space-y-6 px-6">
+        <Transition
+          show={open}
+          enter="transition ease-in-out duration-500 transform"
+          enterFrom="-translate-x-full"
+          enterTo="translate-x-0"
+          leave="transition ease-in-out duration-500 transform"
+          leaveFrom="translate-x-0"
+          leaveTo="-translate-x-full"
+        >
+          <div className="absolute w-1/2  top-0 left-0 h-44 bg-surface border">
+            <div className="pointer-events-auto w-screen max-w-md">
+              <div className="flex flex-col overflow-y-scroll  py-6 shadow-xl ">
+                <div className="px-4 sm:px-6">
+                  <div className="flex items-start justify-between">
+                    {/* <div.Title className="text-base font-semibold leading-6 text-gray-900">
+                    Panel title
+                  </div.Title> */}
+                    <div className="ml-3 flex h-7 items-center ">
+                      <button
+                        type="button"
+                        className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        onClick={() => setOpen(false)}
+                      >
+                        <span className="absolute -inset-2.5" />
+                        <span className="sr-only">Close panel</span>
+                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                  {/* Your content */}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Transition>
         <h2 className="text-primary">My support List</h2>
+        <span className="text-surface_var">{pool}</span>
         <div>
           <p>
             You can give support with your tokens to the projects you selected{" "}
@@ -187,7 +234,7 @@ export const SupporProjects = ({ pool }: { pool: string }) => {
           </div>
         </div>
         {/* //! testting sending support throw interface */}
-        <div>
+        {/* <div>
           <button onClick={() => write?.()} className="border-2 w-full p-2">
             SEND TRANSACTION
           </button>
@@ -197,7 +244,7 @@ export const SupporProjects = ({ pool }: { pool: string }) => {
             </div>
           )}
           {isSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
-        </div>
+        </div> */}
 
         <ul
           role="list"
@@ -264,7 +311,7 @@ export const SupporProjects = ({ pool }: { pool: string }) => {
         )}
         <div className="mt-24">
           <button
-            onClick={() => console.log(generateCheckoutArray())}
+            onClick={() => setOpen(true)}
             className="text-primary px-4 py-4 rounded-md  w-full border border-primary hover:bg-primary  hover:text-black transition-all  duration-200 ease-in-out font-semibold"
           >
             Checkout
