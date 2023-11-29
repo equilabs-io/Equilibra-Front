@@ -3,11 +3,11 @@ import { useEffect, useState, useRef } from "react";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { DonutChart } from "./DonutChart";
+import { Dialog, Transition } from "@headlessui/react";
 import { getUrqlClient } from "@/services/urqlService";
 import * as ABI from "@/constants/abis/MimeToken.json";
 import POOL_ABI from "@/constants/abis/Pool.json";
 import { Fragment } from "react";
-import { Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
@@ -165,47 +165,11 @@ export const SupporProjects = ({ pool }: any) => {
   const [open, setOpen] = useState(false);
   return (
     <>
+      <Checkout open={open} setOpen={setOpen} />
       <div className="space-y-6 px-6">
-        <Transition
-          show={open}
-          enter="transition ease-in-out duration-500 transform"
-          enterFrom="-translate-x-full"
-          enterTo="translate-x-0"
-          leave="transition ease-in-out duration-500 transform"
-          leaveFrom="translate-x-0"
-          leaveTo="-translate-x-full"
-        >
-          <div className="absolute w-1/2  top-0 left-0 h-44 bg-surface border">
-            <div className="pointer-events-auto w-screen max-w-md">
-              <div className="flex flex-col overflow-y-scroll  py-6 shadow-xl ">
-                <div className="px-4 sm:px-6">
-                  <div className="flex items-start justify-between">
-                    {/* <div.Title className="text-base font-semibold leading-6 text-gray-900">
-                    Panel title
-                  </div.Title> */}
-                    <div className="ml-3 flex h-7 items-center ">
-                      <button
-                        type="button"
-                        className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        onClick={() => setOpen(false)}
-                      >
-                        <span className="absolute -inset-2.5" />
-                        <span className="sr-only">Close panel</span>
-                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                  {/* Your content */}
-                </div>
-              </div>
-            </div>
-          </div>
-        </Transition>
         <h2 className="text-primary">My support List</h2>
-        <span className="text-surface_var">{pool}</span>
-        <div>
+
+        <div className="text-textSecondary">
           <p>
             You can give support with your tokens to the projects you selected{" "}
           </p>
@@ -318,6 +282,84 @@ export const SupporProjects = ({ pool }: any) => {
           </button>
         </div>
       </div>
+    </>
+  );
+};
+type CheckoutProps = {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+const Checkout = ({ ...props }: CheckoutProps) => {
+  const { open, setOpen } = props;
+
+  return (
+    <>
+      <Transition.Root show={open} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={setOpen}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-in-out duration-500"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in-out duration-500"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-700 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto relative w-screen max-w-md">
+                    <Transition.Child
+                      as={Fragment}
+                      enter="ease-in-out duration-500"
+                      enterFrom="opacity-0"
+                      enterTo="opacity-100"
+                      leave="ease-in-out duration-500"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                    >
+                      <div className="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 sm:-ml-10 sm:pr-4">
+                        <button
+                          type="button"
+                          className="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                          onClick={() => setOpen(false)}
+                        >
+                          <span className="absolute -inset-2.5" />
+                          <span className="sr-only">Close panel</span>
+                          <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                        </button>
+                      </div>
+                    </Transition.Child>
+                    <div className="flex h-full flex-col overflow-y-scroll bg-surface py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <Dialog.Title className="text-base font-thin leading-6">
+                          Chechout Panel
+                        </Dialog.Title>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                        {/* Your content */}
+                      </div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
     </>
   );
 };

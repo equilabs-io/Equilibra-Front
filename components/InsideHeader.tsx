@@ -21,9 +21,9 @@ export const InsideHeader = ({
         <main className="container m-auto px-6 pt-32 pb-32 md:px-12 lg:pt-[4.8rem] lg:pb-[4.8rem] lg:px-7">
           <div className="flex items-center flex-wrap px-2 md:px-0">
             <div className="relative lg:w-8/12 lg:py-24 xl:py-32 space-y-8">
-              <h1 className="font-bold md:text-7xl lg:w-10/12 text-surface_var">
+              <h2 className="font-bold md:text-7xl lg:w-10/12 text-surface_var">
                 {title}
-              </h1>
+              </h2>
               <p className="text-textSecondary text-lg">{description}</p>
             </div>
             <div className="flex justify-center md:w-full lg:w-1/3 mt-10 lg:mt-0">

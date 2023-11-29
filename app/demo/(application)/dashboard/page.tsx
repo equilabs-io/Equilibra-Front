@@ -9,6 +9,7 @@ import { getUrqlClient } from "@/services/urqlService";
 import { ProfileHeader } from "@/components/ProfileHeader";
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 type IndexFunc = (str: string, char: string) => number;
 //helper function to get the last 4 chars of a string
@@ -88,8 +89,6 @@ export default function ProfileDashboard({}) {
     fetchPoolbyOwner();
   }, [participant]);
 
-  console.log(participantSupports);
-
   //TODO: logic if it is a server component
   // const address = "0x5be8bb8d7923879c3ddc9c551c5aa85ad0fa4de3";
   // const participantQueryResult = await getUrqlClient().query(
@@ -101,57 +100,76 @@ export default function ProfileDashboard({}) {
   //   participantQueryResult.data.poolProjectParticipantSupports;
   return (
     <>
-      <div className="w-full min-h-screen px-4 py-8 sm:px-6 lg:px-8 space-y-20">
+      <div className="w-full min-h-screen px-4 py-8 sm:px-6 lg:px-8 space-y-10">
+        {/* Header */}
         <ProfileHeader />
-        <Disclousure />
-        <Wrapper label="Pools">
-          <div className="flex flex-col w-full space-y-2">
-            {queryPoolbyOwner.length > 0 &&
-              queryPoolbyOwner.slice(-2)?.map((pool, idx) => (
-                <>
-                  <div key={idx}>
-                    <MyModal pool={pool} />
-                  </div>
-                </>
-              ))}
-          </div>
-        </Wrapper>
+
+        {/* Stats */}
+        <div>
+          <h3 className="text-base font-semibold leading-6 text-gray-900">
+            Last 30 days
+          </h3>
+          <dl className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+            {stats.map((item) => (
+              <div
+                key={item.name}
+                className="overflow-hidden rounded-lg bg-surface px-4 py-5 shadow sm:p-6"
+              >
+                <dt className="truncate text-sm font-medium text-surface_var">
+                  {item.name}
+                </dt>
+                <dd className="mt-1 text-3xl font-semibold tracking-tight text-primary">
+                  {item.stat}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+        {/* <Checkout /> */}
+
+        {queryPoolbyOwner.length > 0 &&
+          queryPoolbyOwner.slice(-2)?.map((pool, idx) => (
+            <>
+              <div key={idx}>
+                <Disclousure as={"div"} pool={pool} />
+              </div>
+            </>
+          ))}
       </div>
     </>
   );
 }
+const stats = [
+  { name: "Total Support Given", stat: "450" },
+  { name: "Pool Owner", stat: "2" },
+  { name: "Staking Projects", stat: "4" },
+];
 
 type WrapperProps = {
   label?: string;
   children?: React.ReactNode;
 };
 
-const Wrapper = ({ label = "Projects", children }: WrapperProps) => {
-  return (
-    <>
-      <div className="flex flex-col w-full space-y-2">
-        <h2 className="text-primary ">{label}</h2>
-        <div className="border-[1px] border-surface w-full min-h-content rounded-bl-3xl flex flex-col p-4 shadow-lg shadow-surface">
-          {children}
-        </div>
-      </div>
-    </>
-  );
-};
-
-const Disclousure = () => {
+const Disclousure = ({ ...props }: any) => {
+  const { pool } = props;
+  console.log("pool", pool);
   return (
     <div className="w-full">
       <div className="mx-auto w-full rounded-2xl bg-surface p-2">
-        <Disclosure defaultOpen={true}>
+        <Disclosure defaultOpen={pool[0]} as="div">
           {({ open }) => (
             <>
-              <Disclosure.Button className="flex w-full justify-between rounded-lg bg-surface_var px-4 py-2 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500/75">
-                <span>What is your refund policy?</span>
+              <Disclosure.Button
+                as="button"
+                className="flex w-full justify-between rounded-lg bg-surface px-4 py-2 text-left text-sm font-medium  hover:opacity-80 focus:outline-none focus-visible:ring focus-visible:ring-purple-500/75"
+              >
+                <span className="text-textSecondary">
+                  Pool Address: {pool.address}
+                </span>
                 <ChevronUpIcon
                   className={`transition-all duration-200 ease-in ${
                     open ? "rotate-180 transform" : ""
-                  } h-5 w-5 text-purple-500`}
+                  } h-5 w-5 text-primary`}
                 />
               </Disclosure.Button>
               <Transition
@@ -165,12 +183,10 @@ const Disclousure = () => {
                 leaveTo="transform scale-95 opacity-0"
               >
                 <Disclosure.Panel
-                  static
+                  as="div"
                   className="px-4 pb-2 pt-4 text-sm text-gray-500"
                 >
-                  If you are unhappy with your purchase for any reason, email us
-                  within 90 days and we will refund you in full, no questions
-                  asked.
+                  <SupporProjects pool={pool.address} />
                 </Disclosure.Panel>
               </Transition>
             </>
@@ -181,6 +197,66 @@ const Disclousure = () => {
   );
 };
 
+const CountdownTimer = () => {
+  // Set the end date and time for the countdown
+  const countdownDate = new Date("December 10, 2023").getTime();
+
+  const calculateTimeLeft = () => {
+    const now = new Date().getTime();
+    const difference = countdownDate - now;
+
+    if (difference <= 0) {
+      // Timer has expired
+      return {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      };
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    return {
+      days,
+      hours,
+      minutes,
+      seconds,
+    };
+  };
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    // Clear the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, [timeLeft]);
+
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="text-center">
+        <div className="text-4xl font-bold text-gray-800 mb-2">
+          Countdown Timer
+        </div>
+        <div className="text-2xl text-gray-600">
+          {timeLeft.days} Days {timeLeft.hours} Hours {timeLeft.minutes} Minutes{" "}
+          {timeLeft.seconds} Seconds
+        </div>
+      </div>
+    </div>
+  );
+};
+
+//TODO!: Delete this components afterwards
 const MyModal = ({ ...props }: any) => {
   let [isOpen, setIsOpen] = useState(false);
   const [word, setWord] = useState("hello");
@@ -251,61 +327,15 @@ const MyModal = ({ ...props }: any) => {
   );
 };
 
-const CountdownTimer = () => {
-  // Set the end date and time for the countdown
-  const countdownDate = new Date("December 10, 2023").getTime();
-
-  const calculateTimeLeft = () => {
-    const now = new Date().getTime();
-    const difference = countdownDate - now;
-
-    if (difference <= 0) {
-      // Timer has expired
-      return {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      };
-    }
-
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-    return {
-      days,
-      hours,
-      minutes,
-      seconds,
-    };
-  };
-
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
-    // Clear the timer when the component unmounts
-    return () => clearTimeout(timer);
-  }, [timeLeft]);
-
+const Wrapper = ({ label = "Projects", children }: WrapperProps) => {
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="text-center">
-        <div className="text-4xl font-bold text-gray-800 mb-2">
-          Countdown Timer
-        </div>
-        <div className="text-2xl text-gray-600">
-          {timeLeft.days} Days {timeLeft.hours} Hours {timeLeft.minutes} Minutes{" "}
-          {timeLeft.seconds} Seconds
+    <>
+      <div className="flex flex-col w-full space-y-2">
+        <h2 className="text-primary ">{label}</h2>
+        <div className="border-[1px] border-surface w-full min-h-content rounded-bl-3xl flex flex-col p-4 shadow-lg shadow-surface">
+          {children}
         </div>
       </div>
-    </div>
+    </>
   );
 };
