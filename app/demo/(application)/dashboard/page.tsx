@@ -70,6 +70,7 @@ export default function ProfileDashboard({}) {
         }
       `;
 
+    //TODO: Promise.all
     const fetchParticipantSupports = async () => {
       //Get the participant supports
       const result = await getUrqlClient().query(participantSupportQuery, {
@@ -125,8 +126,8 @@ export default function ProfileDashboard({}) {
             ))}
           </dl>
         </div>
-        {/* <Checkout /> */}
 
+        {/*Main content - Pool Disclousure comp */}
         {queryPoolbyOwner.length > 0 &&
           queryPoolbyOwner.slice(-2)?.map((pool, idx) => (
             <>
@@ -152,11 +153,10 @@ type WrapperProps = {
 
 const Disclousure = ({ ...props }: any) => {
   const { pool } = props;
-  console.log("pool", pool);
   return (
     <div className="w-full">
       <div className="mx-auto w-full rounded-2xl bg-surface p-2">
-        <Disclosure defaultOpen={pool[0]} as="div">
+        <Disclosure defaultOpen={true}>
           {({ open }) => (
             <>
               <Disclosure.Button

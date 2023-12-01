@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useAccount, useContractRead, useContractWrite } from "wagmi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { DonutChart } from "./DonutChart";
@@ -10,7 +10,7 @@ import POOL_ABI from "@/constants/abis/Pool.json";
 import { Fragment } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
+const osmoticPool = `query (id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
     id
     poolProjects(first: 10) {
       id
@@ -23,6 +23,31 @@ const osmoticPool = `(id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
       }
     }
   }`;
+
+const queryByPoolAndParticipant = `query ($pool: String!, $participant: String!) {
+    osmoticPool(id: $pool) {
+        address
+        projectList {
+          name
+        }
+        mimeToken {
+          name
+          symbol
+        }
+        poolProjects(first: 10) {
+          id
+          poolProjectSupports {
+            support
+            poolProjectParticipantsSupports(
+              where: {participant: $participant}
+            ) {
+              participant
+              support
+            }
+          }
+        }
+      }
+}`;
 
 export const SupporProjects = ({ pool }: any) => {
   const { address: participant } = useAccount();
@@ -41,9 +66,11 @@ export const SupporProjects = ({ pool }: any) => {
 
   //!contractWrite
   const { data, isLoading, isSuccess, write } = useContractWrite({
+    // this address is the pool address
     address: "0xDC66c3c481540dC737212A582880EC2D441BDc54",
     abi: POOL_ABI,
     functionName: "supportProjects",
+    // this is the array of arguments for the function
     args: [
       [
         [7, 20],
@@ -61,13 +88,17 @@ export const SupporProjects = ({ pool }: any) => {
   //   functionName: "name",
   // });
 
-  const [participantSupports, setParticipantSupports] = useState([]);
+  //checkout slideOver state
+  const [open, setOpen] = useState(false);
+
+  const [poolInfo, setPoolInfo] = useState<any>([{}]);
+  const [participantSupports, setParticipantSupports] = useState<any>([{}]);
   const [values, setValues] = useState([
     { id: 1, value: 0, static: 0 },
     { id: 2, value: 0, static: 0 },
   ]);
   const [maxValue, setMaxValue] = useState(350);
-  const [hasValueChanged, setHasValueChanged] = useState(false);
+
   const previousValuesRef = useRef<
     { id: number; value: number; static: number }[]
   >([]);
@@ -107,12 +138,26 @@ export const SupporProjects = ({ pool }: any) => {
         },
       ]);
     };
+    const fetchPoolInfoAndParticipantSupports = async () => {
+      const result = await getUrqlClient().query(queryByPoolAndParticipant, {
+        pool,
+        participant,
+      });
+      setPoolInfo([
+        {
+          address: result.data.osmoticPool.address,
+          projectList: result.data.osmoticPool.projectList,
+          mimeToken: result.data.osmoticPool.mimeToken,
+        },
+      ]);
+      setParticipantSupports([result.data.osmoticPool.poolProjects]);
+    };
 
     fetchParticipantSupports();
+    fetchPoolInfoAndParticipantSupports();
   }, []);
 
   let actualCurrentValue = values.reduce((acc, curr) => acc + curr.value, 0);
-  console.log(actualCurrentValue);
 
   const handleValueChange = (index: number, newValue: number) => {
     // Update the corresponding value in the values array
@@ -141,89 +186,92 @@ export const SupporProjects = ({ pool }: any) => {
     }
   };
 
-  useEffect(() => {
-    //TODO: delete
-    previousValuesRef.current = values.map((valuesss) => {
-      return { id: valuesss.id, value: valuesss.value };
-    });
-  }, [values]);
+  //Function that return array to store the values before submiting transaction
+  const generateCheckoutArray = useCallback(() => {
+    let checkoutValues: any = [];
 
-  //Array to store the values before submiting transaction
-  let checkoutValues: any = [];
-  const generateCheckoutArray = () => {
-    values.forEach((value, index) => {
+    values.forEach((value) => {
       const difference = value.value - value.static;
       if (difference !== 0) {
         checkoutValues.push([value.id, difference]);
       }
     });
     return checkoutValues;
-  };
+  }, [values]);
 
+  const handleCheckout = useCallback(() => {
+    setOpen(true);
+    generateCheckoutArray(); // Ensure generateCheckoutArray is memoized
+  }, [generateCheckoutArray, setOpen]);
+
+  const checkoutValues = generateCheckoutArray();
   const isMaxValueReached = actualCurrentValue === maxValue;
+  const poolAddress = poolInfo?.[0].address;
+  const mimeTokenSymbol = poolInfo?.[0].mimeToken?.symbol;
+  const projectList = poolInfo?.[0].projectList?.name;
 
-  const [open, setOpen] = useState(false);
   return (
     <>
-      <Checkout open={open} setOpen={setOpen} />
-      <div className="space-y-6 px-6">
-        <h2 className="text-primary">My support List</h2>
-
-        <div className="text-textSecondary">
-          <p>
-            You can give support with your tokens to the projects you selected{" "}
-          </p>
+      <div className="space-x-2  grid grid-cols-3">
+        {/* Pool tokens Info */}
+        <div className="text-textSecondary  border-purple-500 col-span-1">
           <div className="mt-2 w-full flex items-center">
             <div className="space-y-2">
               <p className="">Your Balances:</p>
               <span className="mr-2 text-2xl font-mono">{maxValue}</span>
               <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary">
-                FTK
+                {mimeTokenSymbol}
               </span>
               <div>
                 <span className="mr-2 text-2xl font-mono">
                   {actualCurrentValue}
                 </span>
                 <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary">
-                  FTK already staked
+                  {mimeTokenSymbol} already staked
                 </span>
               </div>
-            </div>
-            <div className="flex-1 flex justify-end">
-              <DonutChart
-                maxValue={maxValue}
-                currentValue={actualCurrentValue}
-              />
+              <div className="flex-1 flex justify-end">
+                <DonutChart
+                  maxValue={maxValue}
+                  currentValue={actualCurrentValue}
+                />
+              </div>
             </div>
           </div>
         </div>
         {/* //! testting sending support throw interface */}
         {/* <div>
-          <button onClick={() => write?.()} className="border-2 w-full p-2">
+          <button onClick={() => write?.()} className=" w-full p-2">
             SEND TRANSACTION
           </button>
           {isLoading && (
-            <div className="border-2 absolute top-0 left-0 w-full h-full bg-surface">
+            <div className=" absolute top-0 left-0 w-full h-full bg-surface">
               Check Wallet
             </div>
           )}
           {isSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
         </div> */}
 
+        {/* Ranger inputs */}
         <ul
           role="list"
-          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2"
+          className="col-span-2 grid grid-cols-1 gap-6   border-red-400"
         >
+          <p className=" text-center">
+            Give support{" "}
+            {/* <span className="text-primary uppercase">{projectList}</span>  */}
+            with your tokens to the projects of your choice
+          </p>
           {values.map((value, index) => (
             <>
               <li
                 key={value.id}
-                className="col-span-1 divide-y divide-gray-200 rounded-lg bg-background shadow-md hover:shadow-slate-500 cursor-pointer transition-all duration-300 ease-in-out"
+                className="col-span-1 divide-y divide-gray-200 rounded-lg bg-background shadow-md hover:shadow-slate-500 cursor-pointer transition-all duration-300 ease-in-out "
               >
-                <div className="px-4 py-2">
+                <div className="px-4 p-1">
                   <label
                     htmlFor="medium-range"
-                    className="mb-2 text-md font-mono text-gray-900 dark:text-white flex items-center justify-evenly"
+                    className="mb-2 text-md font-mono text-gray-900 dark:text-white flex items-center justify-evenly "
                   >
                     id: {value.id}
                     <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-medium text-white ring-1 ring-inset ring-gray-800 font-mono text-2xl">
@@ -248,7 +296,7 @@ export const SupporProjects = ({ pool }: any) => {
                     onChange={(e) =>
                       handleValueChange(index, parseInt(e.target.value))
                     }
-                    className="appearance-none bg-transparent w-full cursor-pointer [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-[20px] [&::-webkit-slider-thumb]:w-[20px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
+                    className="appearance-none bg-background w-full cursor-pointer [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-[13px] [&::-webkit-slider-thumb]:w-[13px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary_var [&::-webkit-slider-thumb]:hover:bg-primary"
                     step={10}
                   />
                 </div>
@@ -257,30 +305,38 @@ export const SupporProjects = ({ pool }: any) => {
           ))}
           {/*Reset button for all disabled inputs */}
         </ul>
-        {isMaxValueReached && (
-          <>
-            <div className="flex">
-              <span className="border-2 p-2 border-red-400 rounded-md">
-                You reach the maximum support value of {maxValue}, please
-                checkout or reset and try again
-              </span>
-              <button
-                onClick={handleResetValues}
-                className="bg-secondary text-white px-4 py-2 rounded-md ml-4 "
-              >
-                Reset All Values
-              </button>
-            </div>
-          </>
-        )}
-        <div className="mt-24">
-          <button
-            onClick={() => setOpen(true)}
-            className="text-primary px-4 py-4 rounded-md  w-full border border-primary hover:bg-primary  hover:text-black transition-all  duration-200 ease-in-out font-semibold"
-          >
-            Checkout
-          </button>
-        </div>
+      </div>
+      {/* Alert when reaching maxvalue of Token staked */}
+      {isMaxValueReached && (
+        <>
+          <div className="flex">
+            <span className=" p-2 border-red-400 rounded-md">
+              You reach the maximum support value of {maxValue}, please checkout
+              or reset and try again
+            </span>
+            <button
+              onClick={handleResetValues}
+              className="bg-secondary text-white px-4 py-2 rounded-md ml-4 "
+            >
+              Reset All Values
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Checkout button */}
+      <div className="mt-10">
+        <Checkout
+          open={open}
+          setOpen={setOpen}
+          checkoutValues={checkoutValues}
+        />
+        <button
+          onClick={handleCheckout}
+          className="text-textSecondary px-4 py-4 rounded-md bg-highlight  w-full hover:bg-highlight  hover:text-primary transition-all  duration-200 ease-in-out font-semibold"
+        >
+          Checkout
+        </button>
       </div>
     </>
   );
@@ -288,10 +344,11 @@ export const SupporProjects = ({ pool }: any) => {
 type CheckoutProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
+  checkoutValues: [];
 };
 
 const Checkout = ({ ...props }: CheckoutProps) => {
-  const { open, setOpen } = props;
+  const { checkoutValues, open, setOpen } = props;
 
   return (
     <>
@@ -349,7 +406,10 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                           Chechout Panel
                         </Dialog.Title>
                       </div>
-                      <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6 text-white">
+                        {checkoutValues.length <= 0
+                          ? "No changes to checkout"
+                          : "Lets goo"}
                         {/* Your content */}
                       </div>
                     </div>
@@ -361,5 +421,92 @@ const Checkout = ({ ...props }: CheckoutProps) => {
         </Dialog>
       </Transition.Root>
     </>
+  );
+};
+
+import React from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+
+const Example = () => {
+  return (
+    <div className="grid w-full place-content-center bg-surface px-4 py-12 text-slate-900">
+      <TiltCard />
+    </div>
+  );
+};
+
+const TiltCard = () => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x);
+  const mouseYSpring = useSpring(y);
+
+  const rotateX = useTransform(
+    mouseYSpring,
+    [-0.5, 0.5],
+    ["1.5deg", "-1.5deg"]
+  );
+  const rotateY = useTransform(
+    mouseXSpring,
+    [-0.5, 0.5],
+    ["-1.5deg", "1.5deg"]
+  );
+
+  const handleMouseMove = (e) => {
+    const rect = e.target.getBoundingClientRect();
+
+    const width = rect.width;
+    const height = rect.height;
+
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateY,
+        rotateX,
+        transformStyle: "preserve-3d",
+      }}
+      className="relative h-96 w-72 rounded-xl bg-highlight"
+    >
+      <div
+        style={{
+          transform: "translateZ(75px)",
+          transformStyle: "preserve-3d",
+        }}
+        className="absolute inset-4 grid place-content-center rounded-xl bg-surface shadow-lg"
+      >
+        {/* <FiMousePointer
+          style={{
+            transform: "translateZ(75px)",
+          }}
+          className="mx-auto text-4xl"
+        /> */}
+        <p
+          style={{
+            transform: "translateZ(50px)",
+          }}
+          className="text-center text-2xl font-bold"
+        >
+          HOVER ME
+        </p>
+      </div>
+    </motion.div>
   );
 };

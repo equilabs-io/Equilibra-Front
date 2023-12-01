@@ -114,7 +114,7 @@ export default function ProjectCard({ project }: { project: Project }) {
         <div className="my-2"></div>
         <div className="flex justify-center">
           <CustomButton
-            text="Support Project"
+            text="Add to List"
             styles={`w-full  ${
               active ? "" : "bg-red-200 text-highlight hover:bg-red-300"
             }`}
