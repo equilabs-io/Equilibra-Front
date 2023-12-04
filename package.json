@@ -11,6 +11,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
+    "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
     "@pinata/sdk": "^2.1.0",
     "@urql/core": "^4.1.4",
     "@urql/next": "^1.1.0",
@@ -38,6 +39,8 @@
     "eslint": "^8",
     "eslint-config-next": "13.5.4",
     "postcss": "^8",
+    "prettier": "^3.1.0",
+    "prettier-plugin-tailwindcss": "^0.5.7",
     "tailwindcss": "^3",
     "typescript": "^5"
   }

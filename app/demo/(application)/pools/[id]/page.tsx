@@ -81,7 +81,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
         id: getLastFourLetters(project.id, 6),
         active: project.active,
         flowLastRate: project.flowLastRate,
-        flowLastTime: project.flowLastTime,
+        flowLastTime: 1701128880,
         currentRound: project.currentRound,
       };
     }

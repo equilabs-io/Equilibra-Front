@@ -97,7 +97,7 @@ input {
   animation: rotation 2s linear infinite;
 }
 .loader::after {
-  content: "";
+  content: '';
 
   position: absolute;
   left: 50%;

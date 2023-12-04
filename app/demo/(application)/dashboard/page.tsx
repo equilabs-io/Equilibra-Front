@@ -1,26 +1,25 @@
-"use client";
-import { useState, useEffect } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
-import { useAccount } from "wagmi";
-import Link from "next/link";
-import { SupporProjects } from "@/components/SupporProjects";
-import { getUrqlClient } from "@/services/urqlService";
-import { ProfileHeader } from "@/components/ProfileHeader";
-import { Disclosure } from "@headlessui/react";
-import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+'use client';
+
+import { Fragment, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ProfileHeader } from '@/components/ProfileHeader';
+import { SupporProjects } from '@/components/SupporProjects';
+import { getUrqlClient } from '@/services/urqlService';
+import { Dialog, Disclosure, Transition } from '@headlessui/react';
+import { ChevronUpIcon } from '@heroicons/react/20/solid';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useAccount } from 'wagmi';
 
 type IndexFunc = (str: string, char: string) => number;
 //helper function to get the last 4 chars of a string
 function getFourChars(str: string, indexFunc: IndexFunc): string {
-  const lastDashIndex = indexFunc(str, "-");
+  const lastDashIndex = indexFunc(str, '-');
   const fourChars = str.substring(lastDashIndex - 4, lastDashIndex);
   return fourChars;
 }
 //helper function to get the string before the first dash
 function getBeforeFirstDash(str: string): string {
-  const firstDashIndex = str.indexOf("-");
+  const firstDashIndex = str.indexOf('-');
   if (firstDashIndex === -1) {
     return str;
   }
@@ -101,7 +100,7 @@ export default function ProfileDashboard({}) {
   //   participantQueryResult.data.poolProjectParticipantSupports;
   return (
     <>
-      <div className="w-full min-h-screen px-4 py-8 sm:px-6 lg:px-8 space-y-10">
+      <div className="min-h-screen w-full space-y-10 px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <ProfileHeader />
 
@@ -132,7 +131,7 @@ export default function ProfileDashboard({}) {
           queryPoolbyOwner.slice(-2)?.map((pool, idx) => (
             <>
               <div key={idx}>
-                <Disclousure as={"div"} pool={pool} />
+                <Disclousure as={'div'} pool={pool} />
               </div>
             </>
           ))}
@@ -141,9 +140,9 @@ export default function ProfileDashboard({}) {
   );
 }
 const stats = [
-  { name: "Total Support Given", stat: "450" },
-  { name: "Pool Owner", stat: "2" },
-  { name: "Staking Projects", stat: "4" },
+  { name: 'Total Support Given', stat: '450' },
+  { name: 'Pool Owner', stat: '2' },
+  { name: 'Staking Projects', stat: '4' },
 ];
 
 type WrapperProps = {
@@ -168,7 +167,7 @@ const Disclousure = ({ ...props }: any) => {
                 </span>
                 <ChevronUpIcon
                   className={`transition-all duration-200 ease-in ${
-                    open ? "rotate-180 transform" : ""
+                    open ? 'rotate-180 transform' : ''
                   } h-5 w-5 text-primary`}
                 />
               </Disclosure.Button>
@@ -199,7 +198,7 @@ const Disclousure = ({ ...props }: any) => {
 
 const CountdownTimer = () => {
   // Set the end date and time for the countdown
-  const countdownDate = new Date("December 10, 2023").getTime();
+  const countdownDate = new Date('December 10, 2023').getTime();
 
   const calculateTimeLeft = () => {
     const now = new Date().getTime();
@@ -217,7 +216,7 @@ const CountdownTimer = () => {
 
     const days = Math.floor(difference / (1000 * 60 * 60 * 24));
     const hours = Math.floor(
-      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
     );
     const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((difference % (1000 * 60)) / 1000);
@@ -242,13 +241,13 @@ const CountdownTimer = () => {
   }, [timeLeft]);
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex h-screen items-center justify-center">
       <div className="text-center">
-        <div className="text-4xl font-bold text-gray-800 mb-2">
+        <div className="mb-2 text-4xl font-bold text-gray-800">
           Countdown Timer
         </div>
         <div className="text-2xl text-gray-600">
-          {timeLeft.days} Days {timeLeft.hours} Hours {timeLeft.minutes} Minutes{" "}
+          {timeLeft.days} Days {timeLeft.hours} Hours {timeLeft.minutes} Minutes{' '}
           {timeLeft.seconds} Seconds
         </div>
       </div>
@@ -259,17 +258,17 @@ const CountdownTimer = () => {
 //TODO!: Delete this components afterwards
 const MyModal = ({ ...props }: any) => {
   let [isOpen, setIsOpen] = useState(false);
-  const [word, setWord] = useState("hello");
+  const [word, setWord] = useState('hello');
   const { pool } = props;
 
   function closeModal() {
     setIsOpen(false);
-    setWord("goodbye");
+    setWord('goodbye');
   }
 
   function openModal() {
     setIsOpen(true);
-    setWord("helloToYou");
+    setWord('helloToYou');
   }
 
   return (
@@ -277,7 +276,7 @@ const MyModal = ({ ...props }: any) => {
       <button
         type="button"
         onClick={openModal}
-        className="rounded-md bg-surface px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+        className="focus-visible:ring-white/75 rounded-md bg-surface px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2"
       >
         {pool?.address}
       </button>
@@ -312,7 +311,7 @@ const MyModal = ({ ...props }: any) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-surface_var"
                   >
-                    {""}
+                    {''}
                   </Dialog.Title>
                   <div className="mt-2">
                     <SupporProjects pool={pool.address} />
@@ -327,12 +326,12 @@ const MyModal = ({ ...props }: any) => {
   );
 };
 
-const Wrapper = ({ label = "Projects", children }: WrapperProps) => {
+const Wrapper = ({ label = 'Projects', children }: WrapperProps) => {
   return (
     <>
-      <div className="flex flex-col w-full space-y-2">
+      <div className="flex w-full flex-col space-y-2">
         <h2 className="text-primary ">{label}</h2>
-        <div className="border-[1px] border-surface w-full min-h-content rounded-bl-3xl flex flex-col p-4 shadow-lg shadow-surface">
+        <div className="min-h-content flex w-full flex-col rounded-bl-3xl border-[1px] border-surface p-4 shadow-lg shadow-surface">
           {children}
         </div>
       </div>
