@@ -101,15 +101,7 @@ export const SupporProjects = ({ pool }: any) => {
 
   const [poolInfo, setPoolInfo] = useState<any>([{}]);
   const [participantSupports, setParticipantSupports] = useState<any>([{}]);
-  const [values, setValues] = useState([
-    { id: 1, value: 0, static: 0 },
-    { id: 2, value: 0, static: 0 },
-  ]);
   const [maxValue, setMaxValue] = useState(350);
-
-  const previousValuesRef = useRef<
-    { id: number; value: number; static: number }[]
-  >([]);
 
   function getFourChars(str: string, indexFunc: any): string {
     if (!str) return '';
@@ -117,6 +109,9 @@ export const SupporProjects = ({ pool }: any) => {
     const fourChars = str.substring(lastDashIndex - 3, lastDashIndex);
     const id = fourChars.substring(0, 1);
     return id;
+  }
+  function getIdOfProyectId(str: string): string {
+    return str?.[str.length - 1];
   }
 
   useEffect(() => {
@@ -132,19 +127,6 @@ export const SupporProjects = ({ pool }: any) => {
       const result = await getUrqlClient().query(participantSupportQuery, {
         participant,
       });
-
-      setValues([
-        {
-          id: 7,
-          value: +result.data.poolProjectParticipantSupports[4].support,
-          static: +result.data.poolProjectParticipantSupports[4].support,
-        },
-        {
-          id: 8,
-          value: +result.data.poolProjectParticipantSupports[5].support,
-          static: +result.data.poolProjectParticipantSupports[5].support,
-        },
-      ]);
     };
     const fetchPoolInfoAndParticipantSupports = async () => {
       const result = await getUrqlClient().query(queryByPoolAndParticipant, {
@@ -158,25 +140,49 @@ export const SupporProjects = ({ pool }: any) => {
           mimeToken: result.data.osmoticPool.mimeToken,
         },
       ]);
-      setParticipantSupports([result.data.osmoticPool.poolProjects]);
+
+      const participantSupports = result.data.osmoticPool.poolProjects.map(
+        (project) => {
+          return {
+            id: getIdOfProyectId(project.id),
+            value: project.poolProjectSupports?.[0].support,
+            static: project.poolProjectSupports?.[0].support,
+            participantSupport:
+              project.poolProjectSupports?.[0]
+                .poolProjectParticipantsSupports?.[0].support,
+          };
+        },
+      );
+      setParticipantSupports(participantSupports);
     };
 
     fetchParticipantSupports();
     fetchPoolInfoAndParticipantSupports();
   }, []);
 
-  let actualCurrentValue = values.reduce((acc, curr) => acc + curr.value, 0);
+  let actualCurrentValue = participantSupports.reduce(
+    (acc, curr) => +acc + +curr.value,
+    0,
+  );
+
+  //   const [newValues, setNewValues] = participantSupports.map((project, idx) => {
+  //     return {
+  //       id: getIdOfProyectId(project.id),
+  //       value: project.poolProjectSupports?.[0].support,
+  //       static: project.poolProjectSupports?.[0].support,
+  //       participantSupport:
+  //         project.poolProjectSupports?.[0].poolProjectParticipantsSupports?.[0]
+  //           .support,
+  //     };
+  //   });
 
   const handleValueChange = (index: number, newValue: number) => {
     // Update the corresponding value in the values array
-    setValues((prevValues) => {
+    setParticipantSupports((prevValues) => {
       const updatedValues = [...prevValues];
       updatedValues[index] = { ...updatedValues[index], value: newValue };
       return updatedValues;
     });
-
-    // Update the actualCurrentValue
-    const newCurrentValue = values.reduce((acc, curr) => acc + curr.value, 0);
   };
 
   const resetToInitialState = () => {
@@ -185,7 +191,7 @@ export const SupporProjects = ({ pool }: any) => {
       { id: 2, value: 200 },
     ]);
     setMaxValue(350);
-    // Reset any other state variables you might have
+    // Reset any other state variables
   };
 
   const handleResetValues = () => {
@@ -194,18 +200,21 @@ export const SupporProjects = ({ pool }: any) => {
     }
   };
 
+  console.log(participantSupports.map((project) => typeof project));
+
   //Function that return array to store the values before submiting transaction
   const generateCheckoutArray = useCallback(() => {
     let checkoutValues: any = [];
 
-    values.forEach((value) => {
+    participantSupports.forEach((value) => {
       const difference = value.value - value.static;
+      const totalNewSupport = value.value;
       if (difference !== 0) {
-        checkoutValues.push([value.id, difference]);
+        checkoutValues.push([value.id, difference, totalNewSupport]);
       }
     });
     return checkoutValues;
-  }, [values]);
+  }, [participantSupports]);
 
   const handleCheckout = useCallback(() => {
     setOpen(true);
@@ -213,8 +222,9 @@ export const SupporProjects = ({ pool }: any) => {
   }, [generateCheckoutArray, setOpen]);
 
   const checkoutValues = generateCheckoutArray();
-
   const isMaxValueReached = actualCurrentValue === maxValue;
+
+  //values from data:
   const poolAddress = poolInfo?.[0].address;
   const mimeTokenSymbol = poolInfo?.[0].mimeToken?.symbol;
   const mimeTokenName = poolInfo?.[0].mimeToken?.name;
@@ -224,10 +234,11 @@ export const SupporProjects = ({ pool }: any) => {
     <>
       <div className="grid grid-cols-1 items-center space-x-2  lg:grid-cols-3">
         {/* Pool tokens Info */}
+
         <div className="col-span-1 text-white">
           <div className="mt-2 flex w-full items-center">
             <div className="flex w-full items-center justify-center space-y-2">
-              <TiltCard available={350} staked={180}>
+              <TiltCard balance={350} staked={actualCurrentValue}>
                 <Chart maxValue={maxValue} currentValue={actualCurrentValue} />
               </TiltCard>
             </div>
@@ -258,16 +269,17 @@ export const SupporProjects = ({ pool }: any) => {
             </span>{' '}
             to the projects of your choice
           </p>
-          {values.map((value, index) => (
+
+          {participantSupports.map((project, index) => (
             <>
               <li
-                key={value.id}
+                key={project.id}
                 className="shadow-inset max-h-min cursor-pointer rounded-lg bg-surface shadow-background transition-all duration-300 ease-in-out"
               >
                 <div className="flex">
                   <div className="flex items-center justify-center rounded-full  p-2">
                     <label htmlFor="medium-range" className="text-md">
-                      id: {value.id}
+                      id: {project.id}
                     </label>
                   </div>
 
@@ -279,7 +291,7 @@ export const SupporProjects = ({ pool }: any) => {
                       name={`range${index + 1}`}
                       min="0"
                       max={maxValue}
-                      value={value.value}
+                      value={project.value}
                       onChange={(e) =>
                         handleValueChange(index, parseInt(e.target.value))
                       }
@@ -296,7 +308,7 @@ export const SupporProjects = ({ pool }: any) => {
                       >
                         <circle cx={3} cy={3} r={3} />
                       </svg>
-                      {value.value}
+                      {project.value}
                     </span>
                   </div>
                 </div>
@@ -306,6 +318,7 @@ export const SupporProjects = ({ pool }: any) => {
           {/*Reset button for all disabled inputs */}
         </ul>
       </div>
+
       {/* Alert when reaching maxvalue of Token staked */}
       {isMaxValueReached && (
         <>
@@ -330,6 +343,8 @@ export const SupporProjects = ({ pool }: any) => {
           open={open}
           setOpen={setOpen}
           checkoutValues={checkoutValues}
+          balance={350}
+          staked={actualCurrentValue}
         />
         <button
           onClick={handleCheckout}
@@ -346,11 +361,12 @@ type CheckoutProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
   checkoutValues: [];
+  balance: number;
+  staked: number;
 };
 
 const Checkout = ({ ...props }: CheckoutProps) => {
-  const { checkoutValues, open, setOpen } = props;
-  console.log(checkoutValues);
+  const { checkoutValues, open, setOpen, balance, staked } = props;
 
   return (
     <>
@@ -405,7 +421,7 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                     <div className="flex h-full flex-col overflow-y-scroll bg-surface py-6 shadow-xl">
                       <div className="px-4 sm:px-6">
                         <Dialog.Title className="text-base leading-6">
-                          Staking summary
+                          Support summary
                         </Dialog.Title>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 text-white sm:px-6">
@@ -423,30 +439,57 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                                     </span>
                                     {/* <span>Current support: 50%</span> */}
                                   </div>
-                                  <div className="flex flex-col">
+                                  <div className="relative flex flex-col">
                                     <span
-                                      className={`text-lg font-thin ${
+                                      className={`text-lg ${
                                         value[1] < 0
                                           ? 'text-red-400'
                                           : 'text-primary'
                                       }`}
                                     >
-                                      New support:{' '}
-                                      <span className="text-2xl">
+                                      {value[1] < 0 ? 'Remove' : 'Added'}
+                                      <span className="absolute right-0 top-0 ml-2  text-2xl">
                                         {value[1]}
                                       </span>
                                     </span>
-                                    <span className="text-sm">
-                                      Percentage of support: 50%
+                                    <span className="text-sm font-thin ">
+                                      total support: {value[2]}
+                                    </span>
+                                    <span className="text-sm font-thin ">
+                                      Percentage of support:{' '}
+                                      {((value[2] / balance) * 100).toFixed(1)}{' '}
+                                      %
                                     </span>
                                   </div>
                                 </div>
                                 <hr className="my-2" />
                               </>
                             ))}
+                            <div className="flex h-[150px] flex-col justify-between pl-4">
+                              <p>Resume</p>
+                              <div className="flex justify-between">
+                                <span className="text-xl font-semibold">
+                                  Balance
+                                </span>
+                                <span className="text-xl ">{balance}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-xl font-semibold">
+                                  Staked
+                                </span>
+                                <span className="text-xl ">{staked}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-xl font-semibold">
+                                  Available
+                                </span>
+                                <span className="text-xl ">
+                                  {balance - staked}
+                                </span>
+                              </div>
+                            </div>
                           </div>
                         </section>
-                        {/* Your content */}
                       </div>
                       <button
                         className="border-2"
@@ -466,7 +509,7 @@ const Checkout = ({ ...props }: CheckoutProps) => {
   );
 };
 
-const TiltCard = ({ children, available, staked }: any) => {
+const TiltCard = ({ children, balance, staked }: any) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -516,7 +559,7 @@ const TiltCard = ({ children, available, staked }: any) => {
         className="absolute inset-4 flex flex-col items-center justify-evenly rounded-xl bg-surface  shadow-lg"
       >
         <div className="absolute left-1/2 top-1/2 z-50 flex min-h-[100px] -translate-x-1/2 -translate-y-1/2 transform flex-col items-center justify-between text-lg text-textSecondary">
-          <span>Available: {available}</span>
+          <span>Balance: {balance}</span>
           <span>Staked: {staked}</span>
         </div>
         {children}
