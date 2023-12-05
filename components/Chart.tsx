@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-interface DonutChartProps {
+interface ChartProps {
   maxValue: number;
   currentValue: number;
 }
 
-export const DonutChart = ({ maxValue, currentValue }: DonutChartProps) => {
+export const Chart = ({ maxValue, currentValue }: ChartProps) => {
   const sideLength = 240; // Adjust as needed
   const strokeWidth = 10;
   const percentage = (currentValue / maxValue) * 100;
@@ -57,8 +57,8 @@ export const DonutChart = ({ maxValue, currentValue }: DonutChartProps) => {
             fill="transparent"
             stroke={
               percentage >= 50
-                ? "var(--color-secondary)"
-                : "var(--color-primary)"
+                ? 'var(--color-secondary)'
+                : 'var(--color-primary)'
             }
             strokeWidth={strokeWidth}
             strokeDasharray={strokeDasharray}
@@ -74,8 +74,8 @@ export const DonutChart = ({ maxValue, currentValue }: DonutChartProps) => {
               fontWeight="bold"
               fill={
                 percentage >= 50
-                  ? "var(--color-secondary)"
-                  : "var(--color-primary)"
+                  ? 'var(--color-secondary)'
+                  : 'var(--color-primary)'
               }
             >
               {percentage.toFixed(0)}%

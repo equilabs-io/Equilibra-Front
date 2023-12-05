@@ -16,7 +16,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useAccount, useContractRead, useContractWrite } from 'wagmi';
 
-import { DonutChart } from './DonutChart';
+import { Chart } from './Chart';
 
 const osmoticPool = `query (id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
     id
@@ -181,7 +181,7 @@ export const SupporProjects = ({ pool }: any) => {
 
   const resetToInitialState = () => {
     setValues([
-      { id: 1, value: 100 },
+      { id: 1, value: 80 },
       { id: 2, value: 200 },
     ]);
     setMaxValue(350);
@@ -213,37 +213,22 @@ export const SupporProjects = ({ pool }: any) => {
   }, [generateCheckoutArray, setOpen]);
 
   const checkoutValues = generateCheckoutArray();
+
   const isMaxValueReached = actualCurrentValue === maxValue;
   const poolAddress = poolInfo?.[0].address;
   const mimeTokenSymbol = poolInfo?.[0].mimeToken?.symbol;
+  const mimeTokenName = poolInfo?.[0].mimeToken?.name;
   const projectList = poolInfo?.[0].projectList?.name;
 
   return (
     <>
-      <div className="grid  grid-cols-3 space-x-2">
+      <div className="grid grid-cols-1 items-center space-x-2  lg:grid-cols-3">
         {/* Pool tokens Info */}
-        <div className="col-span-1  border-purple-500 text-textSecondary">
+        <div className="col-span-1 text-white">
           <div className="mt-2 flex w-full items-center">
-            <div className="space-y-2">
-              <p className="">Your Balances:</p>
-              <span className="mr-2 font-mono text-2xl">{maxValue}</span>
-              <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary">
-                {mimeTokenSymbol}
-              </span>
-              <div>
-                <span className="mr-2 font-mono text-2xl">
-                  {actualCurrentValue}
-                </span>
-                <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary">
-                  {mimeTokenSymbol} already staked
-                </span>
-              </div>
-
-              <TiltCard>
-                <DonutChart
-                  maxValue={maxValue}
-                  currentValue={actualCurrentValue}
-                />
+            <div className="flex w-full items-center justify-center space-y-2">
+              <TiltCard available={350} staked={180}>
+                <Chart maxValue={maxValue} currentValue={actualCurrentValue} />
               </TiltCard>
             </div>
           </div>
@@ -264,28 +249,48 @@ export const SupporProjects = ({ pool }: any) => {
         {/* Ranger inputs */}
         <ul
           role="list"
-          className="col-span-2 grid grid-cols-1 gap-6   border-red-400"
+          className="col-span-2 flex h-full flex-col space-y-8  py-2 "
         >
-          <p className=" text-center">
-            Give support{' '}
-            {/* <span className="text-primary uppercase">{projectList}</span>  */}
-            with your tokens to the projects of your choice
+          <p className="h-fit text-center">
+            Give support with
+            <span className="ml-1 rounded-full bg-highlight px-2 py-1 text-primary">
+              {mimeTokenName}
+            </span>{' '}
+            to the projects of your choice
           </p>
           {values.map((value, index) => (
             <>
               <li
                 key={value.id}
-                className="col-span-1 cursor-pointer divide-y divide-gray-200 rounded-lg bg-background shadow-md transition-all duration-300 ease-in-out hover:shadow-slate-500 "
+                className="shadow-inset max-h-min cursor-pointer rounded-lg bg-surface shadow-background transition-all duration-300 ease-in-out"
               >
-                <div className="p-1 px-4">
-                  <label
-                    htmlFor="medium-range"
-                    className="text-md mb-2 flex items-center justify-evenly font-mono text-gray-900 dark:text-white "
-                  >
-                    id: {value.id}
-                    <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-mono text-2xl font-medium text-white ring-1 ring-inset ring-gray-800">
+                <div className="flex">
+                  <div className="flex items-center justify-center rounded-full  p-2">
+                    <label htmlFor="medium-range" className="text-md">
+                      id: {value.id}
+                    </label>
+                  </div>
+
+                  <div className="flex flex-1 items-center justify-center bg-surface">
+                    <input
+                      type="range"
+                      id={`range${index + 1}`}
+                      disabled={isMaxValueReached}
+                      name={`range${index + 1}`}
+                      min="0"
+                      max={maxValue}
+                      value={value.value}
+                      onChange={(e) =>
+                        handleValueChange(index, parseInt(e.target.value))
+                      }
+                      className="w-full cursor-pointer appearance-none bg-background [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:h-[13px] [&::-webkit-slider-thumb]:w-[13px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary_var [&::-webkit-slider-thumb]:hover:bg-primary"
+                      step={10}
+                    />
+                  </div>
+                  <div className="">
+                    <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-mono text-2xl font-medium text-white">
                       <svg
-                        className="h-1.5 w-1.5 fill-green-400"
+                        className="h-1 w-1 fill-green-400"
                         viewBox="0 0 6 6"
                         aria-hidden="true"
                       >
@@ -293,21 +298,7 @@ export const SupporProjects = ({ pool }: any) => {
                       </svg>
                       {value.value}
                     </span>
-                  </label>
-                  <input
-                    type="range"
-                    id={`range${index + 1}`}
-                    disabled={isMaxValueReached}
-                    name={`range${index + 1}`}
-                    min="0"
-                    max={maxValue}
-                    value={value.value}
-                    onChange={(e) =>
-                      handleValueChange(index, parseInt(e.target.value))
-                    }
-                    className="w-full cursor-pointer appearance-none bg-background [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:h-[13px] [&::-webkit-slider-thumb]:w-[13px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary_var [&::-webkit-slider-thumb]:hover:bg-primary"
-                    step={10}
-                  />
+                  </div>
                 </div>
               </li>
             </>
@@ -318,14 +309,14 @@ export const SupporProjects = ({ pool }: any) => {
       {/* Alert when reaching maxvalue of Token staked */}
       {isMaxValueReached && (
         <>
-          <div className="flex">
-            <span className=" rounded-md border-red-400 p-2">
+          <div className="mt-4 flex items-center justify-center bg-background">
+            <span className="rounded-md  p-2">
               You reach the maximum support value of {maxValue}, please checkout
               or reset and try again
             </span>
             <button
               onClick={handleResetValues}
-              className="ml-4 rounded-md bg-secondary px-4 py-2 text-white "
+              className="ml-4 rounded-md bg-secondary px-4 py-2 font-semibold text-highlight transition-all duration-200  ease-in-out hover:bg-highlight hover:text-primary "
             >
               Reset All Values
             </button>
@@ -342,7 +333,8 @@ export const SupporProjects = ({ pool }: any) => {
         />
         <button
           onClick={handleCheckout}
-          className="w-full rounded-md bg-highlight px-4 py-4  font-semibold text-textSecondary  transition-all duration-200  ease-in-out hover:bg-highlight hover:text-primary"
+          disabled={checkoutValues.length === 0}
+          className="w-full cursor-pointer rounded-md bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all  duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
         >
           Checkout
         </button>
@@ -358,6 +350,7 @@ type CheckoutProps = {
 
 const Checkout = ({ ...props }: CheckoutProps) => {
   const { checkoutValues, open, setOpen } = props;
+  console.log(checkoutValues);
 
   return (
     <>
@@ -365,10 +358,10 @@ const Checkout = ({ ...props }: CheckoutProps) => {
         <Dialog as="div" className="relative z-50" onClose={setOpen}>
           <Transition.Child
             as={Fragment}
-            enter="ease-in-out duration-500"
+            enter="ease-in-out duration-200"
             enterFrom="opacity-0"
             enterTo="opacity-100"
-            leave="ease-in-out duration-500"
+            leave="ease-in-out duration-200"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
@@ -380,20 +373,20 @@ const Checkout = ({ ...props }: CheckoutProps) => {
               <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                 <Transition.Child
                   as={Fragment}
-                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enter="transform transition ease-in-out duration-300 sm:duration-500"
                   enterFrom="translate-x-full"
                   enterTo="translate-x-0"
-                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leave="transform transition ease-in-out duration-300 sm:duration-500"
                   leaveFrom="translate-x-0"
                   leaveTo="translate-x-full"
                 >
                   <Dialog.Panel className="pointer-events-auto relative w-screen max-w-md">
                     <Transition.Child
                       as={Fragment}
-                      enter="ease-in-out duration-500"
+                      enter="ease-in-out duration-200"
                       enterFrom="opacity-0"
                       enterTo="opacity-100"
-                      leave="ease-in-out duration-500"
+                      leave="ease-in-out duration-200"
                       leaveFrom="opacity-100"
                       leaveTo="opacity-0"
                     >
@@ -411,16 +404,56 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                     </Transition.Child>
                     <div className="flex h-full flex-col overflow-y-scroll bg-surface py-6 shadow-xl">
                       <div className="px-4 sm:px-6">
-                        <Dialog.Title className="text-base font-thin leading-6">
-                          Chechout Panel
+                        <Dialog.Title className="text-base leading-6">
+                          Staking summary
                         </Dialog.Title>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 text-white sm:px-6">
-                        {checkoutValues.length <= 0
-                          ? 'No changes to checkout'
-                          : 'Lets goo'}
+                        <section
+                          aria-labelledby="summary-heading"
+                          className="px-4 pb-10 pt-16 sm:px-6 lg:col-start-2 lg:row-start-1 lg:bg-transparent lg:px-0 lg:pb-16"
+                        >
+                          <div className="mx-auto max-w-lg space-y-10 text-textSecondary lg:max-w-none">
+                            {checkoutValues.map((value) => (
+                              <>
+                                <div className="flex items-baseline justify-between ">
+                                  <div className="flex flex-col">
+                                    <span className="text-xl font-semibold">
+                                      Project id: {value[0]}
+                                    </span>
+                                    {/* <span>Current support: 50%</span> */}
+                                  </div>
+                                  <div className="flex flex-col">
+                                    <span
+                                      className={`text-lg font-thin ${
+                                        value[1] < 0
+                                          ? 'text-red-400'
+                                          : 'text-primary'
+                                      }`}
+                                    >
+                                      New support:{' '}
+                                      <span className="text-2xl">
+                                        {value[1]}
+                                      </span>
+                                    </span>
+                                    <span className="text-sm">
+                                      Percentage of support: 50%
+                                    </span>
+                                  </div>
+                                </div>
+                                <hr className="my-2" />
+                              </>
+                            ))}
+                          </div>
+                        </section>
                         {/* Your content */}
                       </div>
+                      <button
+                        className="border-2"
+                        onClick={() => setOpen(false)}
+                      >
+                        SEND TRANSACTION
+                      </button>
                     </div>
                   </Dialog.Panel>
                 </Transition.Child>
@@ -433,15 +466,7 @@ const Checkout = ({ ...props }: CheckoutProps) => {
   );
 };
 
-const Example = () => {
-  return (
-    <div className="w-fit  bg-surface">
-      <TiltCard />
-    </div>
-  );
-};
-
-const TiltCard = ({ children }: any) => {
+const TiltCard = ({ children, available, staked }: any) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -481,18 +506,18 @@ const TiltCard = ({ children }: any) => {
         rotateX,
         transformStyle: 'preserve-3d',
       }}
-      className="relative h-96 w-72 rounded-xl bg-highlight"
+      className="h-96 w-72 rounded-xl  bg-highlight"
     >
       <div
         style={{
           transform: 'translateZ(75px)',
           transformStyle: 'preserve-3d',
         }}
-        className="absolute inset-4 grid place-content-center rounded-xl bg-surface  shadow-lg"
+        className="absolute inset-4 flex flex-col items-center justify-evenly rounded-xl bg-surface  shadow-lg"
       >
-        <div className="absolute left-1/2 top-1/2 z-50 flex -translate-x-1/2 -translate-y-1/2 transform flex-col items-center justify-center border-2">
-          <span>Available: 350</span>
-          <span>Staked: 200</span>
+        <div className="absolute left-1/2 top-1/2 z-50 flex min-h-[100px] -translate-x-1/2 -translate-y-1/2 transform flex-col items-center justify-between text-lg text-textSecondary">
+          <span>Available: {available}</span>
+          <span>Staked: {staked}</span>
         </div>
         {children}
       </div>
