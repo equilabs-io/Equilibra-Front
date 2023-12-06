@@ -12,7 +12,7 @@ import POOL_ABI from '@/constants/abis/Pool.json';
 import { useDebounce } from '@/hooks/useDebounce';
 import { getUrqlClient } from '@/services/urqlService';
 import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useAccount, useContractRead, useContractWrite } from 'wagmi';
 
@@ -98,6 +98,7 @@ export const SupporProjects = ({ pool }: any) => {
 
   //checkout slideOver state
   const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState();
 
   const [poolInfo, setPoolInfo] = useState<any>([{}]);
   const [participantSupports, setParticipantSupports] = useState<any>([{}]);
@@ -110,6 +111,7 @@ export const SupporProjects = ({ pool }: any) => {
     const id = fourChars.substring(0, 1);
     return id;
   }
+  //return the last element of a string, use it to get the id
   function getIdOfProyectId(str: string): string {
     return str?.[str.length - 1];
   }
@@ -142,7 +144,13 @@ export const SupporProjects = ({ pool }: any) => {
       ]);
 
       const participantSupports = result.data.osmoticPool.poolProjects.map(
-        (project) => {
+        (project: {
+          id: string;
+          poolProjectSupports: {
+            support: any;
+            poolProjectParticipantsSupports: { support: any }[];
+          }[];
+        }) => {
           return {
             id: getIdOfProyectId(project.id),
             value: project.poolProjectSupports?.[0].support,
@@ -161,24 +169,15 @@ export const SupporProjects = ({ pool }: any) => {
   }, []);
 
   let actualCurrentValue = participantSupports.reduce(
-    (acc, curr) => +acc + +curr.value,
+    (acc: string | number, curr: { value: string | number }) =>
+      +acc + +curr.value,
     0,
   );
 
-  //   const [newValues, setNewValues] = participantSupports.map((project, idx) => {
-  //     return {
-  //       id: getIdOfProyectId(project.id),
-  //       value: project.poolProjectSupports?.[0].support,
-  //       static: project.poolProjectSupports?.[0].support,
-  //       participantSupport:
-  //         project.poolProjectSupports?.[0].poolProjectParticipantsSupports?.[0]
-  //           .support,
-  //     };
-  //   });
-
+  //function that updates the values of participantSupport throw the range input
   const handleValueChange = (index: number, newValue: number) => {
     // Update the corresponding value in the values array
-    setParticipantSupports((prevValues) => {
+    setParticipantSupports((prevValues: any) => {
       const updatedValues = [...prevValues];
       updatedValues[index] = { ...updatedValues[index], value: newValue };
       return updatedValues;
@@ -186,10 +185,6 @@ export const SupporProjects = ({ pool }: any) => {
   };
 
   const resetToInitialState = () => {
-    setValues([
-      { id: 1, value: 80 },
-      { id: 2, value: 200 },
-    ]);
     setMaxValue(350);
     // Reset any other state variables
   };
@@ -200,19 +195,19 @@ export const SupporProjects = ({ pool }: any) => {
     }
   };
 
-  console.log(participantSupports.map((project) => typeof project));
-
-  //Function that return array to store the values before submiting transaction
+  //Function that return array to store the [id, values, newSupport] before submiting transaction
   const generateCheckoutArray = useCallback(() => {
     let checkoutValues: any = [];
 
-    participantSupports.forEach((value) => {
-      const difference = value.value - value.static;
-      const totalNewSupport = value.value;
-      if (difference !== 0) {
-        checkoutValues.push([value.id, difference, totalNewSupport]);
-      }
-    });
+    participantSupports.forEach(
+      (value: { value: number; static: number; id: any }) => {
+        const difference = value.value - value.static;
+        const totalNewSupport = value.value;
+        if (difference !== 0) {
+          checkoutValues.push([value.id, difference, totalNewSupport]);
+        }
+      },
+    );
     return checkoutValues;
   }, [participantSupports]);
 
@@ -270,51 +265,80 @@ export const SupporProjects = ({ pool }: any) => {
             to the projects of your choice
           </p>
 
-          {participantSupports.map((project, index) => (
-            <>
-              <li
-                key={project.id}
-                className="shadow-inset max-h-min cursor-pointer rounded-lg bg-surface shadow-background transition-all duration-300 ease-in-out"
-              >
-                <div className="flex">
-                  <div className="flex items-center justify-center rounded-full  p-2">
-                    <label htmlFor="medium-range" className="text-md">
-                      id: {project.id}
-                    </label>
-                  </div>
+          {participantSupports.map(
+            (
+              project: {
+                id:
+                  | boolean
+                  | React.Key
+                  | React.ReactElement<
+                      any,
+                      string | React.JSXElementConstructor<any>
+                    >
+                  | Iterable<React.ReactNode>
+                  | React.PromiseLikeOfReactNode
+                  | null
+                  | undefined;
+                value:
+                  | string
+                  | number
+                  | boolean
+                  | React.ReactElement<
+                      any,
+                      string | React.JSXElementConstructor<any>
+                    >
+                  | Iterable<React.ReactNode>
+                  | React.PromiseLikeOfReactNode
+                  | null
+                  | undefined;
+              },
+              index: number,
+            ) => (
+              <>
+                <li
+                  key={project.id}
+                  className="shadow-inset max-h-min cursor-pointer rounded-lg bg-surface shadow-background transition-all duration-300 ease-in-out"
+                >
+                  <div className="flex">
+                    <div className="flex items-center justify-center rounded-full  p-2">
+                      <label htmlFor="medium-range" className="text-md">
+                        id: {project.id}
+                      </label>
+                    </div>
 
-                  <div className="flex flex-1 items-center justify-center bg-surface">
-                    <input
-                      type="range"
-                      id={`range${index + 1}`}
-                      disabled={isMaxValueReached}
-                      name={`range${index + 1}`}
-                      min="0"
-                      max={maxValue}
-                      value={project.value}
-                      onChange={(e) =>
-                        handleValueChange(index, parseInt(e.target.value))
-                      }
-                      className="w-full cursor-pointer appearance-none bg-background [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:h-[13px] [&::-webkit-slider-thumb]:w-[13px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary_var [&::-webkit-slider-thumb]:hover:bg-primary"
-                      step={10}
-                    />
+                    <div className="flex flex-1 items-center justify-center bg-surface">
+                      <input
+                        type="range"
+                        id={`range${index + 1}`}
+                        disabled={isMaxValueReached}
+                        name={`range${index + 1}`}
+                        min="0"
+                        max={maxValue}
+                        value={project.value}
+                        onChange={(e) =>
+                          handleValueChange(index, parseInt(e.target.value))
+                        }
+                        className="w-full cursor-pointer appearance-none bg-background [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:h-[13px] [&::-webkit-slider-thumb]:w-[13px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary_var [&::-webkit-slider-thumb]:hover:bg-primary"
+                        step={10}
+                      />
+                    </div>
+                    <div className="">
+                      <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-mono text-2xl font-medium text-white">
+                        <svg
+                          className="h-1 w-1 fill-green-400"
+                          viewBox="0 0 6 6"
+                          aria-hidden="true"
+                        >
+                          <circle cx={3} cy={3} r={3} />
+                        </svg>
+                        {project.value}
+                      </span>
+                    </div>
                   </div>
-                  <div className="">
-                    <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-mono text-2xl font-medium text-white">
-                      <svg
-                        className="h-1 w-1 fill-green-400"
-                        viewBox="0 0 6 6"
-                        aria-hidden="true"
-                      >
-                        <circle cx={3} cy={3} r={3} />
-                      </svg>
-                      {project.value}
-                    </span>
-                  </div>
-                </div>
-              </li>
-            </>
-          ))}
+                </li>
+              </>
+            ),
+          )}
           {/*Reset button for all disabled inputs */}
         </ul>
       </div>
@@ -354,6 +378,7 @@ export const SupporProjects = ({ pool }: any) => {
           Checkout
         </button>
       </div>
+      {/* <TransactionModal open={open} setOpen={setOpen} /> */}
     </>
   );
 };
@@ -367,7 +392,11 @@ type CheckoutProps = {
 
 const Checkout = ({ ...props }: CheckoutProps) => {
   const { checkoutValues, open, setOpen, balance, staked } = props;
-
+  const [openModal, setOpenModal] = useState(false);
+  const handle = () => {
+    setOpen(false);
+    setOpenModal(true);
+  };
   return (
     <>
       <Transition.Root show={open} as={Fragment}>
@@ -491,10 +520,7 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                           </div>
                         </section>
                       </div>
-                      <button
-                        className="border-2"
-                        onClick={() => setOpen(false)}
-                      >
+                      <button className="border-2" onClick={handle}>
                         SEND TRANSACTION
                       </button>
                     </div>
@@ -505,6 +531,7 @@ const Checkout = ({ ...props }: CheckoutProps) => {
           </div>
         </Dialog>
       </Transition.Root>
+      <TransactionModal open={openModal} setOpen={setOpenModal} />
     </>
   );
 };
@@ -519,7 +546,11 @@ const TiltCard = ({ children, balance, staked }: any) => {
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['3deg', '-3deg']);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-3deg', '3deg']);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: {
+    target: { getBoundingClientRect: () => any };
+    clientX: number;
+    clientY: number;
+  }) => {
     const rect = e.target.getBoundingClientRect();
 
     const width = rect.width;
@@ -567,3 +598,104 @@ const TiltCard = ({ children, balance, staked }: any) => {
     </motion.div>
   );
 };
+
+type TransactionModalProps = {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
+
+export default function TransactionModal({
+  open,
+  setOpen,
+}: TransactionModalProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  //example function to test ui styles
+  const submitTransaction = async () => {
+    try {
+      // Simulate API call or any asynchronous operation with a 5-second delay
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
+      // After the delay, set the success state to true
+      setIsSuccess(true);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Transaction submission failed:', error);
+    } finally {
+      // Set loading state to false after the transaction is processed
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      submitTransaction();
+    }
+  }, [open]);
+
+  return (
+    <Transition.Root show={open} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-slate-700 bg-opacity-50 transition-opacity" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+                <div className="flex justify-center">
+                  {isLoading && (
+                    <div className="h-16 w-16 animate-spin rounded-full border-b-2 border-t-2 border-indigo-500" />
+                  )}
+
+                  {isSuccess && (
+                    <div className="text-6xl text-primary">&#10003;</div>
+                  )}
+                </div>
+
+                <div className="mt-4 text-center">
+                  {isLoading && (
+                    <p className="text-highlight">Processing transaction...</p>
+                  )}
+                  {isSuccess && (
+                    <p className="text-surface_var">Transaction successful!</p>
+                  )}
+                </div>
+
+                {isSuccess && (
+                  <div className="mt-5 sm:mt-6">
+                    <button
+                      type="button"
+                      className="inline-flex w-full justify-center rounded-md bg-background px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-highlight hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      onClick={() => setOpen(false)}
+                    >
+                      Go back to dashboard
+                    </button>
+                  </div>
+                )}
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+  );
+}
