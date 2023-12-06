@@ -1,3 +1,3 @@
 export * from "./Hero";
-export * from "./PillardsStack";
+export * from "./PillarsStack";
 export * from "./Team";
