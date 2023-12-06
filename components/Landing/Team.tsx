@@ -28,17 +28,21 @@ const equilibraTeam = [
   {
     name: "Lucho",
     role: "Frontend Developer",
-    imageUrl: "/logo.png",
+    imageUrl: "/lucho-profile.jpg",
     socialMedia: [
-      { title: "Twitter", href: "https://twitter.com", icon: TwitterIcon },
+      {
+        title: "Twitter",
+        href: "https://twitter.com/LuchoSca",
+        icon: TwitterIcon,
+      },
       {
         title: "GitHub",
-        href: "https://github.com",
+        href: "https://github.com/Lucianosc",
         icon: GitHubIcon,
       },
       {
         title: "LinkedIn",
-        href: "https://www.linkedin.com",
+        href: "https://www.linkedin.com/in/luciano-scaminaci/",
         icon: LinkedInIcon,
       },
     ],
@@ -46,17 +50,11 @@ const equilibraTeam = [
   {
     name: "Vero",
     role: "UX/UI Designer",
-    imageUrl: "/logo.png",
+    imageUrl: "/vero-profile.jpg",
     socialMedia: [
-      { title: "Twitter", href: "https://twitter.com", icon: TwitterIcon },
-      {
-        title: "GitHub",
-        href: "https://github.com",
-        icon: GitHubIcon,
-      },
       {
         title: "LinkedIn",
-        href: "https://www.linkedin.com",
+        href: "https://www.linkedin.com/in/verónica-blanco-313890108/",
         icon: LinkedInIcon,
       },
     ],
@@ -83,47 +81,35 @@ const equilibraTeam = [
 
 export const Team = () => {
   return (
-    <div className="bg-gray-900 py-24 rounded-2xl">
-      <div className="mx-auto max-w-7xl px-6 text-center lg:px-8">
+    <div className="bg-gray-900 py-16 sm:py-20 rounded-md mx-auto mt-20">
+      <div className=" max-w-7xl px-6 text-center lg:px-8">
         <div className="mx-auto max-w-2xl">
-          <h2 className="text-3xl font-bold tracking-tight spacing text-primary sm:text-4xl">
-            Meet our pioneers
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+            Meet our team
           </h2>
-          <p className="mt-4 text-lg leading-8 text-textSecondary">
-            An amazing web3 team supercharged to push the boundaries of
-            innovation.
+          <p className="mt-4 text-lg leading-8 text-gray-400">
+            We’re a dynamic group of web3 enthusiasts ready to push the
+            boundaries of innovation.
           </p>
         </div>
         <ul
           role="list"
-          className="mx-auto mt-20 grid max-w-2xl grid-cols-1 gap-6 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-8"
+          className="flex flex-wrap justify-center gap-x-8 gap-y-10 mt-16 text-center"
         >
-          {equilibraTeam.map((person) => (
-            <li
-              key={person.name}
-              className="rounded-2xl bg-background px-8 py-10 hover:border-[1px] hover:border-primary"
-            >
-              {person.imageUrl && (
-                <div className="mx-auto h-48 w-48 md:h-56 md:w-56 relative">
-                  <Image
-                    src={person.imageUrl}
-                    alt=""
-                    layout="fill"
-                    objectFit="fit"
-                    className="rounded-full "
-                  />
-                </div>
-              )}
-
-              <h3 className="mt-6 text-base font-semibold leading-7 tracking-tight text-white">
-                {person.name}
+          {equilibraTeam.map(({ name, imageUrl, role, socialMedia }) => (
+            <li key={name} className="w-[180px]">
+              <Image
+                width={240}
+                height={240}
+                className="mx-auto h-32 w-32 rounded-full object-cover"
+                src={imageUrl}
+                alt="team member photo"
+              />
+              <h3 className="mt-4 text-base font-semibold leading-7 tracking-tight text-white">
+                {name}
               </h3>
-              <p className="text-sm leading-6 text-gray-400">{person.role}</p>
-              <ul role="list" className="mt-6 flex justify-center gap-x-6">
-                <SocialMediaIcons
-                  socialMediaProfiles={person.socialMedia ?? []}
-                />
-              </ul>
+              <p className="text-sm leading-6 text-gray-400">{role}</p>
+              <SocialMediaIcons socialMediaProfiles={socialMedia ?? []} />
             </li>
           ))}
         </ul>
