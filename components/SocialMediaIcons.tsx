@@ -1,4 +1,3 @@
-import Link from "next/link";
 import clsx from "clsx";
 
 type SocialMediaProfile = {
@@ -47,16 +46,23 @@ export function SocialMediaIcons({
   socialMediaProfiles: SocialMediaProfile[];
 }) {
   return (
-    <ul role="list" className={clsx("flex gap-x-6 text-gray-400", className)}>
+    <ul
+      role="list"
+      className={clsx(
+        "flex justify-center gap-6 my-4 text-gray-400",
+        className
+      )}
+    >
       {socialMediaProfiles?.map((socialMediaProfile) => (
         <li key={socialMediaProfile.title}>
-          <Link
+          <a
             href={socialMediaProfile.href}
             aria-label={socialMediaProfile.title}
             className="transition hover:text-gray-200"
+            target="_blank"
           >
             <socialMediaProfile.icon className="h-6 w-6 fill-current" />
-          </Link>
+          </a>
         </li>
       ))}
     </ul>
