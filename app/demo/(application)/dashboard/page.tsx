@@ -105,26 +105,6 @@ export default function ProfileDashboard({}) {
         <ProfileHeader />
 
         {/* Stats */}
-        <div>
-          <h3 className="text-base font-semibold leading-6 text-gray-900">
-            Last 30 days
-          </h3>
-          <dl className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-            {stats.map((item) => (
-              <div
-                key={item.name}
-                className="overflow-hidden rounded-lg bg-surface px-4 py-5 shadow sm:p-6"
-              >
-                <dt className="truncate text-sm font-medium text-surface_var">
-                  {item.name}
-                </dt>
-                <dd className="mt-1 text-3xl font-semibold tracking-tight text-primary">
-                  {item.stat}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
 
         {/*Main content - Pool Disclousure comp */}
         {queryPoolbyOwner.length > 0 &&
@@ -139,11 +119,6 @@ export default function ProfileDashboard({}) {
     </>
   );
 }
-const stats = [
-  { name: 'Total Support Given', stat: '450' },
-  { name: 'Pool Owner', stat: '2' },
-  { name: 'Staking Projects', stat: '4' },
-];
 
 type WrapperProps = {
   label?: string;
@@ -326,6 +301,7 @@ const MyModal = ({ ...props }: any) => {
   );
 };
 
+//TODO!: Delete this components afterwards
 const Wrapper = ({ label = 'Projects', children }: WrapperProps) => {
   return (
     <>

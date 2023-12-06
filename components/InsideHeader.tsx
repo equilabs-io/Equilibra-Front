@@ -1,6 +1,6 @@
-import React from "react";
-import Link from "next/link";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import React from 'react';
+import Link from 'next/link';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 type InsideHeaderProps = {
   title: string;
@@ -18,15 +18,15 @@ export const InsideHeader = ({
   return (
     <>
       <header className="w-full">
-        <main className="container m-auto px-6 pt-32 pb-32 md:px-12 lg:pt-[4.8rem] lg:pb-[4.8rem] lg:px-7">
-          <div className="flex items-center flex-wrap px-2 md:px-0">
-            <div className="relative lg:w-8/12 lg:py-24 xl:py-32 space-y-8">
-              <h2 className="font-bold md:text-7xl lg:w-10/12 text-surface_var">
+        <main className="container mx-auto px-6 pb-32 pt-32 md:px-12 lg:px-7 lg:pb-[4.8rem] lg:pt-[4.8rem]">
+          <div className="flex flex-wrap items-center px-2 md:px-0">
+            <div className="relative space-y-8 lg:w-8/12 lg:py-24 xl:py-32">
+              <h2 className="font-bold text-surface_var md:text-7xl lg:w-10/12">
                 {title}
               </h2>
-              <p className="text-textSecondary text-lg">{description}</p>
+              <p className="text-lg text-textSecondary">{description}</p>
             </div>
-            <div className="flex justify-center md:w-full lg:w-1/3 mt-10 lg:mt-0">
+            <div className="mt-10 flex justify-center md:w-full lg:mt-0 lg:w-1/3">
               <Link href={href}>
                 <button
                   type="button"
@@ -44,7 +44,7 @@ export const InsideHeader = ({
           </div>
         </main>
       </header>
-      <div className=" w-full h-10 rounded-full flex items-center justify-center border border-highlight">
+      <div className=" flex h-10 w-full items-center justify-center rounded-full border border-highlight">
         Search
       </div>
     </>
