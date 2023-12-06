@@ -34,11 +34,13 @@ export const ProfileHeader = () => {
 
             <div className="peer flex h-full w-full flex-col justify-between">
               {stats.map((item) => (
-                <div className="flex items-center justify-between rounded-lg bg-surface px-4 py-8">
-                  <span className="text-lg text-surface_var peer-hover:text-red-300">
+                <div className="group flex items-center justify-between rounded-lg bg-surface px-4 py-8  ">
+                  <span className="text-lg text-surface_var transition-all duration-300 ease-in-out group-hover:scale-90">
                     {item.name}
                   </span>
-                  <span className="text-3xl text-primary">{item.stat}</span>
+                  <span className="text-3xl text-primary transition-all duration-300 ease-in-out group-hover:scale-125 ">
+                    {item.stat}
+                  </span>
                 </div>
               ))}
             </div>
