@@ -1,7 +1,8 @@
-import React from "react";
-import Image from "next/image";
-import CustomButton from "./CustomButton";
-import { Link } from "./Link";
+import React from 'react';
+import Image from 'next/image';
+
+import CustomButton from './CustomButton';
+import { Link } from './Link';
 
 interface Project {
   id: string;
@@ -39,24 +40,29 @@ export default function ProjectCard({ project }: { project: Project }) {
 
   //helper function to get the string after the first dash -
   function getFirstLetterAfterHyphen(str: string): string {
-    const hyphenIndex = str.indexOf("-");
+    const hyphenIndex = str.indexOf('-');
     if (hyphenIndex !== -1 && hyphenIndex < str.length - 1) {
       return str.charAt(hyphenIndex + 1);
     }
-    return "";
+    return '';
   }
 
+  const handle = () => {
+    console.log('hello');
+  };
+
   return (
-    <section className="group relative flex flex-col p-2 overflow-hidden rounded-lg bg-surface hover:shadow-md hover:shadow-highlight">
-      <div className="bg-white sm:aspect-none group-hover:opacity-100 h-[180px] ">
+    <section className="group relative flex flex-col overflow-hidden rounded-lg bg-surface p-2 hover:shadow-md hover:shadow-highlight">
+      <div className="sm:aspect-none h-[180px] bg-white group-hover:opacity-100 ">
         {category && (
-          <div className="flex flex-1 flex-col justify-end m-2 absolute top-2 left-2">
+          <div className="absolute left-2 top-2 m-2 flex flex-1 flex-col justify-end">
             {/* <span className="opacity-80  inline-flex items-center rounded-full bg-primary px-4 py-2 text-2xl font-medium text-black transition-opacity duration-200 ease-in">
               {getFirstLetterAfterHyphen(id)}
             </span> */}
           </div>
         )}
         {(content?.fileHash && (
+          // TODO! SEE image error when "use client"
           <Image
             src={`${process.env.PINATA_GATEWAY_URL}${fileHash}`}
             alt="project img"
@@ -65,50 +71,50 @@ export default function ProjectCard({ project }: { project: Project }) {
             className="h-full w-full object-cover object-center"
           />
         )) ||
-          ""}
+          ''}
       </div>
-      <div className="flex flex-1 flex-col p-4 bg-surface transition-all duration-200 ease-out">
+      <div className="flex flex-1 flex-col bg-surface p-4 transition-all duration-200 ease-out">
         <Link href={`/demo/projects/${id}`}>
-          <h3 className="truncate mb-1">{name ? name : "-no name-"}</h3>
+          <h3 className="mb-1 truncate">{name ? name : '-no name-'}</h3>
         </Link>
-        <p className="mb-0 line-clamp-3 text-textSecondary font-thin min-h-[75px]">
+        <p className="mb-0 line-clamp-3 min-h-[75px] font-thin text-textSecondary">
           {description}
         </p>
       </div>
       {/* Project Details */}
-      <div className="flex flex-1 flex-col p-4 bg-surface gap-2">
-        <div className="flex justify-between items-center">
-          <h4 className="truncate mb-1 text-textSecondary">Project Details</h4>
+      <div className="flex flex-1 flex-col gap-2 bg-surface p-4">
+        <div className="flex items-center justify-between">
+          <h4 className="mb-1 truncate text-textSecondary">Project Details</h4>
           <span
-            className={`max-w-fit inline-flex items-center gap-x-1.5 rounded-md px-4 py-0.5 text-sm font-medium  ${
+            className={`inline-flex max-w-fit items-center gap-x-1.5 rounded-md px-4 py-0.5 text-sm font-medium  ${
               active
-                ? "text-primary_var bg-surface_var"
-                : "text-red-300 bg-highlight"
+                ? 'bg-surface_var text-primary_var'
+                : 'bg-highlight text-red-300'
             }`}
           >
             <svg
               className={`h-1.5 w-1.5  ${
                 active
-                  ? "text-primary_var fill-primary_var"
-                  : "text-highlight fill-red-500"
+                  ? 'fill-primary_var text-primary_var'
+                  : 'fill-red-500 text-highlight'
               }`}
               viewBox="0 0 6 6"
               aria-hidden="true"
             >
               <circle cx={3} cy={3} r={3} />
             </svg>
-            {active ? "Active" : "Inactive"}
+            {active ? 'Active' : 'Inactive'}
           </span>
         </div>
 
-        <div className="bg-highlight p-2 flex justify-between items-center">
-          <span className="font-bold text-textSecondary">Streaming:</span>{" "}
-          <span className="text-xl font-mono">{flowLastRates}</span>
+        <div className="flex items-center justify-between bg-highlight p-2">
+          <span className="font-bold text-textSecondary">Streaming:</span>{' '}
+          <span className="font-mono text-xl">{flowLastRates}</span>
         </div>
 
-        <div className="bg-highlight p-2 flex justify-between items-center">
-          <span className="font-bold text-textSecondary">Amount streamed:</span>{" "}
-          <span className="text-xl font-mono">0</span>
+        <div className="flex items-center justify-between bg-highlight p-2">
+          <span className="font-bold text-textSecondary">Amount streamed:</span>{' '}
+          <span className="font-mono text-xl">0</span>
         </div>
 
         <div className="my-2"></div>
@@ -116,7 +122,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           <CustomButton
             text="Add to List"
             styles={`w-full  ${
-              active ? "" : "bg-red-200 text-highlight hover:bg-red-300"
+              active ? '' : 'bg-red-200 text-highlight hover:bg-red-300'
             }`}
           />
         </div>
