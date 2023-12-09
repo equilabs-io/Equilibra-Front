@@ -155,15 +155,15 @@ export default function Support() {
           <p>
             You can give support with your tokens to the projects you selected
           </p>
-          <div className="mt-2 w-full flex items-center">
+          <div className="mt-2 flex w-full items-center">
             <div className="space-y-2">
               <p className="">Your Balances:</p>
-              <span className="mr-2 text-2xl font-mono">{maxValue}</span>
+              <span className="mr-2 font-mono text-2xl">{maxValue}</span>
               <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary">
                 FTK
               </span>
               <div>
-                <span className="mr-2 text-2xl font-mono">
+                <span className="mr-2 font-mono text-2xl">
                   {actualCurrentValue}
                 </span>
                 <span className="inline-flex flex-shrink-0 items-center rounded-full bg-surface px-4 py-1  font-medium text-primary">
@@ -171,7 +171,7 @@ export default function Support() {
                 </span>
               </div>
             </div>
-            <div className="flex-1 flex justify-end">
+            <div className="flex flex-1 justify-end">
               <DonutChart
                 maxValue={maxValue}
                 currentValue={actualCurrentValue}
@@ -239,15 +239,15 @@ export default function Support() {
             <>
               <li
                 key={value.id}
-                className="col-span-1 divide-y divide-gray-200 rounded-lg bg-background shadow-md hover:shadow-slate-500 cursor-pointer transition-all duration-300 ease-in-out"
+                className="col-span-1 cursor-pointer divide-y divide-gray-200 rounded-lg bg-background shadow-md transition-all duration-300 ease-in-out hover:shadow-slate-500"
               >
                 <div className="px-4 py-2">
                   <label
                     htmlFor="medium-range"
-                    className="mb-2 text-md font-mono text-gray-900 dark:text-white flex items-center justify-evenly"
+                    className="text-md mb-2 flex items-center justify-evenly font-mono text-gray-900 dark:text-white"
                   >
                     id: {value.id}
-                    <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-medium text-white ring-1 ring-inset ring-gray-800 font-mono text-2xl">
+                    <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-mono text-2xl font-medium text-white ring-1 ring-inset ring-gray-800">
                       <svg
                         className="h-1.5 w-1.5 fill-green-400"
                         viewBox="0 0 6 6"
@@ -269,7 +269,7 @@ export default function Support() {
                     onChange={(e) =>
                       handleValueChange(index, parseInt(e.target.value))
                     }
-                    className="appearance-none bg-transparent w-full cursor-pointer [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-[20px] [&::-webkit-slider-thumb]:w-[20px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
+                    className="w-full cursor-pointer appearance-none bg-transparent [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:h-[20px] [&::-webkit-slider-thumb]:w-[20px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
                     step={10}
                   />
                 </div>
@@ -281,13 +281,13 @@ export default function Support() {
         {isMaxValueReached && (
           <>
             <div className="flex">
-              <span className="border-2 p-2 border-red-400 rounded-md">
+              <span className="rounded-md border-2 border-red-400 p-2">
                 You reach the maximum support value of {maxValue}, please
                 checkout or reset and try again
               </span>
               <button
                 onClick={handleResetValues}
-                className="bg-secondary text-white px-4 py-2 rounded-md ml-4 "
+                className="ml-4 rounded-md bg-secondary px-4 py-2 text-white "
               >
                 Reset All Values
               </button>
@@ -297,7 +297,7 @@ export default function Support() {
         <div className="mt-24">
           <button
             onClick={() => console.log(generateCheckoutArray())}
-            className="text-primary px-4 py-4 rounded-md  w-full border border-primary hover:bg-primary  hover:text-black transition-all  duration-200 ease-in-out font-semibold"
+            className="w-full rounded-md border border-primary  px-4 py-4 font-semibold text-primary  transition-all duration-200  ease-in-out hover:bg-primary hover:text-black"
           >
             Checkout
           </button>
