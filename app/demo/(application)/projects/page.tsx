@@ -1,9 +1,10 @@
-import React from 'react';
-import { InsideHeader } from '@/components/InsideHeader';
-import ProjectCard from '@/components/ProjectCard';
-import Search from '@/components/Search';
-import { getProjects } from '@/services/getProjectsService';
-import { getUrqlClient } from '@/services/urqlService';
+import React from "react";
+import { InsideHeader } from "@/components/InsideHeader";
+import ProjectCard from "@/components/Project/ProjectCard";
+import Search from "@/components/Search";
+import { getProjects } from "@/services/getProjectsService";
+import { getUrqlClient } from "@/services/urqlService";
+import ProjectGrid from "@/components/Project/ProjectGrid";
 
 const projectsQuery = `
   query {
@@ -17,11 +18,11 @@ const projectsQuery = `
 `;
 //helper function to get the string after the first dash
 function getStringAfterFirstDash(str: string): string {
-  const index = str.indexOf('-');
+  const index = str.indexOf("-");
   if (index !== -1) {
     return str.slice(index + 1);
   }
-  return '';
+  return "";
 }
 export default async function Projects({
   searchParams,
@@ -29,7 +30,7 @@ export default async function Projects({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const search =
-    typeof searchParams.search === 'string' ? searchParams.search : undefined;
+    typeof searchParams.search === "string" ? searchParams.search : undefined;
 
   const projectsFlowLastRate = async () => {
     const projectsQueryResult = await getUrqlClient().query(projectsQuery, {});
@@ -81,21 +82,7 @@ export default async function Projects({
       {/* <Search search={search} /> */}
 
       {/* projects ... */}
-      <div className="mt-44 flex w-full flex-col items-center justify-center gap-8 rounded-lg px-6 xl:gap-16">
-        <div className="relative w-full max-w-[1440px] pb-8">
-          <h2 className="sr-only">projects</h2>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(310px,1fr))] gap-6 md:grid-cols-[repeat(auto-fit,minmax(360px,1fr))]">
-            {PROJECTS?.map((project, idx) => {
-              if (project)
-                return (
-                  <div key={idx}>
-                    <ProjectCard project={project} />
-                  </div>
-                );
-            })}
-          </div>
-        </div>
-      </div>
+      <ProjectGrid projects={PROJECTS} />
     </>
   );
 }
