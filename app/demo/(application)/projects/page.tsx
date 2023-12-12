@@ -4,7 +4,7 @@ import ProjectCard from "@/components/Project/ProjectCard";
 import Search from "@/components/Search";
 import { getProjects } from "@/services/getProjectsService";
 import { getUrqlClient } from "@/services/urqlService";
-import ProjectGrid from "@/components/Project/ProjectGrid";
+import ProjectGrid from "@/components/Project/ProjectsGrid";
 
 const projectsQuery = `
   query {
@@ -82,6 +82,7 @@ export default async function Projects({
       {/* <Search search={search} /> */}
 
       {/* projects ... */}
+
       <ProjectGrid projects={PROJECTS} />
     </>
   );

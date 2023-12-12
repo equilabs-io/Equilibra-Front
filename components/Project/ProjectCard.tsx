@@ -25,10 +25,10 @@ interface Content {
 
 export default function ProjectCard({
   project,
-  addIdToArray,
+  projectCheckout,
 }: {
   project: Project;
-  addIdToArray: () => number;
+  projectCheckout: string[];
 }) {
   const {
     id,
@@ -45,7 +45,7 @@ export default function ProjectCard({
 
   return (
     <section className="group relative flex flex-col overflow-hidden rounded-lg bg-surface p-2 hover:shadow-md hover:shadow-highlight">
-      <div className="sm:aspect-none h-[180px] bg-white group-hover:opacity-100">
+      <div className="sm:aspect-none h-[180px] bg-background group-hover:opacity-100">
         {category && (
           <div className="absolute left-2 top-2 m-2 flex flex-1 flex-col justify-end">
             {/* <span className="opacity-80  inline-flex items-center rounded-full bg-primary px-4 py-2 text-2xl font-medium text-black transition-opacity duration-200 ease-in">
@@ -111,10 +111,12 @@ export default function ProjectCard({
         </div>
 
         <div className="my-2"></div>
-        <AddListButton active={active} id={id} />
+        <AddListButton
+          active={active}
+          id={id}
+          projectCheckout={projectCheckout}
+        />
       </div>
-
-      <button onClick={() => addIdToArray(id)}>addid</button>
     </section>
   );
 }

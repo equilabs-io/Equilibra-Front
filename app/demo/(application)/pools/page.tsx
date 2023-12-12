@@ -42,12 +42,12 @@ export default async function Pools() {
       />
       <ul
         role="list"
-        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 w-full justify-center p-2 lg:p-0 mt-36"
+        className="mt-36 grid w-full grid-cols-1 justify-center gap-6 p-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:p-0"
       >
         {poolsQuery.osmoticPools.map((pool: PoolCardProps, index: number) => (
           <li
             key={pool.name}
-            className="col-span-1 flex flex-col rounded-lg overflow-hidden"
+            className="col-span-1 flex flex-col overflow-hidden rounded-lg"
           >
             <Link href={`/demo/pools/${pool.id}`}>
               <div className="flex flex-1 flex-col p-1">
