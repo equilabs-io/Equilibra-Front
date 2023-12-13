@@ -5,7 +5,7 @@ interface InputFormProps {
   handleChange: (
     value: string | number,
     name: string,
-    index: number | undefined
+    index: number | undefined,
   ) => void;
   type?: string;
   name: string;
@@ -14,6 +14,7 @@ interface InputFormProps {
   required?: boolean;
   rows?: number;
   index?: number;
+  disabled?: boolean;
 }
 
 export default function InputText({
@@ -26,9 +27,10 @@ export default function InputText({
   required = false,
   rows,
   index,
+  disabled = false,
 }: InputFormProps) {
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => {
     handleChange(e.target.value, name, index);
   };
@@ -51,11 +53,13 @@ export default function InputText({
             rows={rows}
             value={value}
             autoComplete={name}
-            className="block w-full h-full  placeholder-grey_light first:rounded-md border-0 bg-surface py-1.5 px-3 shadow-sm ring-1 ring-inset focus:outline-none ring-grey_mlight focus:ring-2 focus:ring-inset focus:ring-primary text-sm leading-6"
+            className="block h-full w-full  border-0 bg-surface px-3 py-1.5 text-sm leading-6 placeholder-grey_light shadow-sm ring-1 ring-inset ring-grey_mlight first:rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
             placeholder={placeholder}
+            disabled={disabled}
           />
         ) : (
           <input
+            disabled={disabled}
             required={required}
             type={type}
             name={name}
@@ -63,7 +67,7 @@ export default function InputText({
             onChange={handleInputChange}
             value={value}
             autoComplete={name}
-            className="block w-full text-white placeholder-grey_light rounded-md border-0 bg-surface py-1.5 px-3 shadow-sm ring-1 ring-inset focus:outline-none ring-grey_mlight focus:ring-2 focus:ring-inset focus:ring-primary text-sm leading-6"
+            className="block w-full rounded-md border-0 bg-surface px-3 py-1.5 text-sm leading-6 text-white placeholder-grey_light shadow-sm ring-1 ring-inset ring-grey_mlight focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
             placeholder={placeholder}
           />
         )}

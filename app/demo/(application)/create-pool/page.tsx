@@ -1,24 +1,25 @@
 "use client";
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useState, useEffect, FormEvent, useCallback } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useContractWrite } from "wagmi";
 import { ethers } from "ethers";
+import { encodeFunctionData } from "viem";
+import * as POOL_ABI from "@/constants/abis/OsmoticController.json";
 import { Tab } from "@headlessui/react";
 import InputText from "@/components/Form/InputText";
-import InputImage from "@/components/Form/InputImage";
 import { toast } from "react-toastify";
 import InputSelect from "@/components/Form/InputSelect";
 import CustomButton from "@/components/CustomButton";
 import InputSwitch from "@/components/Form/InputSwitch";
 import { motion } from "framer-motion";
+
 interface FormState {
-  description: string;
-  fundingToken: string;
   governanceToken: string;
-  name: string;
-  isMultiSig: boolean;
-  multiSigOwners: any[];
-  sigsRequired: number;
+  fundingToken: string;
+  listAddress: string;
+  MinStake: string;
+  MaxStreaming: string;
+  [key: string]: string;
 }
 
 const tokens = [
@@ -27,44 +28,19 @@ const tokens = [
     symbol: "DAIx",
     address: "0x4e17a5e14331038a580c84172386f1bc2461f647",
   },
+  {
+    name: "Super ETHx goerli",
+    symbol: "ETHx",
+    address: "0x5943F705aBb6834Cad767e6E4bB258Bc48D9C947",
+  },
+];
+
+const OSMOTIC_CONTROLLER_ADDRESS = "0x0b9f52138050881C4d061e6A92f72d8851B59F8e"; //proxy
+const OSMOTIC_POOL_ABI = [
+  "function initialize(address,address,address,tuple(uint256,uint256,uint256,uint256))",
 ];
 
 export default function CreatePool() {
-  // const { write, data, error, isError, isLoading, isSuccess } =
-  //   useContractWrite({
-  //     address: projectRegistry.address,
-  //     abi: projectRegistry.abi,
-  //     functionName: "registerProject",
-  //   });
-
-  // const ipfsJsonUpload = async () => {
-  //   try {
-  //     const response = await fetch("/api/ipfs", {
-  //       method: "POST",
-  //       body: JSON.stringify(formState),
-  //       headers: {
-  //         "content-type": "application/json",
-  //       },
-  //     });
-  //     const json = await response.json();
-  //     if (json?.IpfsHash) {
-  //       return Promise.resolve(json.IpfsHash);
-  //     } else {
-  //       return Promise.reject("No ipfshash returned");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     return Promise.reject(err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (isSuccess) {
-  //     toast.success("Successfully Created a Pool!");
-  //   } else if (isError && error) {
-  //     toast.error((error.cause as ErrorCause).metaMessages[0]);
-  //   }
-  // }, [isLoading, isSuccess, isError]);
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
   }
@@ -82,31 +58,31 @@ export default function CreatePool() {
       component: <AddFunds />,
     },
   ]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   return (
-    <div className="w-full  px-2 py-0 sm:px-0 space-y-4">
-      <Tab.Group selectedIndex={selectedIndex}>
+    <div className="w-full  space-y-4 px-2 py-0 sm:px-0">
+      <Tab.Group selectedIndex={selectedTabIndex}>
         <Tab.List className="flex space-x-1  bg-surface p-1">
           {categories.map((category, index) => (
             <Tab
-              onClick={() => setSelectedIndex(index)}
+              onClick={() => setSelectedTabIndex(index)}
               as={motion.button}
               key={category.name}
               className={({ selected }) =>
                 classNames(
-                  "w-full rounded-lg py-6 text-sm lg:text-lg tracking-wider leading-5 relative",
-                  "ring-white/60 ring-offset-none focus:outline-none focus:ring-none",
+                  "relative w-full rounded-lg py-6 text-sm leading-5 tracking-wider lg:text-lg",
+                  "ring-white/60 ring-offset-none focus:ring-none focus:outline-none ",
                   selected
-                    ? "text-primary shadow font-semibold "
-                    : "text-textSecondary hover:bg-white/[0.12] hover:text-white"
+                    ? "font-semibold text-primary shadow "
+                    : "hover:bg-white/[0.12] text-white hover:text-textSecondary",
                 )
               }
             >
-              {selectedIndex === index && (
+              {selectedTabIndex === index && (
                 <motion.div
                   layoutId="pool"
-                  className="border-b-2 border-primary w-full h-full absolute top-0 left-0"
+                  className="absolute left-0 top-0 h-full w-full border-b-2 border-primary"
                 ></motion.div>
               )}
               {category.name}
@@ -124,7 +100,7 @@ export default function CreatePool() {
               key={idx}
               className={classNames(
                 "rounded-xl bg-background p-3",
-                "ring-offset-none focus:outline-none focus:ring-none"
+                "ring-offset-none focus:ring-none focus:outline-none",
               )}
             >
               {component.component}
@@ -138,64 +114,69 @@ export default function CreatePool() {
 
 const Form = () => {
   const [formState, setFormState] = useState<FormState>({
-    description: "",
-    fundingToken: "",
     governanceToken: "",
-    name: "",
-    isMultiSig: false,
-    multiSigOwners: ["", "", ""],
-    sigsRequired: 2,
+    fundingToken: tokens[0].address,
+    listAddress: "",
+    MinStake: "",
+    MaxStreaming: "",
   });
 
-  const handleChange = (
-    value: string | number | boolean,
-    name: string,
-    index?: number
-  ) => {
-    if (index !== undefined) {
-      const auxArr = [...formState.multiSigOwners];
-      auxArr[index] = value;
-      setFormState({ ...formState, [name]: auxArr });
-    } else {
-      setFormState({ ...formState, [name]: value });
-    }
-  };
+  //handle form changes
+  const handleChange = useCallback(
+    (value: string | number | boolean, name: string, index?: number) => {
+      setFormState((prevFormState) => {
+        const updatedState = { ...prevFormState };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        if (index !== undefined) {
+          // Handle array updates
+          updatedState[name] = [...prevFormState[name]];
+          updatedState[name][index] = value;
+        } else {
+          // Handle regular field updates
+          updatedState[name] = value;
+        }
+        if (name === "fundingToken") {
+          const selectedToken = tokens.find((token) => token.address === value);
+          updatedState.listAddress = selectedToken ? selectedToken.address : "";
+        }
+
+        return updatedState;
+      });
+    },
+    [],
+  );
+
+  console.log(formState);
+
+  //handle form submit to the blockchain and create the pool
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const ipfsUpload = ipfsJsonUpload();
+    const { governanceToken, fundingToken, listAddress } = formState;
+    const poolInitCode = new ethers.utils.Interface(
+      OSMOTIC_POOL_ABI,
+    ).encodeFunctionData("initialize", [
+      fundingToken,
+      governanceToken,
+      listAddress,
+      ["999999197747000000", 1, 19290123456, "28000000000000000"],
+    ]);
 
-    // toast
-    //   .promise(ipfsUpload, {
-    //     pending: "Uploading to IPFS...",
-    //     success: "Successfully uploaded!",
-    //     error: "Ups, something went wrong with IPFS.",
-    //   })
-    //   .then((ipfsHash: string) => {
-    const abiCoder = new ethers.utils.AbiCoder();
-    // const encodedData = abiCoder.encode(["string"], [ipfsHash]);
-
-    // console.log("ipfs json hash: " + ipfsHash);
-    // write({
-    // args: [debouncedBeneficiary, encodedData],
-    // });
-    // })
-    // .catch((error) => {
-    //   console.error("Error:", error);
-    // });
+    console.log(poolInitCode);
+    return poolInitCode;
   };
+
   return (
     <>
       {/* TODO: new logic */}
-      <h4>Fill the form to create a pool</h4>
+      <h4 className="text-textSecondary">Fill the form to create a pool</h4>
       <form
-        className="mx-auto w-full rounded-lg max-h-[600px] overflow-y-auto"
+        className="mx-auto  w-full overflow-y-auto rounded-lg"
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-2">
           <div className="pb-12">
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-4">
+              {/* <div className="sm:col-span-4">
                 <InputText
                   label="Pool name"
                   name="name"
@@ -215,12 +196,24 @@ const Form = () => {
                   rows={4}
                   placeholder="Pool description..."
                 />
+              </div> */}
+
+              <div className="sm:col-span-4">
+                <InputSelect
+                  list={tokens}
+                  label="Funding token"
+                  name="fundingToken"
+                  handleChange={(value) => handleChange(value, "fundingToken")}
+                  required
+                />
               </div>
               <div className="sm:col-span-4">
                 <InputText
                   label="Governance token address"
                   name="governanceToken"
-                  handleChange={handleChange}
+                  handleChange={(value) =>
+                    handleChange(value, "governanceToken")
+                  }
                   value={formState.governanceToken}
                   type="text"
                   placeholder="Governance token contract address..."
@@ -230,9 +223,9 @@ const Form = () => {
               <div className="sm:col-span-4">
                 <InputText
                   label="List address"
-                  name="governanceToken"
-                  handleChange={handleChange}
-                  //value={formState.governanceToken}
+                  name="list address"
+                  handleChange={(value) => handleChange(value, "listAddress")}
+                  value={formState.listAddress}
                   type="text"
                   placeholder="Governance token contract address..."
                   required
@@ -241,107 +234,35 @@ const Form = () => {
               <div className="sm:col-span-4">
                 <InputText
                   label="Minimun Stake"
-                  name="governanceToken"
-                  handleChange={handleChange}
-                  // value={formState.governanceToken}
+                  name="Minimun Stake"
+                  handleChange={(value) => handleChange(value, "MinStake")}
+                  value={formState.MinStake}
                   type="number"
-                  placeholder="Example 4%..."
+                  placeholder="4%..."
                   required
+                  disabled={true}
                 />
               </div>
-              <div className="sm:col-span-4">
-                <InputSelect
-                  list={tokens}
-                  label="Funding token"
-                  name="fundingToken"
-                  handleChange={handleChange}
-                  required
-                />
-              </div>
+
               <div className="sm:col-span-4">
                 <InputText
+                  disabled={true}
                   label="Max streaming per month"
-                  name="governanceToken"
-                  handleChange={handleChange}
-                  //value={formState.governanceToken}
+                  name="max Stream Month"
+                  handleChange={(value) => handleChange(value, "MaxStreaming")}
+                  value={formState.MaxStreaming}
                   type="number"
-                  placeholder="Example 5%..."
+                  placeholder="5%..."
                   required
                 />
               </div>
-              {/* <div className="sm:col-span-4">
-                <InputSwitch
-                  label="Multisig pool with Gnosis Safe"
-                  name="isMultiSig"
-                  handleChange={handleChange}
-                  value={formState.isMultiSig}
-                />
-                <AnimatePresence>
-                  {formState.isMultiSig && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="sm:col-span-4 flex flex-col gap-2 mt-2"
-                    >
-                      <div className="my-2">
-                        <InputText
-                          label="Wallet address"
-                          name="multiSigOwners"
-                          handleChange={handleChange}
-                          value={formState.multiSigOwners[0]}
-                          index={0}
-                          type="text"
-                          placeholder="Wallet address..."
-                          required
-                        />
-                      </div>
-                      <div className="my-2">
-                        <InputText
-                          label="Wallet address"
-                          name="multiSigOwners"
-                          handleChange={handleChange}
-                          value={formState.multiSigOwners[1]}
-                          index={1}
-                          type="text"
-                          placeholder="Wallet address 2..."
-                          required
-                        />
-                      </div>
-                      <div className="my-2">
-                        <InputText
-                          label="Wallet address"
-                          name="multiSigOwners"
-                          handleChange={handleChange}
-                          value={formState.multiSigOwners[2]}
-                          index={2}
-                          type="text"
-                          placeholder="Wallet address 3..."
-                          required
-                        />
-                      </div>
-                      <div className="my-2">
-                        <InputText
-                          label="Signatures required"
-                          name="sigsRequired"
-                          handleChange={handleChange}
-                          value={formState.sigsRequired}
-                          type="number"
-                          placeholder="My pool name"
-                          required
-                        />
-                      </div>
-                      {/* <div className="border-b mt-2"></div> */}
-              {/* </motion.div>
-                  )}
-                </AnimatePresence>
-              </div> */}
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-center gap-x-6">
+        <button onClick={(e) => handleSubmit(e)}>CONSOLE LOG</button>
+        {/* <div className="flex items-center justify-center gap-x-6">
           <CustomButton text="Create pool" type="submit" styles="" />
-        </div>
+        </div> */}
       </form>
     </>
   );
@@ -362,7 +283,7 @@ const AddFunds = () => {
   return (
     <>
       <h4>How much do you want to add to the pool?</h4>
-      <div className="w-full h-[600px] flex flex-col space-y-8 items-center justify-center">
+      <div className="flex h-[600px] w-full flex-col items-center justify-center space-y-8">
         <div>
           <label htmlFor="price" className="sr-only">
             Fund
@@ -375,7 +296,7 @@ const AddFunds = () => {
               type="text"
               name="price"
               id="price"
-              className="block w-full h-full  bg-surface rounded-full border-0 py-1.5 pl-7 pr-12 placeholder:text-gray-400 sm:text-sm md:text-2xl sm:leading-6 text-center ring-1 ring-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-surface_var"
+              className="block h-full w-full  rounded-full border-0 bg-surface py-1.5 pl-7 pr-12 text-center ring-1 ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-surface_var focus:ring-offset-2 sm:text-sm sm:leading-6 md:text-2xl"
               placeholder="0.00"
               aria-describedby="price-currency"
             />
