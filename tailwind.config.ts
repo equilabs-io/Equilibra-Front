@@ -16,6 +16,7 @@ const config: Config = {
         primary: "var(--color-primary)",
         primary_var: "var(--color-primary-var)",
         secondary: "var(--color-secondary)",
+        secondary_var: "var(--color-secondary-content)",
         background: "var(--color-background)",
         surface: "var(--color-surface)",
         surface_var: "var(--color-surface-var)",

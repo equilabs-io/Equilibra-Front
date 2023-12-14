@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface ChartProps {
   maxValue: number;
@@ -57,8 +57,8 @@ export const Chart = ({ maxValue, currentValue }: ChartProps) => {
             fill="transparent"
             stroke={
               percentage >= 50
-                ? 'var(--color-secondary)'
-                : 'var(--color-primary)'
+                ? "var(--color-secondary-content)"
+                : "var(--color-primary)"
             }
             strokeWidth={strokeWidth}
             strokeDasharray={strokeDasharray}
@@ -74,8 +74,8 @@ export const Chart = ({ maxValue, currentValue }: ChartProps) => {
               fontWeight="bold"
               fill={
                 percentage >= 50
-                  ? 'var(--color-secondary)'
-                  : 'var(--color-primary)'
+                  ? "var(--color-secondary)"
+                  : "var(--color-primary)"
               }
             >
               {percentage.toFixed(0)}%

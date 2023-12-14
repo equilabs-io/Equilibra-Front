@@ -5,8 +5,8 @@
 :root {
   --color-primary: #00eab4;
   --color-primary-var: #009775;
-  --color-secondary: #ff9f00;
-  /* new color text-secondary */
+  --color-secondary: #f0eaff;
+  --color-secondary-content: #5b1eff;
   --color-text-secondary: #bfc1de;
   /* new color whit */
   --color-white: #fafafa;
@@ -97,7 +97,7 @@ input {
   animation: rotation 2s linear infinite;
 }
 .loader::after {
-  content: '';
+  content: "";
 
   position: absolute;
   left: 50%;
@@ -125,5 +125,59 @@ input {
   }
   100% {
     border-width: 1px;
+  }
+}
+
+.loaderTwo {
+  width: 86px;
+  height: 50px;
+  border-radius: 50px;
+  background:
+    radial-gradient(
+        farthest-side,
+        #0000 calc(100% - 10px),
+        #fff calc(100% - 10px) 100%,
+        #0000
+      )
+      left,
+    radial-gradient(
+        farthest-side,
+        #0000 calc(100% - 10px),
+        #fff calc(100% - 10px) 100%,
+        #0000
+      )
+      right;
+  background-size: calc(50% + 5px) 100%;
+  background-repeat: no-repeat;
+  position: relative;
+  animation: flipX 1s infinite linear;
+}
+.loaderTwo:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff3d00;
+  transform-origin: -14px 50%;
+  animation: rotate 0.5s infinite linear;
+}
+
+@keyframes flipX {
+  0%,
+  49.99% {
+    transform: scaleX(1);
+  }
+  50%,
+  100% {
+    transform: scaleX(-1);
+  }
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
   }
 }

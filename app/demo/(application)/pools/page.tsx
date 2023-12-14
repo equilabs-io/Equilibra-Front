@@ -7,7 +7,7 @@ import { PoolCardProps } from "@/types";
 
 const poolsQuery = `
   query {
-    osmoticPools(first: 10) {
+    osmoticPools(first: 100) {
       id
       maxActiveProjects
       address
@@ -16,7 +16,7 @@ const poolsQuery = `
         name
         symbol
       }
-      poolProjects(first: 10) {
+      poolProjects(first: 100) {
         id
       }
     }
@@ -29,8 +29,6 @@ const getAllPools = async () => {
 };
 
 export default async function Pools() {
-  //TODO: erase this TimeOut, just for testing loading state
-
   const poolsQuery = await getAllPools();
 
   return (

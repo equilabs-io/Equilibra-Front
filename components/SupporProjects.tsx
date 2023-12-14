@@ -1,22 +1,15 @@
-'use client';
+"use client";
 
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import * as ABI from '@/constants/abis/MimeToken.json';
-import POOL_ABI from '@/constants/abis/Pool.json';
-import { useDebounce } from '@/hooks/useDebounce';
-import { getUrqlClient } from '@/services/urqlService';
-import { Dialog, Transition } from '@headlessui/react';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useAccount, useContractRead, useContractWrite } from 'wagmi';
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import POOL_ABI from "@/constants/abis/Pool.json";
+import { getUrqlClient } from "@/services/urqlService";
+import { Dialog, Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
+import TransactionModal from "./TransactionModal";
 
-import { Chart } from './Chart';
+import { Chart } from "./Chart";
 
 const osmoticPool = `query (id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
     id
@@ -72,41 +65,14 @@ export const SupporProjects = ({ pool }: any) => {
   //Success state: ??
   //Error state: ??
 
-  //!contractWrite
-  const { data, isLoading, isSuccess, write } = useContractWrite({
-    // this address is the pool address
-    address: '0xDC66c3c481540dC737212A582880EC2D441BDc54',
-    abi: POOL_ABI,
-    functionName: 'supportProjects',
-    // this is the array of arguments for the function
-    args: [
-      [
-        [7, 20],
-        [8, 10],
-      ],
-    ],
-    onError(error) {
-      console.log(error);
-    },
-  });
-  // const { data }: any = useContractRead({
-  //   address: "",
-  //   chainId: 5,
-  //   abi: ABI,
-  //   functionName: "name",
-  // });
-
-  //checkout slideOver state
   const [open, setOpen] = useState(false);
-  const [openModal, setOpenModal] = useState();
-
   const [poolInfo, setPoolInfo] = useState<any>([{}]);
   const [participantSupports, setParticipantSupports] = useState<any>([{}]);
   const [maxValue, setMaxValue] = useState(350);
 
   function getFourChars(str: string, indexFunc: any): string {
-    if (!str) return '';
-    const lastDashIndex = indexFunc(str, '-');
+    if (!str) return "";
+    const lastDashIndex = indexFunc(str, "-");
     const fourChars = str.substring(lastDashIndex - 3, lastDashIndex);
     const id = fourChars.substring(0, 1);
     return id;
@@ -204,7 +170,7 @@ export const SupporProjects = ({ pool }: any) => {
         const difference = value.value - value.static;
         const totalNewSupport = value.value;
         if (difference !== 0) {
-          checkoutValues.push([value.id, difference, totalNewSupport]);
+          checkoutValues.push([+value.id, difference, totalNewSupport]);
         }
       },
     );
@@ -224,7 +190,7 @@ export const SupporProjects = ({ pool }: any) => {
   const mimeTokenSymbol = poolInfo?.[0].mimeToken?.symbol;
   const mimeTokenName = poolInfo?.[0].mimeToken?.name;
   const projectList = poolInfo?.[0].projectList?.name;
-
+  console.log("poolInfo: ", poolAddress);
   return (
     <>
       <div className="grid grid-cols-1 items-center space-x-2  lg:grid-cols-3">
@@ -239,18 +205,6 @@ export const SupporProjects = ({ pool }: any) => {
             </div>
           </div>
         </div>
-        {/* //! testting sending support throw interface */}
-        {/* <div>
-          <button onClick={() => write?.()} className=" w-full p-2">
-            SEND TRANSACTION
-          </button>
-          {isLoading && (
-            <div className=" absolute top-0 left-0 w-full h-full bg-surface">
-              Check Wallet
-            </div>
-          )}
-          {isSuccess && <div>Transaction: {JSON.stringify(data)}</div>}
-        </div> */}
 
         {/* Ranger inputs */}
         <ul
@@ -261,7 +215,7 @@ export const SupporProjects = ({ pool }: any) => {
             Give support with
             <span className="ml-1 rounded-full bg-highlight px-2 py-1 text-primary">
               {mimeTokenName}
-            </span>{' '}
+            </span>{" "}
             to the projects of your choice
           </p>
 
@@ -369,6 +323,7 @@ export const SupporProjects = ({ pool }: any) => {
           checkoutValues={checkoutValues}
           balance={350}
           staked={actualCurrentValue}
+          address={poolAddress}
         />
         <button
           onClick={handleCheckout}
@@ -388,14 +343,38 @@ type CheckoutProps = {
   checkoutValues: [];
   balance: number;
   staked: number;
+  address: string;
 };
 
 const Checkout = ({ ...props }: CheckoutProps) => {
-  const { checkoutValues, open, setOpen, balance, staked } = props;
-  const [openModal, setOpenModal] = useState(false);
+  const { checkoutValues, open, setOpen, balance, staked, address } = props;
+
+  const { config } = usePrepareContractWrite({
+    address: "0xDC66c3c481540dC737212A582880EC2D441BDc54",
+    abi: POOL_ABI,
+    functionName: "supportProjects",
+    args: [
+      [
+        [7, 10],
+        [8, 10],
+      ],
+    ],
+    // onSuccess: () => {
+    //   console.log("success u are a genius");
+    // },
+    // onError: (error) => {
+    //   console.log("error: ", error);
+    // },
+    // onSettled: (data) => {
+    //   console.log("data: ", data?.result, data?.request, data?.mode);
+    // },
+  });
+
+  const { data, isLoading, isSuccess, write } = useContractWrite(config);
+
   const handle = () => {
     setOpen(false);
-    setOpenModal(true);
+    write?.();
   };
   return (
     <>
@@ -472,11 +451,11 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                                     <span
                                       className={`text-lg ${
                                         value[1] < 0
-                                          ? 'text-red-400'
-                                          : 'text-primary'
+                                          ? "text-red-400"
+                                          : "text-primary"
                                       }`}
                                     >
-                                      {value[1] < 0 ? 'Remove' : 'Added'}
+                                      {value[1] < 0 ? "Remove" : "Added"}
                                       <span className="absolute right-0 top-0 ml-2  text-2xl">
                                         {value[1]}
                                       </span>
@@ -485,8 +464,8 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                                       total support: {value[2]}
                                     </span>
                                     <span className="text-sm font-thin ">
-                                      Percentage of support:{' '}
-                                      {((value[2] / balance) * 100).toFixed(1)}{' '}
+                                      Percentage of support:{" "}
+                                      {((value[2] / balance) * 100).toFixed(1)}{" "}
                                       %
                                     </span>
                                   </div>
@@ -520,9 +499,11 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                           </div>
                         </section>
                       </div>
-                      <button className="border-2" onClick={handle}>
-                        SEND TRANSACTION
-                      </button>
+                      <TransactionModal
+                        label={"Stake"}
+                        writeFunction={handle}
+                        isLoading={true}
+                      />
                     </div>
                   </Dialog.Panel>
                 </Transition.Child>
@@ -531,7 +512,6 @@ const Checkout = ({ ...props }: CheckoutProps) => {
           </div>
         </Dialog>
       </Transition.Root>
-      <TransactionModal open={openModal} setOpen={setOpenModal} />
     </>
   );
 };
@@ -543,8 +523,8 @@ const TiltCard = ({ children, balance, staked }: any) => {
   const mouseXSpring = useSpring(x);
   const mouseYSpring = useSpring(y);
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['3deg', '-3deg']);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-3deg', '3deg']);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["3deg", "-3deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-3deg", "3deg"]);
 
   const handleMouseMove = (e: {
     target: { getBoundingClientRect: () => any };
@@ -578,14 +558,14 @@ const TiltCard = ({ children, balance, staked }: any) => {
       style={{
         rotateY,
         rotateX,
-        transformStyle: 'preserve-3d',
+        transformStyle: "preserve-3d",
       }}
       className="h-96 w-72 rounded-xl  bg-highlight"
     >
       <div
         style={{
-          transform: 'translateZ(75px)',
-          transformStyle: 'preserve-3d',
+          transform: "translateZ(75px)",
+          transformStyle: "preserve-3d",
         }}
         className="absolute inset-4 flex flex-col items-center justify-evenly rounded-xl bg-surface  shadow-lg"
       >
@@ -598,104 +578,3 @@ const TiltCard = ({ children, balance, staked }: any) => {
     </motion.div>
   );
 };
-
-type TransactionModalProps = {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-};
-
-export default function TransactionModal({
-  open,
-  setOpen,
-}: TransactionModalProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  //example function to test ui styles
-  const submitTransaction = async () => {
-    try {
-      // Simulate API call or any asynchronous operation with a 5-second delay
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-
-      // After the delay, set the success state to true
-      setIsSuccess(true);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Transaction submission failed:', error);
-    } finally {
-      // Set loading state to false after the transaction is processed
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (open) {
-      submitTransaction();
-    }
-  }, [open]);
-
-  return (
-    <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-slate-700 bg-opacity-50 transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
-                <div className="flex justify-center">
-                  {isLoading && (
-                    <div className="h-16 w-16 animate-spin rounded-full border-b-2 border-t-2 border-indigo-500" />
-                  )}
-
-                  {isSuccess && (
-                    <div className="text-6xl text-primary">&#10003;</div>
-                  )}
-                </div>
-
-                <div className="mt-4 text-center">
-                  {isLoading && (
-                    <p className="text-highlight">Processing transaction...</p>
-                  )}
-                  {isSuccess && (
-                    <p className="text-surface_var">Transaction successful!</p>
-                  )}
-                </div>
-
-                {isSuccess && (
-                  <div className="mt-5 sm:mt-6">
-                    <button
-                      type="button"
-                      className="inline-flex w-full justify-center rounded-md bg-background px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-highlight hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      onClick={() => setOpen(false)}
-                    >
-                      Go back to dashboard
-                    </button>
-                  </div>
-                )}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
-  );
-}

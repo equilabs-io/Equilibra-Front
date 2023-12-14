@@ -9,5 +9,7 @@ export type PoolProps = {
 };
 
 export type PoolCardProps = {
+  id: any;
+  name: string | undefined;
   pool: PoolProps[];
 };

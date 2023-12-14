@@ -8,38 +8,38 @@ const PoolCard = ({ pool }: PoolProps) => {
 
   return (
     <>
-      <div className="rounded-2xl overflow-hidden  cursor-pointer transition-all ease-in duration-150 group hover:scale-105">
-        <div className="bg-surface rounded-lg shadow">
+      <div className="group cursor-pointer  overflow-hidden rounded-2xl transition-all duration-150 ease-in hover:scale-105">
+        <div className="rounded-lg bg-surface shadow">
           <div className={`max-h-[170px] w-full bg-surface`}>
             {/* Image */}
             <img
               src={`https://effigy.im/a/${pool?.address}`}
-              className="w-full max-h-[170px] object-cover overflow-hidden blur-sm group-hover:blur-none transition-all ease-in duration-150"
+              className="max-h-[170px] w-full overflow-hidden object-cover blur-sm transition-all duration-150 ease-in group-hover:blur-none"
             />
           </div>
           <div className="px-8 py-7">
             <div className=" mb-5">
-              <h3 className="text-xs font-bold text-textSecondary text-ellipsis overflow-hidden">
+              <h3 className="overflow-hidden text-ellipsis text-xs font-bold text-textSecondary">
                 {pool?.address}
               </h3>
               <p className="text-lg text-primary">poolName - {bgColor}</p>
             </div>
 
-            <p className="mb-4 font-thin text-xs  text-grey_light">
+            <p className="mb-4 text-xs font-thin  text-textSecondary">
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam
               vel nemo illum tempore enim dolore, aspernatur rem dolores rerum
               natus.
             </p>
             <div className="mb-8 text-center">
-              <h5 className="text-xs text-grey_light">
+              <h5 className="text-xs text-textSecondary">
                 Governance Token:{" "}
-                <span className="inline-flex items-center rounded-md bg-pink-400/10 px-2 py-1 text-xs font-medium text-secondary ring-1 ring-inset ring-pink-400/20 ml-2">
+                <span className="bg-secondary_var ml-2 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-secondary">
                   {pool?.mimeToken.name}
                 </span>
               </h5>
             </div>
             <div className="">
-              <button className="inline-flex  px-3 py-2 text-md font-bold text-background bg-primary rounded-lg w-full items-center justify-center">
+              <button className="text-md  inline-flex w-full items-center justify-center rounded-lg bg-primary px-3 py-2 font-bold text-background">
                 <Balance address={pool?.address} />
                 {/* <span className="h-4 w-4 border-2 rounded-full ml-2 border-slate-900"></span> */}
               </button>

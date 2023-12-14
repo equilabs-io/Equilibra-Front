@@ -8,7 +8,7 @@ import {
   usePrepareSendTransaction,
   useSendTransaction,
 } from "wagmi";
-
+import TransactionModal from "@/components/TransactionModal";
 import { ethers, utils } from "ethers";
 import POOL_ABI from "@/constants/abis/OsmoticController.json";
 import { Tab } from "@headlessui/react";
@@ -197,13 +197,6 @@ const Form = () => {
     abi: POOL_ABI,
     functionName: "createOsmoticPool",
     args: [encodedData],
-
-    // onSuccess: (data) => {
-    //   console.log("success, you are a genious", data?.result);
-    // },
-    // onError: (error) => {
-    //   console.log("error", error.message);
-    // },
     onSettled: (data) => {
       console.log("settled", data?.result);
     },
@@ -257,28 +250,6 @@ const Form = () => {
         <div className="space-y-2">
           <div className="pb-12">
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              {/* <div className="sm:col-span-4">
-                <InputText
-                  label="Pool name"
-                  name="name"
-                  handleChange={handleChange}
-                  value={formState.name}
-                  type="text"
-                  placeholder="What's your pool name?"
-                />
-              </div>
-              <div className="sm:col-span-4 md:col-span-5">
-                <InputText
-                  label="Description"
-                  name="description"
-                  handleChange={handleChange}
-                  value={formState.description}
-                  type="textarea"
-                  rows={4}
-                  placeholder="Pool description..."
-                />
-              </div> */}
-
               <div className="sm:col-span-4">
                 <InputSelect
                   list={tokens}
@@ -342,14 +313,23 @@ const Form = () => {
         </div>
 
         <div className="flex items-center justify-center gap-x-6">
-          <CustomButton
+          <TransactionModal
+            isLoading={isLoading}
+            isSuccess={isSuccess}
+            writeFunction={handleEncodeData}
+            disabledButton={
+              formState.governanceToken === "" || formState.listAddress === ""
+            }
+            label="Create Pool"
+          />
+          {/* <CustomButton
             text={`${isLoading ? "Creating ..." : "Create pool"}`}
             type="submit"
             handleOnClick={() => handleEncodeData()}
             disabled={
               formState.governanceToken === "" || formState.listAddress === ""
             }
-          />
+          /> */}
         </div>
       </form>
     </>
@@ -393,7 +373,7 @@ const AddFunds = () => {
     functionName: "transfer",
     args: [
       transferTo,
-      parseEther(transferAmount), // convert to wei / TODO! handle this
+      parseEther(transferAmount), // convert to wei /
     ],
   });
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
@@ -402,7 +382,7 @@ const AddFunds = () => {
     <>
       <h4>
         How much <span className="text-primary">Super Fake Dai</span> do you
-        want to add to the pool?
+        want to deposit to the pool?
       </h4>
       <div className="flex h-[600px] w-full flex-col items-center justify-center space-y-8">
         <div>
@@ -430,14 +410,13 @@ const AddFunds = () => {
             </div>
           </div>
         </div>
-        {/* TODO!: logic */}
-        <button
-          className="rounded-full border px-6 py-1 transition-all duration-200 ease-in-out hover:border-primary hover:bg-primary hover:text-highlight disabled:cursor-not-allowed disabled:opacity-50"
-          onClick={() => write?.()}
-          disabled={value === "" || value === "0"}
-        >
-          {isLoading ? "Check your wallet" : "Send Funds"}
-        </button>
+
+        <TransactionModal
+          isLoading={isLoading}
+          isSuccess={isSuccess}
+          writeFunction={write}
+          label="Deposit"
+        />
         {isSuccess && (
           <>
             <div className="group flex flex-col items-center space-y-2 rounded-xl bg-surface px-8 py-2 transition-all duration-300 ease-in">
@@ -456,6 +435,7 @@ const AddFunds = () => {
             </div>
           </>
         )}
+
         {/* <button>Deposit</button> */}
       </div>
     </>

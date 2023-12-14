@@ -64,17 +64,6 @@ export default function CreateProjectForm({
         write({
           args: [debouncedBeneficiary, encodedData],
         });
-
-        // id, admin, beneficiary, data
-        // updateProject
-        // write({
-        //   args: [
-        //     7 as number,
-        //     "0x584ddfb0bdd922ff1fbf3e85e7e781d5816b4f23",
-        //     debouncedBeneficiary,
-        //     encodedData,
-        //   ],
-        // });
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -89,14 +78,6 @@ export default function CreateProjectForm({
       abi: projectRegistry.abi,
       functionName: "registerProject",
     });
-
-  //TODO: remove this, use to check if the contract is working
-  if (data) {
-    console.log(data);
-  }
-  if (error) {
-    console.log(error);
-  }
 
   const ipfsJsonUpload = async () => {
     try {
@@ -130,7 +111,7 @@ export default function CreateProjectForm({
   return (
     <>
       <form
-        className="mx-auto w-full max-w-5xl p-6 rounded-lg bg-surface"
+        className="mx-auto w-full max-w-5xl rounded-lg bg-background p-6"
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-12">
@@ -206,7 +187,7 @@ export default function CreateProjectForm({
             </div>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-end gap-x-6">
+        <div className="mt-6 flex items-center justify-center gap-x-6">
           <CustomButton text="Create project" type="submit" />
         </div>
       </form>
