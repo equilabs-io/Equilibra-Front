@@ -1,10 +1,16 @@
 "use client";
 import React, { useState, useEffect, FormEvent, useCallback } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useContractWrite } from "wagmi";
-import { ethers } from "ethers";
-import { encodeFunctionData } from "viem";
-import * as POOL_ABI from "@/constants/abis/OsmoticController.json";
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useContractEvent,
+  usePrepareSendTransaction,
+  useSendTransaction,
+} from "wagmi";
+
+import { ethers, utils } from "ethers";
+import POOL_ABI from "@/constants/abis/OsmoticController.json";
 import { Tab } from "@headlessui/react";
 import InputText from "@/components/Form/InputText";
 import { toast } from "react-toastify";
@@ -114,12 +120,13 @@ export default function CreatePool() {
 
 const Form = () => {
   const [formState, setFormState] = useState<FormState>({
-    governanceToken: "",
     fundingToken: tokens[0].address,
+    governanceToken: "",
     listAddress: "",
     MinStake: "",
     MaxStreaming: "",
   });
+  const [encodedData, setEncodedData] = useState<string | null>(null);
 
   //handle form changes
   const handleChange = useCallback(
@@ -137,7 +144,8 @@ const Form = () => {
         }
         if (name === "fundingToken") {
           const selectedToken = tokens.find((token) => token.address === value);
-          updatedState.listAddress = selectedToken ? selectedToken.address : "";
+
+          // updatedState.listAddress = selectedToken ? selectedToken.address : "";
         }
 
         return updatedState;
@@ -146,32 +154,102 @@ const Form = () => {
     [],
   );
 
-  console.log(formState);
+  const handleEncodeData = async () => {
+    try {
+      const { governanceToken, fundingToken, listAddress } = formState;
 
-  //handle form submit to the blockchain and create the pool
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+      // Check if addresses are valid
+      if (
+        !ethers.utils.isAddress(governanceToken) ||
+        !ethers.utils.isAddress(fundingToken) ||
+        !ethers.utils.isAddress(listAddress)
+      ) {
+        throw new Error("Invalid address provided");
+      }
+
+      // Encoding the data ...
+      const poolInitCode = new ethers.utils.Interface(
+        OSMOTIC_POOL_ABI,
+      ).encodeFunctionData("initialize", [
+        fundingToken,
+        governanceToken,
+        listAddress,
+        ["999999197747000000", 1, 19290123456, "28000000000000000"],
+      ]);
+
+      setEncodedData(poolInitCode);
+
+      return poolInitCode;
+    } catch (error) {
+      // Handle the error
+      console.error("Error in handleEncodeData:", error.message);
+
+      return "";
+    }
+  };
+
+  //config for the transaction
+  const { config } = usePrepareContractWrite({
+    address: OSMOTIC_CONTROLLER_ADDRESS,
+    abi: POOL_ABI,
+    functionName: "createOsmoticPool",
+    args: [encodedData],
+
+    // onSuccess: (data) => {
+    //   console.log("success, you are a genious", data?.result);
+    // },
+    // onError: (error) => {
+    //   console.log("error", error.message);
+    // },
+    onSettled: (data) => {
+      console.log("settled", data?.result);
+    },
+  });
+
+  // Shoots transaction to the blockchain
+  const { write, isLoading, isSuccess, data, status } =
+    useContractWrite(config);
+
+  //testing event listener:
+  // useContractEvent({
+  //   abi: POOL_ABI,
+  //   address: OSMOTIC_CONTROLLER_ADDRESS,
+  //   eventName: "OsmoticPoolCreated",
+
+  //   listener: (log) => {
+  //     console.log("event", log);
+  //   },
+  // });
+
+  //0x8e155cdd14b74dd50fbcc8190b59ff474bb0f7884297ee989f3bf5cb3b024d63
+
+  //handle form to submit to the blockchain and create the pool
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { governanceToken, fundingToken, listAddress } = formState;
-    const poolInitCode = new ethers.utils.Interface(
-      OSMOTIC_POOL_ABI,
-    ).encodeFunctionData("initialize", [
-      fundingToken,
-      governanceToken,
-      listAddress,
-      ["999999197747000000", 1, 19290123456, "28000000000000000"],
-    ]);
 
-    console.log(poolInitCode);
-    return poolInitCode;
+    try {
+      // Await the result of handleEncodeData
+      const encodedData = await handleEncodeData();
+
+      // Check if encodedData is not empty
+      if (encodedData) {
+        //shoot!
+        write?.();
+      }
+    } catch (error) {
+      console.error("Error in handleSubmit:", error.message);
+    }
   };
 
   return (
     <>
-      {/* TODO: new logic */}
       <h4 className="text-textSecondary">Fill the form to create a pool</h4>
+
       <form
         className="mx-auto  w-full overflow-y-auto rounded-lg"
-        onSubmit={(e) => handleSubmit(e)}
+        onSubmit={(e) => {
+          handleSubmit(e);
+        }}
       >
         <div className="space-y-2">
           <div className="pb-12">
@@ -259,10 +337,17 @@ const Form = () => {
             </div>
           </div>
         </div>
-        <button onClick={(e) => handleSubmit(e)}>CONSOLE LOG</button>
-        {/* <div className="flex items-center justify-center gap-x-6">
-          <CustomButton text="Create pool" type="submit" styles="" />
-        </div> */}
+
+        <div className="flex items-center justify-center gap-x-6">
+          <CustomButton
+            text={`${isLoading ? "Creating ..." : "Create pool"}`}
+            type="submit"
+            handleOnClick={() => handleEncodeData()}
+            disabled={
+              formState.governanceToken === "" || formState.listAddress === ""
+            }
+          />
+        </div>
       </form>
     </>
   );
@@ -272,6 +357,7 @@ const AddProjectList = () => {
   return (
     <>
       {/* TODO: add projects and logic  */}
+      <h2>Congratulation! ..you just create a pool with the addres:</h2>
       <h4>
         Select the projects you would like to be elegible bt the community
       </h4>
@@ -280,6 +366,45 @@ const AddProjectList = () => {
 };
 
 const AddFunds = () => {
+  const { config } = usePrepareContractWrite({
+    address: "0x4e17a5e14331038a580C84172386F1bc2461F647",
+    abi: [
+      {
+        constant: false,
+        inputs: [
+          { name: "_to", type: "address" },
+          { name: "_value", type: "uint256" },
+        ],
+        name: "transfer",
+        outputs: [{ name: "success", type: "bool" }],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+    ],
+    functionName: "transfer",
+    args: [
+      "0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3",
+      "100", // convert to wei / TODO! handle this
+    ],
+    onSuccess: (data) => {
+      console.log("success, you are a genious", data?.result);
+    },
+    onError: (error) => {
+      console.log("error", error.message);
+    },
+    onSettled: (data) => {
+      console.log("settled", data?.result);
+    },
+  });
+  const { data, isLoading, isSuccess, write } = useContractWrite(config);
+
+  if (isLoading) {
+    return <p>Waiting for confirmations on your wallet...</p>;
+  }
+
+  if (isSuccess) {
+    return <p>Transaction was sent!</p>;
+  }
   return (
     <>
       <h4>How much do you want to add to the pool?</h4>
@@ -308,7 +433,8 @@ const AddFunds = () => {
           </div>
         </div>
         {/* TODO!: logic */}
-        <button>Deposit</button>
+        <button onClick={() => write?.()}>Send 100 Mime</button>
+        {/* <button>Deposit</button> */}
       </div>
     </>
   );
