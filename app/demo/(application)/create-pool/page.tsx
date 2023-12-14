@@ -18,6 +18,8 @@ import InputSelect from "@/components/Form/InputSelect";
 import CustomButton from "@/components/CustomButton";
 import InputSwitch from "@/components/Form/InputSwitch";
 import { motion } from "framer-motion";
+import { parseEther } from "viem";
+import Link from "next/link";
 
 interface FormState {
   governanceToken: string;
@@ -50,6 +52,7 @@ export default function CreatePool() {
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
   }
+
   let [categories] = useState([
     {
       name: "Info",
@@ -366,6 +369,12 @@ const AddProjectList = () => {
 };
 
 const AddFunds = () => {
+  const [value, setValue] = useState("");
+  const [to, setTo] = useState("0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3");
+
+  const transferAmount = useDebounce(value, 500);
+  const transferTo = useDebounce(to, 500);
+
   const { config } = usePrepareContractWrite({
     address: "0x4e17a5e14331038a580C84172386F1bc2461F647",
     abi: [
@@ -383,31 +392,18 @@ const AddFunds = () => {
     ],
     functionName: "transfer",
     args: [
-      "0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3",
-      "100", // convert to wei / TODO! handle this
+      transferTo,
+      parseEther(transferAmount), // convert to wei / TODO! handle this
     ],
-    onSuccess: (data) => {
-      console.log("success, you are a genious", data?.result);
-    },
-    onError: (error) => {
-      console.log("error", error.message);
-    },
-    onSettled: (data) => {
-      console.log("settled", data?.result);
-    },
   });
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
 
-  if (isLoading) {
-    return <p>Waiting for confirmations on your wallet...</p>;
-  }
-
-  if (isSuccess) {
-    return <p>Transaction was sent!</p>;
-  }
   return (
     <>
-      <h4>How much do you want to add to the pool?</h4>
+      <h4>
+        How much <span className="text-primary">Super Fake Dai</span> do you
+        want to add to the pool?
+      </h4>
       <div className="flex h-[600px] w-full flex-col items-center justify-center space-y-8">
         <div>
           <label htmlFor="price" className="sr-only">
@@ -421,9 +417,11 @@ const AddFunds = () => {
               type="text"
               name="price"
               id="price"
-              className="block h-full w-full  rounded-full border-0 bg-surface py-1.5 pl-7 pr-12 text-center ring-1 ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-surface_var focus:ring-offset-2 sm:text-sm sm:leading-6 md:text-2xl"
+              className="border-1 block h-full  w-full rounded-full bg-surface py-1.5 pl-7 pr-12 text-center ring-1 ring-surface_var  transition-all duration-300 ease-in-out placeholder:text-gray-400 focus:border-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0 sm:text-sm sm:leading-6 md:text-2xl"
               placeholder="0.00"
               aria-describedby="price-currency"
+              onChange={(e) => setValue(e.target.value)}
+              value={value}
             />
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
               <span className="text-primary sm:text-sm" id="price-currency">
@@ -433,7 +431,31 @@ const AddFunds = () => {
           </div>
         </div>
         {/* TODO!: logic */}
-        <button onClick={() => write?.()}>Send 100 Mime</button>
+        <button
+          className="rounded-full border px-6 py-1 transition-all duration-200 ease-in-out hover:border-primary hover:bg-primary hover:text-highlight disabled:cursor-not-allowed disabled:opacity-50"
+          onClick={() => write?.()}
+          disabled={value === "" || value === "0"}
+        >
+          {isLoading ? "Check your wallet" : "Send Funds"}
+        </button>
+        {isSuccess && (
+          <>
+            <div className="group flex flex-col items-center space-y-2 rounded-xl bg-surface px-8 py-2 transition-all duration-300 ease-in">
+              <span className="text-primary transition-all duration-500 ease-in-out group-hover:scale-75 group-hover:text-textSecondary">
+                Funds Sent successfully !
+              </span>
+              <Link
+                href="/demo/dashboard"
+                className="text-textSecondary transition-all duration-500 ease-in-out group-hover:scale-105 group-hover:text-primary"
+              >
+                <span className="">
+                  Go to Dashbaord, Claim your voting Power and Stake on your
+                  favorite Projects
+                </span>
+              </Link>
+            </div>
+          </>
+        )}
         {/* <button>Deposit</button> */}
       </div>
     </>
