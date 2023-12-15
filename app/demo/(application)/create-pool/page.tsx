@@ -7,6 +7,7 @@ import {
   useContractEvent,
   usePrepareSendTransaction,
   useSendTransaction,
+  useWaitForTransaction,
 } from "wagmi";
 import TransactionModal from "@/components/TransactionModal";
 import { ethers, utils } from "ethers";
@@ -378,6 +379,17 @@ const AddFunds = () => {
   });
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
 
+  const {
+    isLoading: isWaitLoading,
+    isSuccess: isWaitSuccess,
+    isError,
+  } = useWaitForTransaction({
+    hash: data?.hash,
+  });
+
+  console.log("loading", isWaitLoading);
+  console.log("success", isWaitSuccess);
+
   return (
     <>
       <h4>
@@ -417,7 +429,7 @@ const AddFunds = () => {
           writeFunction={write}
           label="Deposit"
         />
-        {isSuccess && (
+        {isWaitSuccess && (
           <>
             <div className="group flex flex-col items-center space-y-2 rounded-xl bg-surface px-8 py-2 transition-all duration-300 ease-in">
               <span className="text-primary transition-all duration-500 ease-in-out group-hover:scale-75 group-hover:text-textSecondary">
@@ -435,6 +447,7 @@ const AddFunds = () => {
             </div>
           </>
         )}
+        {isSuccess && <h4>success</h4>}
 
         {/* <button>Deposit</button> */}
       </div>

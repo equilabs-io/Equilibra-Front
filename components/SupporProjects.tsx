@@ -1,15 +1,21 @@
 "use client";
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, use, useCallback, useEffect, useState } from "react";
 import POOL_ABI from "@/constants/abis/Pool.json";
 import { getUrqlClient } from "@/services/urqlService";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
+import {
+  useAccount,
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
 import TransactionModal from "./TransactionModal";
 
 import { Chart } from "./Chart";
+import { check } from "prettier";
 
 const osmoticPool = `query (id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
     id
@@ -190,7 +196,6 @@ export const SupporProjects = ({ pool }: any) => {
   const mimeTokenSymbol = poolInfo?.[0].mimeToken?.symbol;
   const mimeTokenName = poolInfo?.[0].mimeToken?.name;
   const projectList = poolInfo?.[0].projectList?.name;
-  console.log("poolInfo: ", poolAddress);
   return (
     <>
       <div className="grid grid-cols-1 items-center space-x-2  lg:grid-cols-3">
@@ -323,7 +328,7 @@ export const SupporProjects = ({ pool }: any) => {
           checkoutValues={checkoutValues}
           balance={350}
           staked={actualCurrentValue}
-          address={poolAddress}
+          poolAddress={pool}
         />
         <button
           onClick={handleCheckout}
@@ -343,34 +348,32 @@ type CheckoutProps = {
   checkoutValues: [];
   balance: number;
   staked: number;
-  address: string;
+  poolAddress: `0x${string}`;
 };
 
 const Checkout = ({ ...props }: CheckoutProps) => {
-  const { checkoutValues, open, setOpen, balance, staked, address } = props;
+  const { checkoutValues, open, setOpen, balance, staked, poolAddress } = props;
 
-  const { config } = usePrepareContractWrite({
-    address: "0xDC66c3c481540dC737212A582880EC2D441BDc54",
-    abi: POOL_ABI,
-    functionName: "supportProjects",
-    args: [
-      [
-        [7, 10],
-        [8, 10],
-      ],
-    ],
-    // onSuccess: () => {
-    //   console.log("success u are a genius");
-    // },
-    // onError: (error) => {
-    //   console.log("error: ", error);
-    // },
-    // onSettled: (data) => {
-    //   console.log("data: ", data?.result, data?.request, data?.mode);
-    // },
+  const argValues = checkoutValues.map((value: any) => {
+    return [value[0], value[1]];
   });
 
-  const { data, isLoading, isSuccess, write } = useContractWrite(config);
+  const {
+    config,
+    error: prepareError,
+    isError: isPrepareError,
+  } = usePrepareContractWrite({
+    address: poolAddress,
+    abi: POOL_ABI,
+    functionName: "supportProjects",
+    args: [argValues],
+  });
+
+  const { data, error, write } = useContractWrite(config);
+
+  const { isLoading, isSuccess, isError } = useWaitForTransaction({
+    hash: data?.hash,
+  });
 
   const handle = () => {
     setOpen(false);
@@ -500,9 +503,10 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                         </section>
                       </div>
                       <TransactionModal
-                        label={"Stake"}
+                        isLoading={isLoading}
+                        isSuccess={isSuccess}
+                        label={"Support Projects"}
                         writeFunction={handle}
-                        isLoading={true}
                       />
                     </div>
                   </Dialog.Panel>
