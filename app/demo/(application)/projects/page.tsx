@@ -74,7 +74,7 @@ export default async function Projects({
     <>
       <InsideHeader
         title="The Next Web3 Giants"
-        description="Bring your community to the next level by supporting your favorite proyects"
+        description="Shape the destiny of your organization and the Web3 landscape. The journey begins with creating a meaningful project."
         href="./create-project"
       />
       {/* search - filter - cart  */}

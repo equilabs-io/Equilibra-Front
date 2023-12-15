@@ -387,9 +387,6 @@ const AddFunds = () => {
     hash: data?.hash,
   });
 
-  console.log("loading", isWaitLoading);
-  console.log("success", isWaitSuccess);
-
   return (
     <>
       <h4>
@@ -447,7 +444,6 @@ const AddFunds = () => {
             </div>
           </>
         )}
-        {isSuccess && <h4>success</h4>}
 
         {/* <button>Deposit</button> */}
       </div>
