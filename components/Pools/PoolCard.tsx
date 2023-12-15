@@ -31,7 +31,7 @@ const PoolCard = ({ pool }: PoolProps) => {
               natus.
             </p>
             <div className="mb-8 text-center">
-              <h5 className="text-xs text-textSecondary">
+              <h5 className="text-xs text-primary">
                 Governance Token:{" "}
                 <span className="bg-secondary_var ml-2 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-secondary">
                   {pool?.mimeToken.name}

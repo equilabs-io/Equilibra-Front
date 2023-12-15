@@ -42,9 +42,9 @@ export const ProfileHeader = () => {
                   <span className="text-lg text-surface_var transition-all duration-300 ease-in-out group-hover:scale-90">
                     {item.name}
                   </span>
-                  <span className="text-3xl text-primary transition-all duration-300 ease-in-out group-hover:scale-125 ">
+                  {/* <span className="text-3xl text-primary transition-all duration-300 ease-in-out group-hover:scale-125 ">
                     {item.stat}
-                  </span>
+                  </span> */}
                 </div>
               ))}
             </div>
@@ -56,7 +56,8 @@ export const ProfileHeader = () => {
 };
 
 const stats = [
-  { name: "Total Support Given", stat: "450" },
-  { name: "Pool Owner", stat: "2" },
-  { name: "Staking Projects", stat: "4" },
+  { name: "Check your Support Given", stat: "450" },
+  { name: "Pool Ownership", stat: "2" },
+  { name: "Staking in Projects", stat: "4" },
+  // { name: "Activate Projects", stat: "4" },
 ];

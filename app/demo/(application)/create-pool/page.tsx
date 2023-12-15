@@ -47,7 +47,7 @@ const tokens = [
 const OSMOTIC_CONTROLLER_ADDRESS = "0x0b9f52138050881C4d061e6A92f72d8851B59F8e"; //proxy
 const OSMOTIC_POOL_ABI = [
   "function initialize(address,address,address,tuple(uint256,uint256,uint256,uint256))",
-];
+]; //used for encoding data
 
 export default function CreatePool() {
   function classNames(...classes: string[]) {
