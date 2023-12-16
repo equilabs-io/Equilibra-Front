@@ -3,32 +3,32 @@ import Image from "next/image";
 import { Link } from "../Link";
 import AddListButton from "./AddListButton";
 
-interface Project {
-  id: string;
+type Project = {
+  flowLastRates: any;
+  flowLastTime: any;
+  active: any;
+  content: any;
+  contentHash: any;
   admin: string;
   beneficiary: string;
-  contentHash: string;
-  content: any;
-  flowLastRates: number[];
-  flowLastTime: number[];
-  active: boolean;
+  id: string;
   __typename: string;
-}
+};
 
-interface Content {
-  description: string;
-  link: string;
-  fileHash: string;
-  name: string;
-  category: string;
-}
+// interface Content {
+//   description: string;
+//   link: string;
+//   fileHash: string;
+//   name: string;
+//   category: string;
+// }
 
 export default function ProjectCard({
   project,
   projectCheckout,
 }: {
   project: Project;
-  projectCheckout: string[];
+  projectCheckout: (newId: string) => void;
 }) {
   const {
     id,

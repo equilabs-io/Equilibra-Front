@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef, ReactNode } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -28,12 +29,12 @@ export default function PillarCard({
   const opacity = useTransform(
     scrollYProgress,
     [0, 0.3, 0.6, 1],
-    [0.4, 1, 1, 0.4]
+    [0.4, 1, 1, 0.4],
   );
   const scale = useTransform(
     scrollYProgress,
     [0, 0.3, 0.6, 1],
-    [0.4, 1, 1, 0.4]
+    [0.4, 1, 1, 0.4],
   );
   return (
     <>
@@ -43,10 +44,10 @@ export default function PillarCard({
         style={{ opacity, scale }}
         className={`flex flex-col ${
           !reverse ? "md:flex-row" : "md:flex-row-reverse"
-        } max-w-[900px] mx-auto top-10 bg-background md:space-x-8 lg:justify-between space-y-4 md:space-y-0 mb-16 ${className}`}
+        } top-10 mx-auto mb-16 max-w-[900px] space-y-4 bg-background md:space-x-8 md:space-y-0 lg:justify-between ${className}`}
       >
         <span className="sr-only">SVG / IMAGE</span>
-        <div className="h-[150px] w-full md:h-[300px] md:min-w-[262px] md:max-w-[485px] bg-background">
+        <div className="h-[150px] w-full bg-background md:h-[300px] md:min-w-[262px] md:max-w-[485px]">
           {image}
         </div>
 
@@ -54,9 +55,9 @@ export default function PillarCard({
         <div
           className={`text-center ${
             !reverse ? "md:text-left" : "md:text-right"
-          } flex flex-col w-full md:max-w-md space-y-2 `}
+          } flex w-full flex-col space-y-2 md:max-w-md `}
         >
-          <div className="space-y-1 md:space-y-4 mb-6">
+          <div className="mb-6 space-y-1 md:space-y-4">
             <h2 className="mb-4 text-4xl">{title}:</h2>
             <h3 className="mb-4 text-2xl">{subtitle}</h3>
           </div>

@@ -1,9 +1,6 @@
-import React, {useRef} from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+"use client";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 //components
 import CustomButton from "@/components/CustomButton";
 //assets
@@ -19,12 +16,12 @@ export const Hero: React.FC = () => {
   const opacity = useTransform(
     scrollYProgress,
     [0, 0.3, 0.6, 1],
-    [0.2, 1, 1, 0.2]
+    [0.2, 1, 1, 0.2],
   );
   const scale = useTransform(
     scrollYProgress,
     [0, 0.3, 0.6, 1],
-    [0.2, 1, 1, 0.2]
+    [0.2, 1, 1, 0.2],
   );
 
   return (
@@ -33,12 +30,12 @@ export const Hero: React.FC = () => {
         transition={{ duration: 0.5, ease: "easeInOut" }}
         ref={ref}
         style={{ opacity, scale }}
-        className="h-screen flex items-center justify-center relative"
+        className="relative flex h-screen items-center justify-center"
       >
-        <div className="flex flex-col items-center space-x-4 gap-20">
-          <div className="flex items-center flex-col">
-            <div className="flex flex-col md:flex-row items-center mb-6">
-              <h1 className="mb-2 mx-4 md:mb-0">Equilibra</h1>
+        <div className="flex flex-col items-center gap-20 space-x-4">
+          <div className="flex flex-col items-center">
+            <div className="mb-6 flex flex-col items-center md:flex-row">
+              <h1 className="mx-4 mb-2 md:mb-0">Equilibra</h1>
               <EquilibraLogo styles="text-[#00FFC4] w-[120px] h-[70px]" />
             </div>
             <div className="text-center">

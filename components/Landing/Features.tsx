@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
@@ -56,7 +57,7 @@ export default function Features() {
   const opacity = useTransform(
     scrollYProgress,
     [0, 0.3, 0.6, 1],
-    [0.2, 1, 1, 1]
+    [0.2, 1, 1, 1],
   );
   const scale = useTransform(scrollYProgress, [0, 0.3, 0.6, 1], [0.2, 1, 1, 1]);
 
@@ -67,7 +68,7 @@ export default function Features() {
       style={{ opacity, scale }}
       className=""
     >
-      <h2 className="text-5xl mb-28 text-center">Our Core Features</h2>
+      <h2 className="mb-28 text-center text-5xl">Our Core Features</h2>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6 lg:grid-cols-[repeat(auto-fit,minmax(360px,1fr))] xl:grid-cols-3">
         {featuresInfo.map((card) => {
           return <FeatureCard key={card.title} {...card} />;

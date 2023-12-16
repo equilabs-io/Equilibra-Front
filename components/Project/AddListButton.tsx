@@ -4,7 +4,7 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 type AddListButtonProps = {
   active: boolean;
   id: string;
-  projectCheckout: string[];
+  projectCheckout: (newId: string) => void;
 };
 
 const AddListButton = ({ active, id, projectCheckout }: AddListButtonProps) => {

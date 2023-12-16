@@ -5,17 +5,24 @@ import { Transition, Dialog } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 type ProjectGridProps = {
-  children: React.FC;
-  projects: [];
+  children?: React.FC;
+  projects: Project[];
 };
 
-type Project = {
-  id: string;
-  content?: {
-    name?: string;
-    category?: string;
-  };
-};
+type Project =
+  | {
+      flowLastRates: any;
+      flowLastTime: any;
+      active: any;
+      content: any;
+      contentHash: any;
+      admin: string;
+      beneficiary: string;
+      id: string;
+      __typename: string;
+    }
+  | undefined;
+
 //helper function to get the string after the first dash -
 function getFirstLetterAfterHyphen(str: string): string {
   const hyphenIndex = str.indexOf("-");
@@ -41,7 +48,11 @@ const ProjectGrid = ({ children, projects }: ProjectGridProps) => {
       !projectsCheckoutInfo.some((item) => item.id === numericId)
     ) {
       projects.forEach((project: Project) => {
-        if (getFirstLetterAfterHyphen(project.id) === String(numericId)) {
+        if (
+          project !== undefined &&
+          project.id &&
+          getFirstLetterAfterHyphen(project.id) === String(numericId)
+        ) {
           setprojectsCheckoutInfo((prevIds) => [
             {
               id: numericId,
@@ -71,7 +82,7 @@ const ProjectGrid = ({ children, projects }: ProjectGridProps) => {
           <h2 className="sr-only">projects</h2>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(310px,1fr))] gap-6 md:grid-cols-[repeat(auto-fit,minmax(360px,1fr))]">
             {projects?.map((project, idx) => {
-              if (project)
+              if (project !== undefined && project.id)
                 return (
                   <div key={idx}>
                     <ProjectCard

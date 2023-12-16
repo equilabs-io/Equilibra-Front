@@ -9,27 +9,20 @@ const projectId =
 
 const metadata = {
   name: "Web3Modal",
-  description: "Web3Modal Example",
+  description: "Web3Modal Description",
   url: "https://web3modal.com",
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
 
-const chains = [mainnet, optimism, goerli];
+const chains = [goerli];
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
 createWeb3Modal({
   wagmiConfig,
   projectId,
   chains,
-  themeVariables: {
-    // "--w3m-accent": "var(--color-primary-var)",
-  },
 });
 
-export default function WagmiProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Web3Modal({ children }: { children: React.ReactNode }) {
   return <WagmiConfig config={wagmiConfig}> {children} </WagmiConfig>;
 }

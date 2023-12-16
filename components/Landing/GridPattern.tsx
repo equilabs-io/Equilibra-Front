@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useId, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -77,7 +78,7 @@ export function GridPattern({
         let key = counter.current++;
         let block = [x, y, key] as (typeof hoveredBlocks)[number];
         return [...blocks, block].filter(
-          (block) => !(block[0] === x && block[1] === y && block[2] !== key)
+          (block) => !(block[0] === x && block[1] === y && block[2] !== key),
         );
       });
     }
@@ -106,7 +107,7 @@ export function GridPattern({
               transition={{ duration: 1, times: [0, 0, 1] }}
               onAnimationComplete={() => {
                 setHoveredBlocks((blocks) =>
-                  blocks.filter((b) => b[2] !== block[2])
+                  blocks.filter((b) => b[2] !== block[2]),
                 );
               }}
             />
