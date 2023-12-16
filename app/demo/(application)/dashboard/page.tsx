@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { Fragment, useEffect, useState } from 'react';
-import Link from 'next/link';
-import { ProfileHeader } from '@/components/ProfileHeader';
-import { SupporProjects } from '@/components/SupporProjects';
-import { getUrqlClient } from '@/services/urqlService';
-import { Dialog, Disclosure, Transition } from '@headlessui/react';
-import { ChevronUpIcon } from '@heroicons/react/20/solid';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useAccount } from 'wagmi';
+import { Fragment, useEffect, useState } from "react";
+import Link from "next/link";
+import { ProfileHeader } from "@/components/ProfileHeader";
+import { SupporProjects } from "@/components/SupporProjects";
+import { getUrqlClient } from "@/services/urqlService";
+import { Dialog, Disclosure, Transition } from "@headlessui/react";
+import { ChevronUpIcon } from "@heroicons/react/20/solid";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useAccount } from "wagmi";
 
 type IndexFunc = (str: string, char: string) => number;
 //helper function to get the last 4 chars of a string
 function getFourChars(str: string, indexFunc: IndexFunc): string {
-  const lastDashIndex = indexFunc(str, '-');
+  const lastDashIndex = indexFunc(str, "-");
   const fourChars = str.substring(lastDashIndex - 4, lastDashIndex);
   return fourChars;
 }
 //helper function to get the string before the first dash
 function getBeforeFirstDash(str: string): string {
-  const firstDashIndex = str.indexOf('-');
+  const firstDashIndex = str.indexOf("-");
   if (firstDashIndex === -1) {
     return str;
   }
@@ -98,23 +98,42 @@ export default function ProfileDashboard({}) {
   // //participant support to projects data []
   // const participantSupports =
   //   participantQueryResult.data.poolProjectParticipantSupports;
+  const [openManager, setOpenManager] = useState(false);
   return (
     <>
-      <div className="min-h-screen w-full space-y-10 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="absolute inset-0  max-h-screen w-full  space-y-10  px-4 py-24 sm:px-6 lg:px-8">
         {/* Header */}
         <ProfileHeader />
+        <div className="absolute left-0 top-[80%] flex w-full justify-center ">
+          <button
+            onClick={() => setOpenManager(true)}
+            className="rounded-full border px-8 py-4 text-4xl uppercase"
+          >
+            open Manager
+          </button>
+        </div>
+        {openManager && (
+          <div className="absolute inset-0  flex items-center justify-center  bg-background">
+            <button
+              onClick={() => setOpenManager(false)}
+              className="absolute right-20 top-20 rounded-full bg-primary px-4 py-2 text-4xl uppercase text-highlight"
+            >
+              X
+            </button>
+          </div>
+        )}
 
         {/* Stats */}
 
         {/*Main content - Pool Disclousure comp */}
-        {queryPoolbyOwner.length > 0 &&
+        {/* {queryPoolbyOwner.length > 0 &&
           queryPoolbyOwner.slice(-2)?.map((pool, idx) => (
             <>
               <div key={idx}>
-                <Disclousure as={'div'} pool={pool} />
+                <Disclousure as={"div"} pool={pool} />
               </div>
             </>
-          ))}
+          ))} */}
       </div>
     </>
   );
@@ -142,7 +161,7 @@ const Disclousure = ({ ...props }: any) => {
                 </span>
                 <ChevronUpIcon
                   className={`transition-all duration-200 ease-in ${
-                    open ? 'rotate-180 transform' : ''
+                    open ? "rotate-180 transform" : ""
                   } h-5 w-5 text-primary`}
                 />
               </Disclosure.Button>
@@ -173,7 +192,7 @@ const Disclousure = ({ ...props }: any) => {
 
 const CountdownTimer = () => {
   // Set the end date and time for the countdown
-  const countdownDate = new Date('December 10, 2023').getTime();
+  const countdownDate = new Date("December 10, 2023").getTime();
 
   const calculateTimeLeft = () => {
     const now = new Date().getTime();
@@ -222,7 +241,7 @@ const CountdownTimer = () => {
           Countdown Timer
         </div>
         <div className="text-2xl text-gray-600">
-          {timeLeft.days} Days {timeLeft.hours} Hours {timeLeft.minutes} Minutes{' '}
+          {timeLeft.days} Days {timeLeft.hours} Hours {timeLeft.minutes} Minutes{" "}
           {timeLeft.seconds} Seconds
         </div>
       </div>
@@ -233,17 +252,17 @@ const CountdownTimer = () => {
 //TODO!: Delete this components afterwards
 const MyModal = ({ ...props }: any) => {
   let [isOpen, setIsOpen] = useState(false);
-  const [word, setWord] = useState('hello');
+  const [word, setWord] = useState("hello");
   const { pool } = props;
 
   function closeModal() {
     setIsOpen(false);
-    setWord('goodbye');
+    setWord("goodbye");
   }
 
   function openModal() {
     setIsOpen(true);
-    setWord('helloToYou');
+    setWord("helloToYou");
   }
 
   return (
@@ -286,7 +305,7 @@ const MyModal = ({ ...props }: any) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-surface_var"
                   >
-                    {''}
+                    {""}
                   </Dialog.Title>
                   <div className="mt-2">
                     <SupporProjects pool={pool.address} />
@@ -297,20 +316,6 @@ const MyModal = ({ ...props }: any) => {
           </div>
         </Dialog>
       </Transition>
-    </>
-  );
-};
-
-//TODO!: Delete this components afterwards
-const Wrapper = ({ label = 'Projects', children }: WrapperProps) => {
-  return (
-    <>
-      <div className="flex w-full flex-col space-y-2">
-        <h2 className="text-primary ">{label}</h2>
-        <div className="min-h-content flex w-full flex-col rounded-bl-3xl border-[1px] border-surface p-4 shadow-lg shadow-surface">
-          {children}
-        </div>
-      </div>
     </>
   );
 };
