@@ -9,6 +9,7 @@ import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useAccount } from "wagmi";
+import { Manager } from "@/components/Manager";
 
 type IndexFunc = (str: string, char: string) => number;
 //helper function to get the last 4 chars of a string
@@ -104,7 +105,8 @@ export default function ProfileDashboard({}) {
       <div className="absolute inset-0  max-h-screen w-full  space-y-10  px-4 py-24 sm:px-6 lg:px-8">
         {/* Header */}
         <ProfileHeader />
-        <div className="absolute left-0 top-[80%] flex w-full justify-center ">
+        {/* open manager  */}
+        <div className="absolute left-0 top-[80%] flex w-full justify-center">
           <button
             onClick={() => setOpenManager(true)}
             className="rounded-full border px-8 py-4 text-4xl uppercase"
@@ -112,14 +114,17 @@ export default function ProfileDashboard({}) {
             open Manager
           </button>
         </div>
+
+        {/* manager */}
         {openManager && (
-          <div className="absolute inset-0  flex items-center justify-center  bg-background">
+          <div className="absolute inset-0 flex bg-background">
             <button
               onClick={() => setOpenManager(false)}
-              className="absolute right-20 top-20 rounded-full bg-primary px-4 py-2 text-4xl uppercase text-highlight"
+              className="absolute right-5 top-14 rounded-full px-2 py-2 text-xl uppercase text-textSecondary "
             >
               X
             </button>
+            <Manager />
           </div>
         )}
 

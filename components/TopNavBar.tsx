@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { EquilibraLogo } from '@/assets';
-import { navItems } from '@/constants/navigation';
-import useDocumentScroll from '@/hooks/useDocumentScroll';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { EquilibraLogo } from "@/assets";
+import { navItems } from "@/constants/navigation";
+import useDocumentScroll from "@/hooks/useDocumentScroll";
+import { motion } from "framer-motion";
 
 export default function TopNavBar() {
   const [showNav, setShowNav] = useState(true);
@@ -28,8 +28,8 @@ export default function TopNavBar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`sticky top-0 z-50 flex justify-center bg-background py-4  ${
-        showNav ? 'top-0  transition-all duration-200 ease-in' : 'top-[-92px]'
+      className={`sticky top-0 z-50 flex justify-center bg-background py-4 ${
+        showNav ? "top-0 transition-all duration-200 ease-in" : "top-[-92px]"
       }`}
     >
       <div className="container m-auto px-6 md:px-12 lg:px-7">
@@ -88,7 +88,7 @@ export default function TopNavBar() {
             <div className="block h-full w-full md:h-auto">
               {/* NavLinks */}
               <ul className="space-y-8 font-medium tracking-wide md:flex md:space-y-0 ">
-                {pathname !== '/demo' &&
+                {pathname !== "/demo" &&
                   navItems.map((item, index) => (
                     <li
                       key={item.name}
@@ -97,7 +97,7 @@ export default function TopNavBar() {
                       <Link
                         href={`${item.href}`}
                         className={`group block py-2 md:px-3 ${
-                          selectedID === index && 'text-primary'
+                          selectedID === index && "text-primary"
                         }`}
                         onClick={() => setSelectedID(index)}
                       >
@@ -125,14 +125,14 @@ export default function TopNavBar() {
 
             {/* Connect Wallet */}
             <div className="flex w-full flex-col justify-end gap-y-4 md:flex-row md:gap-x-4 md:gap-y-0">
-              <span className="sr-only">Connect Wallet</span>{' '}
+              <span className="sr-only">Connect Wallet</span>{" "}
               <div className="flex justify-center">
-                {' '}
+                {" "}
                 <w3m-button
                   balance="hide"
                   label="Connect Wallet"
                   size="md"
-                />{' '}
+                />{" "}
               </div>
             </div>
           </div>

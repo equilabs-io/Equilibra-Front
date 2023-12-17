@@ -20,9 +20,9 @@ export const ProfileHeader = () => {
               conviction began.
             </p>
           </div>
-          <div className="flex flex-col items-start justify-start gap-x-8 gap-y-4 rounded-xl  bg-background px-4 py-6">
-            <div className="flex w-full items-center justify-between">
-              <div className="truncat overflow-hidden bg-surface">
+          {/* TODO: improve this section styles and data */}
+          <div className="flex flex-col rounded-xl  bg-background px-4 py-6">
+            {/* <div className="truncat overflow-hidden bg-surface">
                 <span className="text-gray_mdark truncate">
                   {formatAddress(participant)}
                 </span>
@@ -32,8 +32,8 @@ export const ProfileHeader = () => {
                 src={`https://effigy.im/a/${participant}.png`}
                 height={40}
                 width={40}
-              />
-            </div>
+              /> */}
+
             {/* stats -mock data for now */}
 
             <div className="peer flex h-full w-full flex-col justify-between">
