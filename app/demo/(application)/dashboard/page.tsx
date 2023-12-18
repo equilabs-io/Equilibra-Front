@@ -33,28 +33,6 @@ export default function ProfileDashboard({}) {
   const [participantSupports, setParticipantSupports] = useState([]);
   const [queryPoolbyOwner, setQueryPoolbyOwner] = useState([]);
 
-  //handeling url params with the address from wagmi
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
-
-  const query = searchParams.get("query");
-
-  const handleSearch = (term: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (term) {
-      params.set("query", term);
-    } else {
-      params.delete("query");
-    }
-    replace(`${pathname}?${params.toString()}`);
-  };
-  // useEffect(() => {
-  //   console.log(participant);
-  //   handleSearch(participant);
-  // }, [participant]);
-  //
-
   useEffect(() => {
     const queryPoolbyOwner = `
     query ($owner: String!) {
@@ -113,22 +91,13 @@ export default function ProfileDashboard({}) {
     fetchPoolbyOwner();
   }, [participant]);
 
-  //TODO: logic if it is a server component
-  // const address = "0x5be8bb8d7923879c3ddc9c551c5aa85ad0fa4de3";
-  // const participantQueryResult = await getUrqlClient().query(
-  //   participantSupportQuery,
-  //   { participant: address }
-  // );
-  // //participant support to projects data []
-  // const participantSupports =
-  //   participantQueryResult.data.poolProjectParticipantSupports;
   const [openManager, setOpenManager] = useState(false);
   return (
     <>
       <div className="absolute inset-0  max-h-screen w-full  space-y-10  px-4 py-24 sm:px-6 lg:px-8">
         {/* Header */}
         <ProfileHeader />
-        <h3>{query?.toString()}</h3>
+
         {/* open manager  */}
         <div className="absolute left-0 top-[80%] flex w-full justify-center">
           <button

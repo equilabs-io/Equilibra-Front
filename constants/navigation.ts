@@ -35,8 +35,8 @@ export const navItems = [
     current: false,
   },
   {
-    name: "Dashboard",
-    href: "/demo/dashboard",
+    name: "Manager",
+    href: "/demo/manager",
     icon: UserCircleIcon,
     current: false,
   },

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, use, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import POOL_ABI from "@/constants/abis/Pool.json";
 import { getUrqlClient } from "@/services/urqlService";
 import { Dialog, Menu, Transition } from "@headlessui/react";
@@ -108,9 +108,9 @@ export const SupporProjects = ({ pool }: any) => {
       });
       setPoolInfo([
         {
-          address: result.data.osmoticPool.address,
-          projectList: result.data.osmoticPool.projectList,
-          mimeToken: result.data.osmoticPool.mimeToken,
+          address: result.data?.osmoticPool.address,
+          projectList: result.data?.osmoticPool.projectList,
+          mimeToken: result.data?.osmoticPool.mimeToken,
         },
       ]);
 
