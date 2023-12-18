@@ -117,7 +117,7 @@ export default function ProfileDashboard({}) {
 
         {/* manager */}
         {openManager && (
-          <div className="absolute inset-0 flex bg-background">
+          <div className="absolute inset-x-0 inset-y-4 flex bg-background">
             <button
               onClick={() => setOpenManager(false)}
               className="absolute right-5 top-14 rounded-full px-2 py-2 text-xl uppercase text-textSecondary "

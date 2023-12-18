@@ -198,22 +198,12 @@ export const SupporProjects = ({ pool }: any) => {
 
   return (
     <>
-      <div className="relative h-full">
+      <div className="relative flex h-full gap-2">
         <ul
           role="list"
-          className="flex h-full w-full flex-col justify-start space-y-4 overflow-hidden"
+          className="flex h-full w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden "
         >
-          <p className="h-fit text-center text-textSecondary">
-            Give support with
-            <span className="mx-2 rounded-full bg-secondary px-2 py-0.5 text-secondary_var">
-              {mimeTokenName}
-            </span>{" "}
-            to the projects of your choice
-          </p>
-          <div>{poolAddress}</div>
-          <div>{mimeTokenSymbol}</div>
-          <div>{mimeTokenName}</div>
-          <div>{projectList}</div>
+          {/* Data and inputs to support and change support for projects */}
           {participantSupports &&
             participantSupports.map(
               (
@@ -250,7 +240,7 @@ export const SupporProjects = ({ pool }: any) => {
                     className="flex justify-between gap-x-6 rounded-xl bg-surface px-2 py-4"
                   >
                     <div className="flex min-w-0 max-w-[150px] items-center gap-x-2">
-                      <span className="h-12 w-12 rounded-full border"></span>
+                      <span className="h-12 w-12 rounded-full"></span>
                       {/* <img
                     className="h-12 w-12 flex-none rounded-full bg-gray-200"
                     src={`https://effigy.im/a/${project.address}`}
@@ -324,7 +314,7 @@ export const SupporProjects = ({ pool }: any) => {
           {/*Reset button for all disabled inputs */}
         </ul>
 
-        {/* Alert when reaching maxvalue of Token staked */}
+        {/* maxValue notofication */}
         {/* {isMaxValueReached && (
         <>
           <div className="mt-4 flex items-center justify-center bg-background">
@@ -342,7 +332,7 @@ export const SupporProjects = ({ pool }: any) => {
         </>
       )} */}
 
-        {/* Checkout button */}
+        {/* Checkout button and & sliderOver comp */}
         <div className="mt-0">
           <Checkout
             open={open}
@@ -355,13 +345,17 @@ export const SupporProjects = ({ pool }: any) => {
           <button
             onClick={handleCheckout}
             disabled={checkoutValues.length === 0}
-            className="absolute bottom-0 left-0 w-full cursor-pointer rounded-md bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all  duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="absolute bottom-0 left-0 cursor-pointer rounded-md bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all  duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
           >
             Checkout
           </button>
         </div>
+
+        {/* Right column area */}
+        <aside className="top-8 h-full flex-1 shrink-0 p-2">
+          <Chart maxValue={maxValue} currentValue={actualCurrentValue} />
+        </aside>
       </div>
-      {/* <TransactionModal open={open} setOpen={setOpen} /> */}
     </>
   );
 };
@@ -525,12 +519,15 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                           </div>
                         </section>
                       </div>
+
+                      {/*Modal*/}
                       <TransactionModal
                         isLoading={isLoading}
                         isSuccess={isSuccess}
                         label={"Support Projects"}
                         writeFunction={handle}
                       />
+                      {/*  */}
                     </div>
                   </Dialog.Panel>
                 </Transition.Child>

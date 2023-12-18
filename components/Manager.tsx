@@ -14,13 +14,14 @@ export const Manager = ({ ...props }) => {
 
   return (
     <>
-      <div className="z-20 mt-20 flex max-h-full w-full flex-col">
-        {/* <header className="shrink-0">
+      <div className="mt-20 flex w-full flex-col gap-4 px-4 ">
+        <header className="">
           <ManagerStats />
-        </header> */}
+        </header>
 
-        <div className="mx-auto flex h-full w-full items-center gap-x-8  px-4 py-1 sm:px-6 lg:px-8">
-          <aside className="sticky top-8 hidden h-96 w-44 shrink-0 border lg:block">
+        <div className="grid h-full grid-cols-4 gap-4">
+          {/* Left column area */}
+          <aside className="cols-span-1 h-full rounded-lg">
             {pools.length > 0 &&
               pools.slice(-2)?.map((pool: any, idx: number) => (
                 <>
@@ -38,20 +39,21 @@ export const Manager = ({ ...props }) => {
             <div className="mt-20 truncate">
               Current Pool {currentPool ?? currentPool}
             </div>
-            {/* Left column area */}
           </aside>
-
-          <main className="h-full w-full flex-1  border p-2">
-            {/* Main area */}
-            {/* <ProjectsSupport /> */}
-            <Suspense fallback={<>...</>}>
-              <SupporProjects pool={currentPool} />
-            </Suspense>
-          </main>
-
-          <aside className="sticky top-8 hidden h-full w-96 shrink-0 border p-2 lg:block">
-            {/* Right column area */}
-          </aside>
+          {/* Main area */}
+          <div className="items-start-2 col-start-2 col-end-5 h-full w-full ">
+            <main className=" h-full w-full flex-1 p-2">
+              <Suspense
+              // fallback={
+              //   <div className="flex h-full items-center justify-center">
+              //     <div className="h-32 w-32 animate-spin rounded-full-b-2-gray-900"></div>
+              //   </div>
+              // }
+              >
+                <SupporProjects pool={currentPool} />
+              </Suspense>
+            </main>
+          </div>
         </div>
       </div>
     </>
@@ -141,19 +143,19 @@ function ProjectsSupport() {
 }
 function ManagerStats() {
   return (
-    <div className="bg-background px-4">
-      <div className="mx-auto w-full ">
-        <div className="bg-white/5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="w-full bg-background">
+      <div className="w-full">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
             <div
               key={stat.name}
-              className="bg-surface px-1 py-2 sm:px-6 lg:px-8"
+              className="group rounded-lg  bg-surface px-1 py-2 sm:px-6 lg:px-8"
             >
-              <p className="text-sm font-medium leading-6 text-textSecondary">
+              <p className="text-xs font-medium leading-6 text-textSecondary">
                 {stat.name}
               </p>
               <p className="mt-2 flex items-baseline gap-x-2">
-                <span className="text-3xl font-semibold tracking-tight text-white">
+                <span className="text-xl font-semibold tracking-tight text-white">
                   {stat.value}
                 </span>
                 {stat.unit ? (
@@ -171,8 +173,8 @@ function ManagerStats() {
 }
 const stats = [
   { name: "Pool", value: "0x56d ... 4Dd8" },
-  { name: "Owenership", value: "Owner", unit: "" },
-  { name: "Supporting Projects", value: "4" },
+  { name: "Gov Token", value: "Fede Token", unit: "" },
+  { name: "Management list", value: "Peepo" },
   { name: "Round ", value: "1" },
 ];
 

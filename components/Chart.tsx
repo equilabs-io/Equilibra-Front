@@ -32,7 +32,7 @@ export const Chart = ({ maxValue, currentValue }: ChartProps) => {
 
   return (
     <>
-      <div>
+      <div className="">
         <svg
           width={sideLength}
           height={sideLength}
