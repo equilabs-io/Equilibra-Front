@@ -3,8 +3,8 @@
 import React, { Fragment, use, useCallback, useEffect, useState } from "react";
 import POOL_ABI from "@/constants/abis/Pool.json";
 import { getUrqlClient } from "@/services/urqlService";
-import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Dialog, Menu, Transition } from "@headlessui/react";
+import { EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import {
   useAccount,
@@ -15,7 +15,6 @@ import {
 import TransactionModal from "./TransactionModal";
 
 import { Chart } from "./Chart";
-import { check } from "prettier";
 
 const osmoticPool = `query (id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
     id
@@ -138,7 +137,7 @@ export const SupporProjects = ({ pool }: any) => {
 
     fetchParticipantSupports();
     fetchPoolInfoAndParticipantSupports();
-  }, []);
+  }, [pool, participant]);
 
   let actualCurrentValue = participantSupports.reduce(
     (acc: string | number, curr: { value: string | number }) =>
@@ -196,75 +195,75 @@ export const SupporProjects = ({ pool }: any) => {
   const mimeTokenSymbol = poolInfo?.[0].mimeToken?.symbol;
   const mimeTokenName = poolInfo?.[0].mimeToken?.name;
   const projectList = poolInfo?.[0].projectList?.name;
+
   return (
     <>
-      <div className="grid grid-cols-1 items-center space-x-2  lg:grid-cols-3">
-        {/* Pool tokens Info */}
-
-        <div className="col-span-1 text-white">
-          <div className="mt-2 flex w-full items-center">
-            <div className="flex w-full items-center justify-center space-y-2">
-              <TiltCard balance={350} staked={actualCurrentValue}>
-                <Chart maxValue={maxValue} currentValue={actualCurrentValue} />
-              </TiltCard>
-            </div>
-          </div>
-        </div>
-
-        {/* Ranger inputs */}
+      <div className="relative h-full">
         <ul
           role="list"
-          className="col-span-2 flex h-full flex-col space-y-8  py-2 "
+          className="flex h-full w-full flex-col justify-start space-y-4 overflow-hidden"
         >
-          <p className="h-fit text-center">
+          <p className="h-fit text-center text-textSecondary">
             Give support with
-            <span className="ml-1 rounded-full bg-highlight px-2 py-1 text-primary">
+            <span className="mx-2 rounded-full bg-secondary px-2 py-0.5 text-secondary_var">
               {mimeTokenName}
             </span>{" "}
             to the projects of your choice
           </p>
-
-          {participantSupports.map(
-            (
-              project: {
-                id:
-                  | boolean
-                  | React.Key
-                  | React.ReactElement<
-                      any,
-                      string | React.JSXElementConstructor<any>
-                    >
-                  | Iterable<React.ReactNode>
-                  | React.PromiseLikeOfReactNode
-                  | null
-                  | undefined;
-                value:
-                  | string
-                  | number
-                  | boolean
-                  | React.ReactElement<
-                      any,
-                      string | React.JSXElementConstructor<any>
-                    >
-                  | Iterable<React.ReactNode>
-                  | React.PromiseLikeOfReactNode
-                  | null
-                  | undefined;
-              },
-              index: number,
-            ) => (
-              <>
-                <li
-                  key={project.id}
-                  className="shadow-inset max-h-min cursor-pointer rounded-lg bg-surface shadow-background transition-all duration-300 ease-in-out"
-                >
-                  <div className="flex">
-                    <div className="flex items-center justify-center rounded-full  p-2">
-                      <label htmlFor="medium-range" className="text-md">
-                        id: {project.id}
-                      </label>
+          <div>{poolAddress}</div>
+          <div>{mimeTokenSymbol}</div>
+          <div>{mimeTokenName}</div>
+          <div>{projectList}</div>
+          {participantSupports &&
+            participantSupports.map(
+              (
+                project: {
+                  id:
+                    | boolean
+                    | React.Key
+                    | React.ReactElement<
+                        any,
+                        string | React.JSXElementConstructor<any>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.PromiseLikeOfReactNode
+                    | null
+                    | undefined;
+                  value:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        any,
+                        string | React.JSXElementConstructor<any>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.PromiseLikeOfReactNode
+                    | null
+                    | undefined;
+                },
+                index: number,
+              ) => (
+                <>
+                  <li
+                    key={index}
+                    className="flex justify-between gap-x-6 rounded-xl bg-surface px-2 py-4"
+                  >
+                    <div className="flex min-w-0 max-w-[150px] items-center gap-x-2">
+                      <span className="h-12 w-12 rounded-full border"></span>
+                      {/* <img
+                    className="h-12 w-12 flex-none rounded-full bg-gray-200"
+                    src={`https://effigy.im/a/${project.address}`}
+                    alt=""
+                  /> */}
+                      <div className="truncate">
+                        <p className="text-sm text-textSecondary">
+                          {String(project.id)}
+                        </p>
+                      </div>
                     </div>
 
+                    {/* Range inputs */}
                     <div className="flex flex-1 items-center justify-center bg-surface">
                       <input
                         type="range"
@@ -283,27 +282,50 @@ export const SupporProjects = ({ pool }: any) => {
                     </div>
                     <div className="">
                       <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-mono text-2xl font-medium text-white">
-                        <svg
-                          className="h-1 w-1 fill-green-400"
-                          viewBox="0 0 6 6"
-                          aria-hidden="true"
-                        >
-                          <circle cx={3} cy={3} r={3} />
-                        </svg>
                         {project.value}
                       </span>
                     </div>
-                  </div>
-                </li>
-              </>
-            ),
-          )}
+                    <Menu as="div" className="relative flex-none">
+                      <Menu.Button className="-m-2.5 block p-2.5 text-gray-500 hover:text-textSecondary">
+                        <span className="sr-only">Open options</span>
+                        <EllipsisVerticalIcon
+                          className="h-5 w-5"
+                          aria-hidden="true"
+                        />
+                      </Menu.Button>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-background py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                href="#"
+                                className="block bg-surface px-3 py-1 text-sm leading-6 text-textSecondary"
+                              >
+                                View Project
+                                <span className="sr-only">, {project.id}</span>
+                              </a>
+                            )}
+                          </Menu.Item>
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
+                  </li>
+                </>
+              ),
+            )}
           {/*Reset button for all disabled inputs */}
         </ul>
-      </div>
 
-      {/* Alert when reaching maxvalue of Token staked */}
-      {isMaxValueReached && (
+        {/* Alert when reaching maxvalue of Token staked */}
+        {/* {isMaxValueReached && (
         <>
           <div className="mt-4 flex items-center justify-center bg-background">
             <span className="rounded-md  p-2">
@@ -318,25 +340,26 @@ export const SupporProjects = ({ pool }: any) => {
             </button>
           </div>
         </>
-      )}
+      )} */}
 
-      {/* Checkout button */}
-      <div className="mt-10">
-        <Checkout
-          open={open}
-          setOpen={setOpen}
-          checkoutValues={checkoutValues}
-          balance={350}
-          staked={actualCurrentValue}
-          poolAddress={pool}
-        />
-        <button
-          onClick={handleCheckout}
-          disabled={checkoutValues.length === 0}
-          className="w-full cursor-pointer rounded-md bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all  duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Checkout
-        </button>
+        {/* Checkout button */}
+        <div className="mt-0">
+          <Checkout
+            open={open}
+            setOpen={setOpen}
+            checkoutValues={checkoutValues}
+            balance={350}
+            staked={actualCurrentValue}
+            poolAddress={pool}
+          />
+          <button
+            onClick={handleCheckout}
+            disabled={checkoutValues.length === 0}
+            className="absolute bottom-0 left-0 w-full cursor-pointer rounded-md bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all  duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Checkout
+          </button>
+        </div>
       </div>
       {/* <TransactionModal open={open} setOpen={setOpen} /> */}
     </>

@@ -124,7 +124,7 @@ export default function ProfileDashboard({}) {
             >
               X
             </button>
-            <Manager />
+            <Manager pools={queryPoolbyOwner.slice(-2)} />
           </div>
         )}
 
