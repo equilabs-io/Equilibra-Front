@@ -9,7 +9,8 @@ import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useAccount } from "wagmi";
-import { Manager } from "@/components/Manager";
+import Manager from "@/components/Manager";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 type IndexFunc = (str: string, char: string) => number;
 //helper function to get the last 4 chars of a string
@@ -31,6 +32,28 @@ export default function ProfileDashboard({}) {
   const { address: participant } = useAccount();
   const [participantSupports, setParticipantSupports] = useState([]);
   const [queryPoolbyOwner, setQueryPoolbyOwner] = useState([]);
+
+  //handeling url params with the address from wagmi
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  const query = searchParams.get("query");
+
+  const handleSearch = (term: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set("query", term);
+    } else {
+      params.delete("query");
+    }
+    replace(`${pathname}?${params.toString()}`);
+  };
+  // useEffect(() => {
+  //   console.log(participant);
+  //   handleSearch(participant);
+  // }, [participant]);
+  //
 
   useEffect(() => {
     const queryPoolbyOwner = `
@@ -105,6 +128,7 @@ export default function ProfileDashboard({}) {
       <div className="absolute inset-0  max-h-screen w-full  space-y-10  px-4 py-24 sm:px-6 lg:px-8">
         {/* Header */}
         <ProfileHeader />
+        <h3>{query?.toString()}</h3>
         {/* open manager  */}
         <div className="absolute left-0 top-[80%] flex w-full justify-center">
           <button
@@ -116,6 +140,7 @@ export default function ProfileDashboard({}) {
         </div>
 
         {/* manager */}
+
         {openManager && (
           <div className="absolute inset-x-0 inset-y-4 flex bg-background">
             <button
@@ -255,72 +280,3 @@ const CountdownTimer = () => {
 };
 
 //TODO!: Delete this components afterwards
-const MyModal = ({ ...props }: any) => {
-  let [isOpen, setIsOpen] = useState(false);
-  const [word, setWord] = useState("hello");
-  const { pool } = props;
-
-  function closeModal() {
-    setIsOpen(false);
-    setWord("goodbye");
-  }
-
-  function openModal() {
-    setIsOpen(true);
-    setWord("helloToYou");
-  }
-
-  return (
-    <>
-      <button
-        type="button"
-        onClick={openModal}
-        className="focus-visible:ring-white/75 rounded-md bg-surface px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2"
-      >
-        {pool?.address}
-      </button>
-
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-background" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-[60vw] transform overflow-hidden rounded-2xl bg-surface p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-surface_var"
-                  >
-                    {""}
-                  </Dialog.Title>
-                  <div className="mt-2">
-                    <SupporProjects pool={pool.address} />
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-    </>
-  );
-};
