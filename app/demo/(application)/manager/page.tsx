@@ -22,6 +22,7 @@ query ($owner: String!) {
           name
           symbol
         }
+      
         poolProjects(first: 10) {
             id
             poolProjectSupports {
@@ -56,10 +57,10 @@ export default async function Manager({
     owner: address,
   });
 
-  const pools = fetchPoolbyOwner.data.osmoticPools.slice(-3);
+  const pools = fetchPoolbyOwner.data?.osmoticPools.slice(-3);
 
   const participantSupports =
-    participantQueryResult.data.poolProjectParticipantSupports;
+    participantQueryResult.data?.poolProjectParticipantSupports;
 
   return (
     <>

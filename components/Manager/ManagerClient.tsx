@@ -3,23 +3,73 @@ import { formatAddress } from "@/lib/format";
 import React, { Suspense, useEffect } from "react";
 import { useState } from "react";
 import { SupporProjects } from "../SupporProjects";
+import { getUrqlClient } from "@/services/urqlService";
+import { useAccount } from "wagmi";
+import ManagerStats from "./ManagerStats";
+import { motion } from "framer-motion";
+
+const poolStatsQuery = `query ($currentPool: String!){
+  osmoticPool(id: $currentPool) {
+    address
+    mimeToken {
+      name
+      symbol
+    }
+    owner
+    projectList {
+      name
+    }
+  }
+  }
+  `;
 
 const ManagerClient = ({ pools }: { pools: any }) => {
   const [openManager, setOpenManager] = useState(false);
   const [currentPool, setCurrentPool] = useState("");
+  const [poolStats, setPoolStats] = useState<any>([]);
+  const { address: participant } = useAccount();
 
-  const filteredPools = pools
-    .filter((pool: any) => pool.address === currentPool)
-    .map((pool: any) => pool.poolProjects);
+  useEffect(() => {
+    if (currentPool !== "") {
+      const fetchPoolInfoAndParticipantSupports = async () => {
+        const result = await getUrqlClient().query(poolStatsQuery, {
+          currentPool,
+        });
 
-  console.log("filteredPools", filteredPools);
+        setPoolStats([
+          {
+            name: "Ownership",
+            data:
+              result.data.osmoticPool?.owner ===
+              "0x5be8bb8d7923879c3ddc9c551c5aa85ad0fa4de3"
+                ? "Owner"
+                : "Not Owner",
+          },
+          {
+            name: "Governance Token",
+            data: result.data.osmoticPool?.mimeToken.name,
+          },
+          {
+            name: "Management List",
+            data: result.data.osmoticPool?.projectList.name,
+          },
+          {
+            name: "Round",
+            data: currentPool == "" ? "" : "1",
+          },
+        ]);
+      };
+
+      fetchPoolInfoAndParticipantSupports();
+    }
+  }, [currentPool, participant]);
 
   return (
     <>
       <div className="absolute left-0 top-[80%] flex w-full justify-center">
         <button
           onClick={() => setOpenManager(true)}
-          className="rounded-full border px-8 py-4 text-4xl uppercase"
+          className="rounded-full  px-8 py-4 text-4xl uppercase"
         >
           open Manager
         </button>
@@ -37,20 +87,25 @@ const ManagerClient = ({ pools }: { pools: any }) => {
             <div className="flex w-full flex-col gap-4 px-4">
               {/* Top Section: pool stats */}
               <header className="">
-                <ManagerStats />
+                <ManagerStats poolStats={poolStats} />
               </header>
 
               <div className="grid h-full grid-cols-4 gap-4 ">
                 {/* Left column: claim btn + pool selection + link to docs  */}
-                <aside className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg border-2 p-4">
-                  <div className="w-full border">
+                <motion.aside
+                  initial={{ x: -100 }}
+                  animate={{ x: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg border p-4"
+                >
+                  <div className="w-full ">
                     <button>CLAIM</button>
                   </div>
 
                   <span className="sr-only">Pools Handle</span>
-                  <div className="flex w-full flex-col border">
+                  <div className="flex w-full flex-col">
                     {pools.length > 0 &&
-                      pools.slice(-2)?.map((pool: any, idx: number) => (
+                      pools?.map((pool: any, idx: number) => (
                         <>
                           <button
                             className="truncate py-2 text-left text-textSecondary hover:bg-surface hover:text-white"
@@ -67,11 +122,11 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                       Current Pool: {formatAddress(currentPool)}
                     </div>
                   </div>
-                  <div className="flex w-full flex-col border">
+                  <div className="flex w-full flex-col text-highlight">
                     <span className="py-4">Alpha Demo v.1</span>
                     <button className="py-2 text-left">Link to Docs</button>
                   </div>
-                </aside>
+                </motion.aside>
 
                 {/* Main section: vote inputs + and chart + checkout */}
                 <div className="items-start-2 col-start-2 col-end-5 h-full w-full">
@@ -91,40 +146,3 @@ const ManagerClient = ({ pools }: { pools: any }) => {
 };
 
 export default ManagerClient;
-
-const stats = [
-  { name: "Ownership", value: "Owner" },
-  { name: "Gov Token", value: "Fede Token", unit: "" },
-  { name: "Management list", value: "Peepo" },
-  { name: "Round ", value: "1" },
-];
-function ManagerStats() {
-  return (
-    <div className="w-full bg-background">
-      <div className="w-full">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <div
-              key={stat.name}
-              className="group rounded-lg  bg-surface px-1 py-2 sm:px-6 lg:px-8"
-            >
-              <p className="text-xs font-medium leading-6 text-textSecondary">
-                {stat.name}
-              </p>
-              <p className="mt-2 flex items-baseline gap-x-2">
-                <span className="text-xl font-semibold tracking-tight text-white">
-                  {stat.value}
-                </span>
-                {stat.unit ? (
-                  <span className="text-sm text-textSecondary">
-                    {stat.unit}
-                  </span>
-                ) : null}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}

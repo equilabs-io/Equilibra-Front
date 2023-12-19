@@ -24,14 +24,7 @@ function getStringAfterFirstDash(str: string): string {
   }
   return "";
 }
-export default async function Projects({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const search =
-    typeof searchParams.search === "string" ? searchParams.search : undefined;
-
+export default async function Projects({}) {
   const projectsFlowLastRate = async () => {
     const projectsQueryResult = await getUrqlClient().query(projectsQuery, {});
     const result = projectsQueryResult.data?.poolProjects.map(

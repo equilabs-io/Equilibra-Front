@@ -15,6 +15,7 @@ import {
 import TransactionModal from "./TransactionModal";
 
 import { Chart } from "./Chart";
+import Link from "next/link";
 
 const osmoticPool = `query (id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
     id
@@ -108,13 +109,13 @@ export const SupporProjects = ({ pool }: any) => {
       });
       setPoolInfo([
         {
-          address: result.data?.osmoticPool.address,
-          projectList: result.data?.osmoticPool.projectList,
-          mimeToken: result.data?.osmoticPool.mimeToken,
+          address: result.data?.osmoticPool?.address,
+          projectList: result.data?.osmoticPool?.projectList,
+          mimeToken: result.data?.osmoticPool?.mimeToken,
         },
       ]);
 
-      const participantSupports = result.data.osmoticPool.poolProjects.map(
+      const participantSupports = result.data?.osmoticPool?.poolProjects.map(
         (project: {
           id: string;
           poolProjectSupports: {
@@ -139,7 +140,7 @@ export const SupporProjects = ({ pool }: any) => {
     fetchPoolInfoAndParticipantSupports();
   }, [pool, participant]);
 
-  let actualCurrentValue = participantSupports.reduce(
+  let actualCurrentValue = participantSupports?.reduce(
     (acc: string | number, curr: { value: string | number }) =>
       +acc + +curr.value,
     0,
@@ -170,7 +171,7 @@ export const SupporProjects = ({ pool }: any) => {
   const generateCheckoutArray = useCallback(() => {
     let checkoutValues: any = [];
 
-    participantSupports.forEach(
+    participantSupports?.forEach(
       (value: { value: number; static: number; id: any }) => {
         const difference = value.value - value.static;
         const totalNewSupport = value.value;
@@ -190,12 +191,16 @@ export const SupporProjects = ({ pool }: any) => {
   const checkoutValues = generateCheckoutArray();
   const isMaxValueReached = actualCurrentValue === maxValue;
 
-  //values from data:
-  const poolAddress = poolInfo?.[0].address;
-  const mimeTokenSymbol = poolInfo?.[0].mimeToken?.symbol;
-  const mimeTokenName = poolInfo?.[0].mimeToken?.name;
-  const projectList = poolInfo?.[0].projectList?.name;
-
+  const variants = {
+    visible: (i: number) => ({
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delay: i * 0.1,
+      },
+    }),
+    hidden: { opacity: 0.2, scale: 0.8 },
+  };
   return (
     <>
       <div className="relative flex h-full gap-2">
@@ -235,17 +240,20 @@ export const SupporProjects = ({ pool }: any) => {
                 index: number,
               ) => (
                 <>
-                  <li
+                  <motion.li
+                    initial="hidden"
+                    animate="visible"
+                    variants={variants}
+                    custom={index}
                     key={index}
-                    className="flex justify-between gap-x-6 rounded-xl bg-surface px-2 py-4"
+                    className="flex items-center justify-between gap-x-4 rounded-xl  bg-surface px-2 py-2 hover:border"
                   >
-                    <div className="flex min-w-0 max-w-[150px] items-center gap-x-2">
-                      <span className="h-12 w-12 rounded-full"></span>
-                      {/* <img
-                    className="h-12 w-12 flex-none rounded-full bg-gray-200"
-                    src={`https://effigy.im/a/${project.address}`}
-                    alt=""
-                  /> */}
+                    <div className="flex max-w-[150px] items-center justify-start gap-x-4 ">
+                      <span
+                        className="h-12 w-12 flex-none rounded-full bg-slate-800"
+                        // src={`https://effigy.im/a/${project.address}`}
+                        // alt=""
+                      />
                       <div className="truncate">
                         <p className="text-sm text-textSecondary">
                           {String(project.id)}
@@ -292,22 +300,22 @@ export const SupporProjects = ({ pool }: any) => {
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                       >
-                        <Menu.Items className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-background py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md  py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                           <Menu.Item>
                             {({ active }) => (
-                              <a
+                              <Link
                                 href="#"
-                                className="block bg-surface px-3 py-1 text-sm leading-6 text-textSecondary"
+                                className="block bg-surface px-3 py-1 text-sm leading-6 text-textSecondary hover:text-primary"
                               >
                                 View Project
                                 <span className="sr-only">, {project.id}</span>
-                              </a>
+                              </Link>
                             )}
                           </Menu.Item>
                         </Menu.Items>
                       </Transition>
                     </Menu>
-                  </li>
+                  </motion.li>
                 </>
               ),
             )}
@@ -352,13 +360,17 @@ export const SupporProjects = ({ pool }: any) => {
         </div>
 
         {/* Right column area */}
-        <aside className="top-8 h-full flex-1 shrink-0 p-2">
-          <Chart maxValue={maxValue} currentValue={actualCurrentValue} />
+        <aside className="grid h-full flex-1 shrink-0 grid-rows-2 gap-4  p-2 shadow">
+          <div className="flex items-center justify-center border">
+            <Chart maxValue={maxValue} currentValue={actualCurrentValue} />
+          </div>
+          <div className="border text-center">Minimal project info</div>
         </aside>
       </div>
     </>
   );
 };
+
 type CheckoutProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -540,6 +552,7 @@ const Checkout = ({ ...props }: CheckoutProps) => {
   );
 };
 
+// TODO: delete after
 const TiltCard = ({ children, balance, staked }: any) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
