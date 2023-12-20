@@ -24,6 +24,7 @@ function getStringAfterFirstDash(str: string): string {
   }
   return "";
 }
+
 export default async function Projects({}) {
   const projectsFlowLastRate = async () => {
     const projectsQueryResult = await getUrqlClient().query(projectsQuery, {});
@@ -44,9 +45,18 @@ export default async function Projects({}) {
   const projectsFlowRate = await projectsFlowLastRate();
 
   // Create a unique array by matching data from projects metadata and flowLastRate details by id
-  const PROJECTS = projects.map((metadataItem) => {
+  const PROJECTS = projects.map((project) => {
+    // First, I getet the list name the project, it could be more than one
+    let projectListNames: string[] = [];
+    if (project?.projectLists && project.projectLists.length > 0) {
+      // If there is at least one projectList, extract its name
+      projectListNames = project.projectLists.map(
+        (projectList) => projectList.projectList.name || "not specified",
+      );
+    }
+
     const correspondingDetails = projectsFlowRate.filter(
-      (detail: { id: string }) => detail.id === metadataItem?.id,
+      (detail: { id: string }) => detail.id === project?.id,
     );
     const flowLastRates = correspondingDetails.map(
       (detail: { flowLastRate: any }) => detail.flowLastRate,
@@ -56,10 +66,11 @@ export default async function Projects({}) {
     );
 
     return {
-      ...metadataItem,
+      ...project,
       flowLastRates: flowLastRates.length > 0 ? flowLastRates : [0],
       flowLastTime: flowLastTime.length > 0 ? flowLastTime : [0],
       active: correspondingDetails[0]?.active || false,
+      list: projectListNames,
     };
   });
 

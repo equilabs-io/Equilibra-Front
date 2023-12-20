@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import Image from "next/image";
 import { Link } from "../Link";
 import AddListButton from "./AddListButton";
+import { ProjectIdBadge } from "./ProjectIdBadge";
 
 type Project = {
   flowLastRates: any;
@@ -12,6 +11,7 @@ type Project = {
   admin: string;
   beneficiary: string;
   id: string;
+  list: string[];
   __typename: string;
 };
 
@@ -39,18 +39,17 @@ export default function ProjectCard({
     flowLastRates,
     flowLastTime,
     active,
+    list,
   } = project;
 
   const { description, link, fileHash, name, category } = content;
 
   return (
-    <section className="group relative flex flex-col overflow-hidden rounded-lg bg-surface p-2 hover:shadow-md hover:shadow-highlight">
-      <div className="sm:aspect-none h-[180px] bg-background group-hover:opacity-100">
+    <section className="group relative flex flex-col rounded-lg  bg-surface p-2 hover:shadow-md hover:shadow-highlight">
+      <div className="sm:aspect-none h-[180px]  bg-background">
         {category && (
           <div className="absolute left-2 top-2 m-2 flex flex-1 flex-col justify-end">
-            {/* <span className="opacity-80  inline-flex items-center rounded-full bg-primary px-4 py-2 text-2xl font-medium text-black transition-opacity duration-200 ease-in">
-              {getFirstLetterAfterHyphen(id)}
-            </span> */}
+            {/* {category} */}
           </div>
         )}
 
@@ -66,19 +65,49 @@ export default function ProjectCard({
         )) ||
           ""} */}
       </div>
-      <div className="flex flex-1 flex-col bg-surface p-4 transition-all duration-200 ease-out">
+      <div className="flex flex-1 flex-col  items-start justify-between overflow-hidden bg-surface p-4 transition-all duration-200 ease-out">
         <Link href={`/demo/projects/${id}`}>
-          <h3 className="mb-1 truncate">{name ? name : "-no name-"}</h3>
+          <span className="mb-4 line-clamp-1 text-lg">
+            {name ? name : "-no name-"}
+          </span>
         </Link>
-        <p className="mb-0 line-clamp-3 min-h-[75px] font-thin text-textSecondary">
+        <span className="line-clamp-3 min-h-[75px] text-sm font-thin text-textSecondary">
           {description}
-        </p>
+        </span>
       </div>
       {/* Project Details */}
       <div className="flex flex-1 flex-col gap-2 bg-surface p-4">
         <div className="flex items-center justify-between">
-          <h4 className="mb-1 truncate text-textSecondary">Project Details</h4>
-          <span
+          <span className="text-md mb-1 truncate text-textSecondary">
+            Project Details
+          </span>
+          <ProjectIdBadge id={id} />
+
+          {/* TODO: check if add active status ?? */}
+        </div>
+
+        <div className="flex items-center justify-between bg-highlight p-2">
+          <span className="text-textSecondary">Streaming:</span>{" "}
+          <span className="text-md">{flowLastRates}</span>
+        </div>
+        <div className="flex items-center justify-between bg-highlight p-2">
+          <span className="text-textSecondary">Amount streamed:</span>{" "}
+          <span className="text-md">0</span>
+        </div>
+        <div className="my-2"></div>
+        <AddListButton
+          projectList={list}
+          active={active}
+          id={id}
+          projectCheckout={projectCheckout}
+        />
+      </div>
+    </section>
+  );
+}
+
+{
+  /* <span
             className={`inline-flex max-w-fit items-center gap-x-1.5 rounded-md px-4 py-0.5 text-sm font-medium  ${
               active
                 ? "bg-surface_var text-primary_var"
@@ -97,26 +126,5 @@ export default function ProjectCard({
               <circle cx={3} cy={3} r={3} />
             </svg>
             {active ? "Active" : "Inactive"}
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between bg-highlight p-2">
-          <span className="font-bold text-textSecondary">Streaming:</span>{" "}
-          <span className="font-mono text-xl">{flowLastRates}</span>
-        </div>
-
-        <div className="flex items-center justify-between bg-highlight p-2">
-          <span className="font-bold text-textSecondary">Amount streamed:</span>{" "}
-          <span className="font-mono text-xl">0</span>
-        </div>
-
-        <div className="my-2"></div>
-        <AddListButton
-          active={active}
-          id={id}
-          projectCheckout={projectCheckout}
-        />
-      </div>
-    </section>
-  );
+          </span> */
 }

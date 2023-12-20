@@ -9,6 +9,7 @@ import {
 } from "wagmi";
 import PROJECT_LIST_ABI from "@/constants/abis/OwnableList.json";
 import TransactionModal from "../TransactionModal";
+import { ProjectIdBadge } from "./ProjectIdBadge";
 
 export const CheckoutProjectaCart = ({ ...props }) => {
   const { open, setOpen, projectChekoutInfo, list } = props;
@@ -20,8 +21,6 @@ export const CheckoutProjectaCart = ({ ...props }) => {
     (project: { id: any }) => project.id,
   );
 
-  console.log("projectsIds:", projectIds);
-
   const { config } = usePrepareContractWrite({
     address: list[0]?.id,
     abi: PROJECT_LIST_ABI,
@@ -29,9 +28,6 @@ export const CheckoutProjectaCart = ({ ...props }) => {
     args: [projectIds],
     onError: (error) => {
       console.log("error", error);
-    },
-    onSettled: (data) => {
-      console.log("set", data?.result);
     },
   });
 
@@ -148,18 +144,12 @@ function ProjectCheckOut({ projects }: { projects: any }) {
             key={project.name}
             className="col-span-1 flex rounded-md bg-surface shadow-sm"
           >
-            <div
-              className={
-                "relative flex w-16 flex-shrink-0 items-center justify-center rounded-l-md bg-primary text-lg font-medium text-highlight"
-              }
-            >
-              <span className="absolute left-1 top-1 text-xs">id:</span>
-              {project.id}
-            </div>
+            <ProjectIdBadge id={project.id} size={"lg"} />
+
             <div className="flex flex-1 items-center justify-between truncate rounded-r-md  bg-surface">
               <div className="flex-1 truncate px-4 py-2 text-sm">
                 <span className="text-lg">{project.name}</span>
-                <p className="text-sm text-gray-500">{project.category}</p>
+                <p className="text-xs text-gray-500">{project.category}</p>
               </div>
               <div className="flex-shrink-0 pr-2"></div>
             </div>

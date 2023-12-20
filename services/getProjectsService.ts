@@ -3,11 +3,16 @@ import { ethers } from "ethers";
 
 const projectsQuery = `
   query {
-    projects(skip: 2, first: 10) {
+    projects(first: 20) {
         admin
         id
         beneficiary
         contentHash
+        projectLists {
+          projectList {
+            name
+          }
+        }
     }
   }
 `;
@@ -18,6 +23,11 @@ interface Project {
   contentHash: string;
   id: string;
   __typename: string;
+  projectLists: {
+    projectList: {
+      name: string;
+    };
+  }[];
 }
 
 const getIpfsData = async (hash: string) => {
@@ -49,6 +59,7 @@ const getParsedProjects = async (projectsQuery: { projects: Project[] }) => {
     projects.map(async (project) => {
       if (project) {
         try {
+          console.log(project);
           return {
             ...project,
             content: await getIpfsData(project.contentHash),
@@ -57,11 +68,11 @@ const getParsedProjects = async (projectsQuery: { projects: Project[] }) => {
           console.log(error);
         }
       }
-    })
+    }),
   );
 
   const filteredProjects = parsedProjects.filter((project) =>
-    Boolean(project?.content?.fileHash)
+    Boolean(project?.content?.fileHash),
   );
 
   return filteredProjects;

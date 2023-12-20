@@ -15,3 +15,16 @@ export function formatAddress(
     address.slice(-charsLength)
   );
 }
+
+export function getStringAfterFirstDash(str: string): string {
+  if (typeof str !== "string") {
+    return str;
+  }
+
+  const index = str.indexOf("-");
+  if (index !== -1) {
+    return str.slice(index + 1);
+  } else {
+    return str;
+  }
+}

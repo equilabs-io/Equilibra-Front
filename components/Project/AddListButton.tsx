@@ -4,11 +4,19 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 type AddListButtonProps = {
   active: boolean;
   id: string;
+  projectList?: string[];
   projectCheckout: (newId: string) => void;
 };
 
-const AddListButton = ({ active, id, projectCheckout }: AddListButtonProps) => {
+const AddListButton = ({
+  active,
+  id,
+  projectList,
+  projectCheckout,
+}: AddListButtonProps) => {
   const [clickedOn, setClickedOn] = useState(false);
+
+  console.log("list", projectList);
 
   const hanlde = (id: any) => {
     projectCheckout(id);
@@ -22,7 +30,7 @@ const AddListButton = ({ active, id, projectCheckout }: AddListButtonProps) => {
           disabled={active}
           onClick={() => hanlde(id)}
           className={`flex w-full min-w-[170px] items-center justify-center rounded-md px-4 transition-all duration-200 ease-in ${
-            active ? "bg-primary text-black" : "bg-surface hover:bg-primary"
+            active ? "bg-highlight text-black" : "bg-surface hover:bg-primary"
           }, ${
             clickedOn
               ? "justify-evenly bg-transparent hover:bg-transparent"
@@ -32,6 +40,7 @@ const AddListButton = ({ active, id, projectCheckout }: AddListButtonProps) => {
           {`${active ? "Listed" : clickedOn ? "Added" : "Add to Cart"}`}
           {clickedOn && <CheckCircleIcon className="h-6 w-6 text-primary" />}
         </button>
+        {/* <span>{list?.[0]}</span> */}
       </div>
     </>
   );
