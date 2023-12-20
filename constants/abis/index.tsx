@@ -1,5 +1,6 @@
 import ProjectRegistryAbi from "./ProjectRegistry.json";
 import OsmoticControllerAbi from "./OsmoticController.json";
+import OwnableListAbi from "./OwnableList.json";
 import PoolAbi from "./Pool.json";
 
 const OSMOTIC_CONTROLLER_ADDRESS = "0x0b9f52138050881C4d061e6A92f72d8851B59F8e";
@@ -29,4 +30,8 @@ export const supportProjects: ContractInterface = {
   abi: PoolAbi,
   contractName: "Pool",
   address: "0x",
+};
+
+export const ownableList: ContractInterface = {
+  abi: OwnableListAbi,
 };

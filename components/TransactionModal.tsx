@@ -5,23 +5,25 @@ import { useState, useEffect, Fragment } from "react";
 type TransactionModalProps = {
   isLoading?: boolean;
   isSuccess?: boolean;
+  isError?: boolean;
   disabledButton?: any;
   label: string;
-  writeFunction?: () => void;
+  handle?: () => void;
 };
 
 export default function TransactionModal({
   isLoading,
   isSuccess,
+  isError,
   disabledButton,
   label,
-  writeFunction,
+  handle,
 }: TransactionModalProps) {
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     if (openModal) {
-      writeFunction?.();
+      handle?.();
     }
   }, [openModal]);
 
@@ -29,7 +31,7 @@ export default function TransactionModal({
     <>
       <button
         onClick={() => setOpenModal(true)}
-        className="rounded-full border px-6 py-1 transition-opacity duration-300 ease-in-out hover:border-primary hover:bg-primary hover:text-highlight disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-full border px-6 py-1 text-xl transition-opacity duration-300 ease-in-out hover:border-primary hover:bg-primary hover:text-highlight disabled:cursor-not-allowed disabled:opacity-50"
         disabled={disabledButton}
       >
         {openModal ? "Check Your Wallet" : label}
@@ -82,6 +84,12 @@ export default function TransactionModal({
                     {isSuccess && (
                       <p className="text-surface_var">
                         Transaction successful!
+                      </p>
+                    )}
+                    {isError && (
+                      <p className="text-surface_var">
+                        Upps!
+                        <span>{isError?.message}</span>
                       </p>
                     )}
                   </div>

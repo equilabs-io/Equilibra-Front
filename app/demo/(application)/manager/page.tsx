@@ -21,8 +21,7 @@ query ($owner: String!) {
         mimeToken {
           name
           symbol
-        }
-      
+        }    
         poolProjects(first: 10) {
             id
             poolProjectSupports {

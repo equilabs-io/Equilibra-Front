@@ -1,7 +1,6 @@
 import React from "react";
 import { InsideHeader } from "@/components/InsideHeader";
-import ProjectCard from "@/components/Project/ProjectCard";
-import Search from "@/components/Search";
+
 import { getProjects } from "@/services/getProjectsService";
 import { getUrqlClient } from "@/services/urqlService";
 import ProjectGrid from "@/components/Project/ProjectsGrid";
@@ -16,6 +15,7 @@ const projectsQuery = `
     }  
   }
 `;
+
 //helper function to get the string after the first dash
 function getStringAfterFirstDash(str: string): string {
   const index = str.indexOf("-");
@@ -70,11 +70,6 @@ export default async function Projects({}) {
         description="Shape the destiny of your organization and the Web3 landscape. The journey begins with creating a meaningful project."
         href="./create-project"
       />
-      {/* search - filter - cart  */}
-
-      {/* <Search search={search} /> */}
-
-      {/* projects ... */}
 
       <ProjectGrid projects={PROJECTS} />
     </>

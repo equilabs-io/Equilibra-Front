@@ -37,11 +37,6 @@ const tokens = [
     symbol: "DAIx",
     address: "0x4e17a5e14331038a580c84172386f1bc2461f647",
   },
-  {
-    name: "Super ETHx goerli",
-    symbol: "ETHx",
-    address: "0x5943F705aBb6834Cad767e6E4bB258Bc48D9C947",
-  },
 ];
 
 const OSMOTIC_CONTROLLER_ADDRESS = "0x0b9f52138050881C4d061e6A92f72d8851B59F8e"; //proxy
@@ -192,7 +187,7 @@ const Form = () => {
     }
   };
 
-  //config for the transaction
+  //prepare for the transaction to be ready ...
   const { config } = usePrepareContractWrite({
     address: OSMOTIC_CONTROLLER_ADDRESS,
     abi: POOL_ABI,
@@ -203,22 +198,22 @@ const Form = () => {
     },
   });
 
-  // Shoots transaction to the blockchain
-  const { write, isLoading, isSuccess, data, status } =
-    useContractWrite(config);
+  // Shoots transaction to the blockchain ..
+  const { write, data, isLoading } = useContractWrite(config);
 
-  //testing event listener:
-  // useContractEvent({
-  //   abi: POOL_ABI,
-  //   address: OSMOTIC_CONTROLLER_ADDRESS,
-  //   eventName: "OsmoticPoolCreated",
+  // Wait for transaction to be mined!
+  const {
+    isError: isWaitError,
+    isLoading: isWaitLoading,
+    isSuccess: isWaitSuccess,
+  } = useWaitForTransaction({
+    hash: data?.hash,
+    onError: (error) => {
+      console.log("error", error);
+    },
+  });
 
-  //   listener: (log) => {
-  //     console.log("event", log);
-  //   },
-  // });
-
-  //0x8e155cdd14b74dd50fbcc8190b59ff474bb0f7884297ee989f3bf5cb3b024d63
+  console.log("loading", isLoading, isWaitLoading);
 
   //handle form to submit to the blockchain and create the pool
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -234,7 +229,7 @@ const Form = () => {
         write?.();
       }
     } catch (error) {
-      console.error("Error in handleSubmit:", error.message);
+      console.error("Error in handleSubmit:", error ?? "");
     }
   };
 
@@ -316,7 +311,8 @@ const Form = () => {
         <div className="flex items-center justify-center gap-x-6">
           <TransactionModal
             isLoading={isLoading}
-            isSuccess={isSuccess}
+            isSuccess={isWaitSuccess}
+            isError={isWaitError}
             writeFunction={handleEncodeData}
             disabledButton={
               formState.governanceToken === "" || formState.listAddress === ""
