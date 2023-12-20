@@ -12,12 +12,6 @@ const Balance = ({ address, token, symbol = true }: BalanceProps) => {
     address: address,
     token: "0x5943F705aBb6834Cad767e6E4bB258Bc48D9C947",
     chainId: 5,
-    // onSuccess(data) {
-    //   console.log("Success", data);
-    // },
-    // onError(error) {
-    //   console.log("Error fetching balance", error);
-    // },
   });
   const { data, isError, isLoading } = balance;
 
@@ -31,7 +25,7 @@ const Balance = ({ address, token, symbol = true }: BalanceProps) => {
     return <div>Error...</div>;
   }
   return (
-    <div className="font-mono text-xl">
+    <div className="">
       {tokenBalance}
       <span className="ml-1">{symbol && tokenSymbol}</span>
     </div>

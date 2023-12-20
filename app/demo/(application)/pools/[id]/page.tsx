@@ -3,10 +3,11 @@ import { getUrqlClient } from "@/services/urqlService";
 import { PoolCardProps } from "@/types";
 import { Link } from "@/components/Link";
 import Balance from "@/components/Balance";
+import { formatAddress } from "@/lib/format";
 
 //TODO: create Querys folder for all queries and move this to it
 const poolQuery = `
-      query ($id: ID!) {
+      query ($id: String!) {
         osmoticPool(id: $id ) {
           id
           owner
@@ -47,13 +48,12 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
   //pool stats, real data except for total streamed
   const poolStats = [
     {
-      name: "Treasury",
+      name: "Funds",
       value: <Balance address={pool?.address} symbol={false} />,
-      unit: "ETHx",
+      symbol: "DAIx",
     },
-    { name: "Total Streamed", value: "0.005", unit: "ETHx" },
+    { name: "Total Streamed", value: "0", symbol: "DAIx" },
     { name: "Current Listed Projects", value: pool?.poolProjects.length },
-    { name: "Max Active Projects", value: pool?.maxActiveProjects },
   ];
   //status colors for pool projects
   const statuses = {
@@ -62,7 +62,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
   };
 
   //helper function to get last 4 letters of pool id used for pool "name and project name"
-  function getLastFourLetters(poolId: string, places = 6): string {
+  function getLastFourLetters(poolId: string, places = 4): string {
     return poolId?.slice(-places);
   }
   //pool name
@@ -73,18 +73,23 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
     (project: {
       id: string;
       active: boolean;
+      address: string;
       flowLastRate: number;
       flowLastTime: number;
       currentRound: number;
     }) => {
       return {
-        id: getLastFourLetters(project.id, 6),
+        id: getLastFourLetters(project.id, 4),
+
+        // TODO! change to real address
+
+        address: "0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b",
         active: project.active,
         flowLastRate: project.flowLastRate,
         flowLastTime: 1701128880,
         currentRound: project.currentRound,
       };
-    }
+    },
   );
 
   //helper function to format date from flow Last Time
@@ -95,6 +100,49 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
     const year = date.getFullYear().toString();
     return `${day} / ${month} / ${year}`;
   }
+
+  console.log(formatDate(1701128880));
+
+  function convertUnixTimestampWithDifference(timestamp) {
+    if (timestamp === 0) {
+      return {};
+    }
+    // Convert the Unix timestamp to milliseconds
+    const milliseconds = timestamp * 1000;
+
+    // Create a new Date object for the provided timestamp
+    const dateObject = new Date(milliseconds);
+
+    // Get the current date and time
+    const currentDate = new Date();
+
+    // Calculate the time difference in milliseconds
+    const timeDifference = currentDate - dateObject;
+
+    // Calculate days and hours
+    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    );
+
+    // Format the date as a string
+    const formattedDate = dateObject.toUTCString();
+
+    return {
+      formattedDate,
+      days,
+      hours,
+    };
+  }
+
+  // Example usage with the provided timestamp
+  const timestamp = 0;
+  const timestampVariant = 1701128880;
+  const result = convertUnixTimestampWithDifference(timestamp);
+  console.log(`Converted Date: ${result.formattedDate || 0}`);
+  console.log(`Days Passed: ${result.days || 0} days`);
+  console.log(`Hours Passed: ${result.hours || 0} hours`);
+
   //
   // const activityItems = [
   //   {
@@ -129,16 +177,16 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
   return (
     <>
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-0">
-        <div className="w-full px-4 space-y-8">
+        <div className="w-full space-y-8 px-4">
           <header>
             {/* Heading */}
-            <div className="rounded-xl w-full">
+            <div className="w-full rounded-xl">
               <div>
-                <div className="w-full max-h-[160px]">
+                <div className="max-h-[160px] w-full">
                   <div className="flex-none rounded-full bg-green-400/10 p-1 text-green-400">
                     <img
                       src={`https://effigy.im/a/${pool?.address}`}
-                      className="object-cover overflow-hidden w-full h-[full] max-h-[160px] rounded-t-2xl"
+                      className="h-[full] max-h-[160px] w-full overflow-hidden rounded-t-2xl object-cover"
                     />
                   </div>
                 </div>
@@ -151,54 +199,30 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                   </span> */}
               </div>
             </div>
-            {/* contract address / owner address */}
 
-            {/* poolStats */}
-            {/* <div className="grid grid-cols-1 bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-4">
-              {poolStats.map((stat, statIdx) => (
-                <div
-                  key={stat.name}
-                  className={classNames(
-                    statIdx % 2 === 1 ? "sm:" : statIdx === 2 ? "" : "",
-                    "rounded-xl py-6 px-4 sm:px-6 lg:px-8 hover:bg-gray-700/20 transition-all ease-in-out duration-150"
-                  )}
-                >
-                  <p className="text-sm font-medium leading-6 text-gray-300">
-                    {stat.name}
-                  </p>
-                  <p className="mt-2 flex items-baseline gap-x-2">
-                    <span className="text-4xl font-semibold tracking-tight text-white">
-                      {stat.value}
-                    </span>
-                    {stat.unit ? (
-                      <span className="text-sm text-gray-300">{stat.unit}</span>
-                    ) : null}
-                  </p>
-                </div>
-              ))}
-            </div> */}
+            {/* contract address / owner address */}
           </header>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 ">
-            <div className="min-h-[100px]  col-span-2 p-4 space-y-4">
+          <div className="grid grid-cols-1 gap-1  lg:grid-cols-3 ">
+            <div className="col-span-2  min-h-[100px] space-y-4  p-4">
               <div className=" flex justify-between">
                 <h1 className="flex gap-x-3 text-base leading-7">
-                  <span className="font-semibold text-4xl">
+                  <span className="text-4xl font-semibold">
                     POOL {""}
-                    <span className="text-primary ml-2">{poolName}</span>
+                    <span className="ml-2 text-primary">{poolName}</span>
                   </span>
                 </h1>
-                <span className="inline-flex items-center rounded-md bg-pink-100/10 px-4 py-1 text-xs font-medium">
-                  <Link
+                <span className="inline-flex items-center rounded-md bg-secondary_var px-4 py-1 text-xs font-medium">
+                  <a
                     href={`https://goerli.etherscan.io/address/${pool?.mimeToken.address}`}
-                    isExternal
+                    target="_blank"
                   >
-                    <p className="text-clip overflow-hidden max-w-content text-primary_var">
+                    <p className="max-w-content text-Secondary overflow-hidden text-clip">
                       Governance: {pool?.mimeToken.name}
                     </p>
-                  </Link>
+                  </a>
                 </span>
               </div>
-              <div className="py-4 text-justify text-gray-300">
+              <div className="py-4 text-justify text-textSecondary">
                 <p>
                   Testing text for demo purpose. Lorem ipsum dolor sit amet
                   consectetur adipisicing elit. Molestiae a, nihil quis modi,
@@ -207,66 +231,64 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                   corporis non.
                 </p>
               </div>
-              <div className="flex flex-col my-4 bg-background rounded-xl justify-between py-4 ">
-                <div className="p-2 rounded-lg hover:bg-surface transition-transform ease-in-out duration-200">
-                  {/* <span className="text-slate-900 font-mono">
-                    contract address
-                  </span>{" "} */}
-                  <Link
+              <div className="my-4 flex flex-col justify-between space-y-4 rounded-xl bg-background">
+                <div className="flex justify-between truncate rounded-lg bg-surface px-4 py-2 transition-transform duration-200 ease-in-out hover:text-textSecondary">
+                  <span>contract addres:</span>
+                  <a
                     href={`https://goerli.etherscan.io/address/${pool?.address}`}
-                    isExternal
+                    target="_blank"
+                    className=""
                   >
-                    <p className="font-mono mt-0 text-gray-300">
-                      <span className="text-gray-400">contract address: </span>{" "}
-                      {pool?.address}
-                    </p>
-                  </Link>
+                    <span className="">{pool?.address}</span>
+                  </a>
                 </div>
-                <div className="p-2 rounded-lg hover:bg-surface transition-transform ease-in-out duration-200">
-                  {/* <span className="text-slate-900 font-mono">owner</span>{" "} */}
-                  <p className="font-mono mt-0 text-gray-300">
-                    <span className="text-gray-400">owner: </span>
-                    {pool?.owner}
-                  </p>
+                <div className="flex justify-between  truncate rounded-lg bg-surface px-4 py-2 transition-transform duration-200 ease-in-out hover:text-textSecondary">
+                  <span>owner :</span>
+                  <a
+                    href={`https://goerli.etherscan.io/address/${pool?.address}`}
+                    target="_blank"
+                    className=""
+                  >
+                    <span className="">{pool?.owner}</span>
+                  </a>
                 </div>
               </div>
             </div>
             <div className=" border-red-300">
-              <div className="grid grid-cols-1 bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-2">
+              <aside className="grid h-full grid-cols-1 space-y-2">
                 {poolStats.map((stat, statIdx) => (
                   <div
                     key={stat.name}
                     className={classNames(
-                      statIdx % 2 === 1 ? "sm:" : statIdx === 2 ? "" : "",
-                      "rounded-xl py-6 px-4 sm:px-6 lg:px-8 hover:bg-gray-700/20 transition-all ease-in-out duration-150"
+                      "rounded-xl bg-surface px-2 py-4 transition-all duration-150 ease-in-out hover:opacity-80 sm:px-6 lg:px-8",
                     )}
                   >
-                    <p className="text-sm font-medium leading-6 text-gray-300">
+                    <p className="text-lg font-medium leading-6 text-textSecondary">
                       {stat.name}
                     </p>
                     <p className="mt-2 flex items-baseline gap-x-2">
                       <span className="text-4xl font-semibold tracking-tight text-white">
                         {stat.value}
                       </span>
-                      {stat.unit ? (
-                        <span className="text-sm text-gray-300">
-                          {stat.unit}
+                      {stat.symbol ? (
+                        <span className="text-sm text-textSecondary">
+                          {stat.symbol}
                         </span>
                       ) : null}
                     </p>
                   </div>
                 ))}
-              </div>
+              </aside>
             </div>
           </div>
 
-          {/* project list */}
+          {/* project table view */}
           <div className="pt-11">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between rounded-md bg-surface py-2">
               <h2 className="px-4 text-base font-semibold leading-7 text-white sm:px-6 lg:px-8">
                 Current Pool Projects
               </h2>
-              <h3 className="text-base px-4">Round - 0</h3>
+              <h3 className="px-4 text-base">Round</h3>
             </div>
             <table className="mt-6 w-full whitespace-nowrap text-left">
               <colgroup>
@@ -276,7 +298,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                 <col className="lg:w-1/12" />
                 <col className="lg:w-1/12" />
               </colgroup>
-              <thead className="border-b border-slate-800 text-sm leading-6 text-white">
+              <thead className="text-md border-b border-slate-800 leading-6 text-textSecondary">
                 <tr>
                   <th
                     scope="col"
@@ -300,13 +322,13 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                     scope="col"
                     className="hidden py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
                   >
-                    Flow Last Rate
+                    Flow Rate
                   </th>
                   <th
                     scope="col"
                     className="hidden py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
                   >
-                    Flow Last Time
+                    Sync Date
                   </th>
                 </tr>
               </thead>
@@ -328,10 +350,10 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                     </td>
                     <td className="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
                       <div className="flex gap-x-3">
-                        <div className="font-mono text-sm leading-6 text-gray-300">
-                          0x1234...
+                        <div className=" text-sm leading-6 text-textSecondary">
+                          {formatAddress(item.address)}
                         </div>
-                        {/* <span className="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-300 ring-1 ring-inset ring-gray-400/20"></span> */}
+                        {/* <span className="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-textSecondary ring-1 ring-inset ring-gray-400/20"></span> */}
                       </div>
                     </td>
                     <td className="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
@@ -339,20 +361,20 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                         <div
                           className={classNames(
                             statuses[item.active ? "Active" : "Inactive"],
-                            "flex-none rounded-full p-1"
+                            "flex-none animate-pulse rounded-full",
                           )}
                         >
-                          <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                          <div className="h-2 w-2 rounded-full bg-current" />
                         </div>
                         <div className="hidden text-white sm:block">
                           {item.active ? "Active" : "Inactive"}
                         </div>
                       </div>
                     </td>
-                    <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-gray-300 md:table-cell lg:pr-20">
+                    <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-textSecondary md:table-cell lg:pr-20">
                       {item.flowLastRate}
                     </td>
-                    <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-300 sm:table-cell sm:pr-6 lg:pr-8">
+                    <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-textSecondary sm:table-cell sm:pr-6 lg:pr-8">
                       <time dateTime={item.flowLastTime}>
                         {formatDate(item.flowLastTime)}
                       </time>
