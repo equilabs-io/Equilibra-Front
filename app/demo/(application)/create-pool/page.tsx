@@ -5,12 +5,10 @@ import {
   useContractWrite,
   usePrepareContractWrite,
   useContractEvent,
-  usePrepareSendTransaction,
-  useSendTransaction,
   useWaitForTransaction,
 } from "wagmi";
 import TransactionModal from "@/components/TransactionModal";
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 import POOL_ABI from "@/constants/abis/OsmoticController.json";
 import { Tab } from "@headlessui/react";
 import InputText from "@/components/Form/InputText";
@@ -19,8 +17,8 @@ import InputSelect from "@/components/Form/InputSelect";
 import CustomButton from "@/components/CustomButton";
 import InputSwitch from "@/components/Form/InputSwitch";
 import { motion } from "framer-motion";
-import { parseEther } from "viem";
 import Link from "next/link";
+import { parseEther } from "viem";
 
 interface FormState {
   governanceToken: string;
@@ -313,7 +311,7 @@ const Form = () => {
             isLoading={isLoading}
             isSuccess={isWaitSuccess}
             isError={isWaitError}
-            writeFunction={handleEncodeData}
+            handle={handleEncodeData}
             disabledButton={
               formState.governanceToken === "" || formState.listAddress === ""
             }
@@ -347,10 +345,7 @@ const AddProjectList = () => {
 
 const AddFunds = () => {
   const [value, setValue] = useState("");
-  const [to, setTo] = useState("0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3");
-
-  const transferAmount = useDebounce(value, 500);
-  const transferTo = useDebounce(to, 500);
+  const [to, setTo] = useState("0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b");
 
   const { config } = usePrepareContractWrite({
     address: "0x4e17a5e14331038a580C84172386F1bc2461F647",
@@ -369,19 +364,24 @@ const AddFunds = () => {
     ],
     functionName: "transfer",
     args: [
-      transferTo,
-      parseEther(transferAmount), // convert to wei /
+      to,
+      parseEther(value), // convert to wei
     ],
   });
-  const { data, isLoading, isSuccess, write } = useContractWrite(config);
+  const { data, isLoading, isSuccess, write, isError, error } =
+    useContractWrite(config);
 
   const {
     isLoading: isWaitLoading,
     isSuccess: isWaitSuccess,
-    isError,
+    // isError,
+    // error,
   } = useWaitForTransaction({
     hash: data?.hash,
   });
+
+  console.log(isError, error);
+  console.log("data...", data?.hash);
 
   return (
     <>
@@ -415,14 +415,20 @@ const AddFunds = () => {
             </div>
           </div>
         </div>
+        <div>
+          <TransactionModal
+            isLoading={isLoading}
+            isWaitLoading={isWaitLoading}
+            isSuccess={isSuccess}
+            isWaitSuccess={isWaitSuccess}
+            isError={isError}
+            error={error}
+            handle={write}
+            label="Deposit"
+          />
+        </div>
 
-        <TransactionModal
-          isLoading={isLoading}
-          isSuccess={isSuccess}
-          writeFunction={write}
-          label="Deposit"
-        />
-        {isWaitSuccess && (
+        {/* {isWaitSuccess && (
           <>
             <div className="group flex flex-col items-center space-y-2 rounded-xl bg-surface px-8 py-2 transition-all duration-300 ease-in">
               <span className="text-primary transition-all duration-500 ease-in-out group-hover:scale-75 group-hover:text-textSecondary">
@@ -439,9 +445,8 @@ const AddFunds = () => {
               </Link>
             </div>
           </>
-        )}
-
-        {/* <button>Deposit</button> */}
+        )} */}
+        <button onClick={() => write?.()}>Depo</button>
       </div>
     </>
   );

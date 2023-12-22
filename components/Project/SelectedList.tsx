@@ -26,7 +26,7 @@ export const SelectedList = ({
     const result = await getUrqlClient().query(listQuery, {
       owner,
     });
-    console.log(result.data.projectLists);
+    // console.log(result.data.projectLists);
     setLists(result.data.projectLists);
   };
 

@@ -15,8 +15,9 @@ const AddListButton = ({
   projectCheckout,
 }: AddListButtonProps) => {
   const [clickedOn, setClickedOn] = useState(false);
+  const [selectedList, setSelectedList] = useState("Peepo");
 
-  console.log("list", projectList);
+  const isIncluded = projectList?.includes(selectedList);
 
   const hanlde = (id: any) => {
     projectCheckout(id);
@@ -27,20 +28,21 @@ const AddListButton = ({
     <>
       <div className="absolute right-4 top-4  flex  justify-end">
         <button
-          disabled={active}
+          disabled={isIncluded}
           onClick={() => hanlde(id)}
           className={`flex w-full min-w-[170px] items-center justify-center rounded-md px-4 transition-all duration-200 ease-in ${
-            active ? "bg-highlight text-black" : "bg-surface hover:bg-primary"
+            isIncluded
+              ? "border bg-highlight text-black"
+              : "bg-surface hover:bg-primary"
           }, ${
             clickedOn
-              ? "justify-evenly bg-transparent hover:bg-transparent"
+              ? "justify-evenly  bg-transparent hover:bg-transparent"
               : "text-surface_var hover:text-white"
           } `}
         >
-          {`${active ? "Listed" : clickedOn ? "Added" : "Add to Cart"}`}
+          {`${isIncluded ? "Listed" : clickedOn ? "Added" : "Add to Cart"}`}
           {clickedOn && <CheckCircleIcon className="h-6 w-6 text-primary" />}
         </button>
-        {/* <span>{list?.[0]}</span> */}
       </div>
     </>
   );

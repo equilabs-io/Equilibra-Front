@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, use } from "react";
 import {
   useContractWrite,
   useWaitForTransaction,
@@ -13,6 +13,8 @@ import { ProjectIdBadge } from "./ProjectIdBadge";
 
 export const CheckoutProjectaCart = ({ ...props }) => {
   const { open, setOpen, projectChekoutInfo, list } = props;
+
+  console.log("open cart", open);
 
   const PROJECT_LENGTH = projectChekoutInfo.length || 0;
   const LIST_NAME = list[0]?.name;
@@ -27,14 +29,23 @@ export const CheckoutProjectaCart = ({ ...props }) => {
     functionName: "addProjects",
     args: [projectIds],
     onError: (error) => {
-      console.log("error", error);
+      console.log("error console", error);
     },
   });
 
-  const { write } = useContractWrite(config);
+  const { write, isLoading, isError, error } = useContractWrite(config);
+
+  const {
+    data,
+    isError: waitIsError,
+    isLoading: isWaitLoading,
+    isSuccess,
+  } = useWaitForTransaction();
 
   const handle = () => {
+    console.log("closing checkout");
     setOpen(false);
+    console.log("writing...");
     write?.();
   };
 
@@ -118,6 +129,9 @@ export const CheckoutProjectaCart = ({ ...props }) => {
 
                         <div className="absolute bottom-0 left-0 w-full px-4">
                           <TransactionModal
+                            isLoading={isLoading}
+                            isError={isError}
+                            isSuccess={isSuccess}
                             label="Add Projects"
                             handle={handle}
                           />
