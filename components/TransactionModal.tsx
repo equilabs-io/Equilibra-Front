@@ -104,7 +104,7 @@ export default function TransactionModal({
                     )}
                     {isWaitSuccess && (
                       <>
-                        <span className="text-textSecondary">
+                        <span className="ani text-textSecondary">
                           Transaction Succesful
                         </span>
                       </>
