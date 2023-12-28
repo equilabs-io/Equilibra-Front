@@ -32,7 +32,7 @@ const AddListButton = ({
 
   const isProjectInList = data;
 
-  const isIncluded = projectList?.includes(selectedList);
+  // const isIncluded = projectList?.includes(selectedList);
 
   const hanlde = (id: any) => {
     projectCheckout(id);

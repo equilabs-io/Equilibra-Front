@@ -1,10 +1,8 @@
 "use client";
-import React, { useState, useEffect, FormEvent, useCallback } from "react";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useState, FormEvent, useCallback } from "react";
 import {
   useContractWrite,
   usePrepareContractWrite,
-  useContractEvent,
   useWaitForTransaction,
 } from "wagmi";
 import TransactionModal from "@/components/TransactionModal";
@@ -12,12 +10,8 @@ import { ethers } from "ethers";
 import POOL_ABI from "@/constants/abis/OsmoticController.json";
 import { Tab } from "@headlessui/react";
 import InputText from "@/components/Form/InputText";
-import { toast } from "react-toastify";
 import InputSelect from "@/components/Form/InputSelect";
-import CustomButton from "@/components/CustomButton";
-import InputSwitch from "@/components/Form/InputSwitch";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { parseEther } from "viem";
 
 interface FormState {
@@ -349,6 +343,7 @@ const AddFunds = () => {
 
   const { config } = usePrepareContractWrite({
     address: "0x4e17a5e14331038a580C84172386F1bc2461F647",
+    //ERC20 abi transfer function
     abi: [
       {
         constant: false,
@@ -379,9 +374,6 @@ const AddFunds = () => {
   } = useWaitForTransaction({
     hash: data?.hash,
   });
-
-  console.log(isError, error);
-  console.log("data...", data?.hash);
 
   return (
     <>

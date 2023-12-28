@@ -40,12 +40,13 @@ query ($owner: String!) {
 
 `;
 
-// Manager server Component
+// manager page severs as a "wrapper" for the manager header and manager client
 export default async function Manager({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  //current conencted address from url params
   const address = searchParams?.query?.toString() ?? "";
 
   const participantQueryResult = await getUrqlClient().query(
@@ -63,7 +64,10 @@ export default async function Manager({
 
   return (
     <>
+      {/* title - description and triple satck info left section */}
       <ManagerHeader />
+
+      {/* start with: OPEN MANAGER btn - then it opens the actual dashbaord */}
       <ManagerClient pools={pools} />
     </>
   );

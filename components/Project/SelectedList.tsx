@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { getUrqlClient } from "@/services/urqlService";
 import { useAccount } from "wagmi";
 import { listQuery } from "@/utils";

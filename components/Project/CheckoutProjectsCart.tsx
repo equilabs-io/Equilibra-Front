@@ -14,8 +14,6 @@ import { ProjectIdBadge } from "./ProjectIdBadge";
 export const CheckoutProjectaCart = ({ ...props }) => {
   const { open, setOpen, projectChekoutInfo, list } = props;
 
-  console.log("open cart", open);
-
   const PROJECT_LENGTH = projectChekoutInfo.length || 0;
   const LIST_NAME = list[0]?.name;
 

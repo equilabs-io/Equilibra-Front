@@ -15,7 +15,6 @@ const variants = {
   hidden: { opacity: 0.2 },
 };
 export default function ManagerStats({ poolStats }: { poolStats: any }) {
-  console.log(poolStats);
   return (
     <div className="w-full bg-background">
       <div className="w-full">

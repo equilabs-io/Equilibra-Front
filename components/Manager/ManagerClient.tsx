@@ -27,11 +27,14 @@ const ManagerClient = ({ pools }: { pools: any }) => {
   const [openManager, setOpenManager] = useState(false);
   const [currentPool, setCurrentPool] = useState("");
   const [poolStats, setPoolStats] = useState<any>([]);
+
+  // current connected address
   const { address: participant } = useAccount();
 
+  //fetach pool stats
   useEffect(() => {
     if (currentPool !== "") {
-      const fetchPoolInfoAndParticipantSupports = async () => {
+      const fetchPoolStats = async () => {
         const result = await getUrqlClient().query(poolStatsQuery, {
           currentPool,
         });
@@ -40,10 +43,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
           {
             name: "Ownership",
             data:
-              result.data.osmoticPool?.owner ===
-              "0x5be8bb8d7923879c3ddc9c551c5aa85ad0fa4de3"
-                ? "Owner"
-                : "Not Owner",
+              result.data.osmoticPool?.owner === participant ? "Not" : "Owner",
           },
           {
             name: "Governance Token",
@@ -60,13 +60,14 @@ const ManagerClient = ({ pools }: { pools: any }) => {
         ]);
       };
 
-      fetchPoolInfoAndParticipantSupports();
+      fetchPoolStats();
     }
   }, [currentPool, participant]);
 
   return (
     <>
       <div className="absolute left-0 top-[80%] flex w-full justify-center">
+        {/* opens the manager */}
         <button
           onClick={() => setOpenManager(true)}
           className="rounded-full  px-8 py-4 text-4xl uppercase"
@@ -74,9 +75,12 @@ const ManagerClient = ({ pools }: { pools: any }) => {
           open Manager
         </button>
       </div>
+      {/* then manager is open... */}
       {openManager && (
         <>
           <div className="absolute inset-x-0 inset-y-4 mt-24 flex bg-background">
+            {/* manualy close the manajer */}
+            {/* TODO: delete */}
             <button
               onClick={() => setOpenManager(false)}
               className="absolute right-5 top-5 z-50 rounded-full px-2 py-2 text-xl uppercase text-textSecondary "
@@ -98,6 +102,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   transition={{ duration: 0.2 }}
                   className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg border p-4"
                 >
+                  {/* claim voting power */}
                   <div className="w-full ">
                     <button>CLAIM</button>
                   </div>
@@ -122,9 +127,12 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                       Current Pool: {formatAddress(currentPool)}
                     </div>
                   </div>
-                  <div className="flex w-full flex-col text-highlight">
+                  <div className="text-textSecoondary flex w-full flex-col">
                     <span className="py-4">Alpha Demo v.1</span>
-                    <button className="py-2 text-left">Link to Docs</button>
+                    {/* TODO: add href to docs */}
+                    <a href="#" target="_blank">
+                      <button className="py-2 text-left">Link to Docs</button>
+                    </a>
                   </div>
                 </motion.aside>
 

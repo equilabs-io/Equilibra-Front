@@ -101,8 +101,6 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
     return `${day} / ${month} / ${year}`;
   }
 
-  console.log(formatDate(1701128880));
-
   function convertUnixTimestampWithDifference(timestamp) {
     if (timestamp === 0) {
       return {};
@@ -139,9 +137,9 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
   const timestamp = 0;
   const timestampVariant = 1701128880;
   const result = convertUnixTimestampWithDifference(timestamp);
-  console.log(`Converted Date: ${result.formattedDate || 0}`);
-  console.log(`Days Passed: ${result.days || 0} days`);
-  console.log(`Hours Passed: ${result.hours || 0} hours`);
+  // console.log(`Converted Date: ${result.formattedDate || 0}`);
+  // console.log(`Days Passed: ${result.days || 0} days`);
+  // console.log(`Hours Passed: ${result.hours || 0} hours`);
 
   //
   // const activityItems = [

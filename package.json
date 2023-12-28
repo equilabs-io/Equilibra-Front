@@ -13,6 +13,7 @@
     "@heroicons/react": "^2.0.18",
     "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
     "@pinata/sdk": "^2.1.0",
+    "@preact/signals-react": "^2.0.0",
     "@urql/core": "^4.1.4",
     "@urql/next": "^1.1.0",
     "@web3modal/wagmi": "^3.1.0",

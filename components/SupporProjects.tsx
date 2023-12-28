@@ -13,6 +13,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import TransactionModal from "./TransactionModal";
+import { ProjectIdBadge } from "./Project/ProjectIdBadge";
 
 import { Chart } from "./Chart";
 import Link from "next/link";
@@ -30,6 +31,31 @@ const osmoticPool = `query (id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
       }
     }
   }`;
+
+const queryBySupportAndList = `query  ($pool: String!, $participant: String!) {
+    osmoticPool(id: $pool) {
+      poolProjects(first: 25) {
+        id
+        poolProjectSupports(first: 10) {
+          support
+          poolProjectParticipantsSupports(
+            where: {participant: $participant}
+          ) {
+            support
+            participant
+          }
+        }
+        id
+      }
+      projectList {
+       
+        projects(first: 25) {
+          id
+        }
+      }
+    }
+  
+}`;
 
 const queryByPoolAndParticipant = `query ($pool: String!, $participant: String!) {
     osmoticPool(id: $pool) {
@@ -55,6 +81,24 @@ const queryByPoolAndParticipant = `query ($pool: String!, $participant: String!)
         }
       }
 }`;
+function extractSubstring(inputString: string) {
+  // Split the string by hyphen ('-')
+  let parts = inputString.split("-");
+
+  // Check if there are at least two hyphens in the string
+  if (parts.length >= 3) {
+    // Extract the substring between the hyphens (index 1)
+    let result = parts[1];
+
+    // Trim any leading or trailing whitespace
+    result = result.trim();
+
+    return result;
+  } else {
+    // If there are not enough hyphens, return an appropriate message or handle the error as needed
+    return "Invalid input: Not enough hyphens";
+  }
+}
 
 export const SupporProjects = ({ pool }: any) => {
   const { address: participant } = useAccount();
@@ -63,18 +107,13 @@ export const SupporProjects = ({ pool }: any) => {
   //Pool: ListName - projects - support - total support - percentage of support - currentRound and time to end
   //MimeToken: name, symbol, balance, total supply
   //Participant: address, Mimetoken balance, Staked balance, percentage of support
-
   //Checkout - difference between new support and previous support
-
-  //Send Transaction:
-  //Loading state: ??
-  //Success state: ??
-  //Error state: ??
 
   const [open, setOpen] = useState(false);
   const [poolInfo, setPoolInfo] = useState<any>([{}]);
   const [participantSupports, setParticipantSupports] = useState<any>([{}]);
   const [maxValue, setMaxValue] = useState(350);
+  const [newData, setNewData] = useState<any>([]);
 
   function getFourChars(str: string, indexFunc: any): string {
     if (!str) return "";
@@ -87,6 +126,66 @@ export const SupporProjects = ({ pool }: any) => {
   function getIdOfProyectId(str: string): string {
     return str?.[str.length - 1];
   }
+
+  useEffect(() => {
+    const fetchSupportedProjectInList = async () => {
+      try {
+        const result = await getUrqlClient().query(queryBySupportAndList, {
+          pool,
+          participant,
+        });
+
+        const participantSupports = (
+          result.data?.osmoticPool?.poolProjects || []
+        ).map((project: any) => {
+          const supportInfo = project.poolProjectSupports?.[0] || 0;
+          const participantSupportInfo =
+            supportInfo.poolProjectParticipantsSupports?.[0] || 0;
+
+          return {
+            idOriginal: project.id,
+            id: getIdOfProyectId(project.id),
+            value: supportInfo.support || 0,
+            static: supportInfo.support || 0,
+            participantSupport: participantSupportInfo.support || 0,
+          };
+        });
+
+        const projectsInList = (
+          result.data?.osmoticPool?.projectList?.projects || []
+        ).map((project: any) => {
+          return {
+            id: extractSubstring(project.id),
+            idOriginal: project.id,
+            value: 0,
+            static: 0,
+            participantSupport: 0,
+          };
+        });
+
+        // Merge participantSupports and projectsInList based on the 'id' property
+        const mergedData = projectsInList.map((project: any) => ({
+          ...project,
+          ...participantSupports.find(
+            (participantSupport: any) => participantSupport.id === project.id,
+          ),
+        }));
+
+        mergedData.sort((a: { id: string }, b: { id: string }) => {
+          const idA = parseInt(a.id, 10);
+          const idB = parseInt(b.id, 10);
+          return idA - idB;
+        });
+
+        // setParticipantSupports(mergedData);
+      } catch (error) {
+        // Handle error appropriately
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchSupportedProjectInList();
+  }, [pool, participant]);
 
   useEffect(() => {
     const participantSupportQuery = `
@@ -107,6 +206,7 @@ export const SupporProjects = ({ pool }: any) => {
         pool,
         participant,
       });
+      // TODO!: not using this info
       setPoolInfo([
         {
           address: result.data?.osmoticPool?.address,
@@ -124,6 +224,7 @@ export const SupporProjects = ({ pool }: any) => {
           }[];
         }) => {
           return {
+            idOriginal: project.id,
             id: getIdOfProyectId(project.id),
             value: project.poolProjectSupports?.[0].support,
             static: project.poolProjectSupports?.[0].support,
@@ -158,7 +259,7 @@ export const SupporProjects = ({ pool }: any) => {
 
   const resetToInitialState = () => {
     setMaxValue(350);
-    // Reset any other state variables
+    // Reset any other state letiables
   };
 
   const handleResetValues = () => {
@@ -248,7 +349,8 @@ export const SupporProjects = ({ pool }: any) => {
                     key={index}
                     className="flex items-center justify-between gap-x-4 rounded-xl  bg-surface px-2 py-2 hover:border"
                   >
-                    <div className="flex max-w-[150px] items-center justify-start gap-x-4 ">
+                    <ProjectIdBadge id={project.id} size="lg" />
+                    {/* <div className="flex max-w-[150px] items-center justify-start gap-x-4 border">
                       <span
                         className="h-12 w-12 flex-none rounded-full bg-slate-800"
                         // src={`https://effigy.im/a/${project.address}`}
@@ -259,7 +361,7 @@ export const SupporProjects = ({ pool }: any) => {
                           {String(project.id)}
                         </p>
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Range inputs */}
                     <div className="flex flex-1 items-center justify-center bg-surface">
@@ -274,7 +376,7 @@ export const SupporProjects = ({ pool }: any) => {
                         onChange={(e) =>
                           handleValueChange(index, parseInt(e.target.value))
                         }
-                        className="w-full cursor-pointer appearance-none bg-background [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-black/25 [&::-webkit-slider-thumb]:h-[13px] [&::-webkit-slider-thumb]:w-[13px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary_var [&::-webkit-slider-thumb]:hover:bg-primary"
+                        className="h-4 w-[80%]"
                         step={10}
                       />
                     </div>
@@ -304,11 +406,14 @@ export const SupporProjects = ({ pool }: any) => {
                           <Menu.Item>
                             {({ active }) => (
                               <Link
-                                href="#"
+                                // TODO: adjust id param
+                                href={`/demo/projects/${project.id}`}
                                 className="block bg-surface px-3 py-1 text-sm leading-6 text-textSecondary hover:text-primary"
                               >
                                 View Project
-                                <span className="sr-only">, {project.id}</span>
+                                <span className="sr-only">
+                                  , {String(project.id)}
+                                </span>
                               </Link>
                             )}
                           </Menu.Item>
@@ -461,7 +566,7 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                     <div className="flex h-full flex-col overflow-y-scroll bg-surface py-6 shadow-xl">
                       <div className="px-4 sm:px-6">
                         <Dialog.Title className="text-base leading-6">
-                          Support summary
+                          Support Projects Summary
                         </Dialog.Title>
                       </div>
                       <div className="relative mt-6 flex-1 px-4 text-white sm:px-6">
@@ -472,14 +577,12 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                           <div className="mx-auto max-w-lg space-y-10 text-textSecondary lg:max-w-none">
                             {checkoutValues.map((value) => (
                               <>
-                                <div className="flex items-baseline justify-between ">
+                                <div className="flex items-center justify-between">
                                   <div className="flex flex-col">
-                                    <span className="text-xl font-semibold">
-                                      Project id: {value[0]}
-                                    </span>
+                                    <ProjectIdBadge id={value[0]} size="lg" />
                                     {/* <span>Current support: 50%</span> */}
                                   </div>
-                                  <div className="relative flex flex-col">
+                                  <div className="relative flex flex-col space-y-2">
                                     <span
                                       className={`text-lg ${
                                         value[1] < 0
@@ -502,28 +605,22 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                                     </span>
                                   </div>
                                 </div>
-                                <hr className="my-2" />
+                                <hr className="" />
                               </>
                             ))}
                             <div className="flex h-[150px] flex-col justify-between pl-4">
-                              <p>Resume</p>
+                              <span>Resume</span>
                               <div className="flex justify-between">
-                                <span className="text-xl font-semibold">
-                                  Balance
-                                </span>
-                                <span className="text-xl ">{balance}</span>
+                                <span className="text-lg">Balance</span>
+                                <span className="text-2xl ">{balance}</span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-xl font-semibold">
-                                  Staked
-                                </span>
-                                <span className="text-xl ">{staked}</span>
+                                <span className="text-lg">Staked</span>
+                                <span className="text-2xl ">{staked}</span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-xl font-semibold">
-                                  Available
-                                </span>
-                                <span className="text-xl ">
+                                <span className="text-lg">Available</span>
+                                <span className="text-2xl">
                                   {balance - staked}
                                 </span>
                               </div>
