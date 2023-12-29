@@ -18,6 +18,8 @@
     "@urql/next": "^1.1.0",
     "@web3modal/wagmi": "^3.1.0",
     "clsx": "^2.0.0",
+    "echarts": "^5.4.3",
+    "echarts-for-react": "^3.0.2",
     "encoding": "^0.1.13",
     "ethers": "^5.7.1",
     "framer-motion": "^10.16.4",
