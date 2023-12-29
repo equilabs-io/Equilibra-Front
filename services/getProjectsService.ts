@@ -59,7 +59,6 @@ const getParsedProjects = async (projectsQuery: { projects: Project[] }) => {
     projects.map(async (project) => {
       if (project) {
         try {
-          console.log(project);
           return {
             ...project,
             content: await getIpfsData(project.contentHash),

@@ -1,6 +1,7 @@
 import { Link } from "../Link";
 import AddListButton from "./AddListButton";
 import { ProjectIdBadge } from "./ProjectIdBadge";
+import Image from "next/image";
 
 type Project = {
   flowLastRates: any;
@@ -44,6 +45,9 @@ export default function ProjectCard({
 
   const { description, link, fileHash, name, category } = content;
 
+  const pinataGateWay =
+    "https://tomato-commercial-jellyfish-816.mypinata.cloud/ipfs/";
+
   return (
     <section className="group relative flex flex-col rounded-lg  bg-surface p-2 hover:shadow-md hover:shadow-highlight">
       <div className="sm:aspect-none h-[180px]  bg-background">
@@ -52,18 +56,13 @@ export default function ProjectCard({
             {/* {category} */}
           </div>
         )}
-
-        {/* {(content?.fileHash && (
-          // TODO! SEE image error when "use client"
-          <Image
-            src={`${process.env.PINATA_GATEWAY_URL}${fileHash}`}
-            alt="project img"
-            height={400}
-            width={300}
-            className="h-full w-full object-cover object-center"
-          />
-        )) ||
-          ""} */}
+        <Image
+          src={`${pinataGateWay}${fileHash}`}
+          alt="project img"
+          height={400}
+          width={300}
+          className="h-full w-full object-cover object-center"
+        />
       </div>
       <div className="flex flex-1 flex-col  items-start justify-between overflow-hidden bg-surface p-4 transition-all duration-200 ease-out">
         <Link href={`/demo/projects/${id}`}>
