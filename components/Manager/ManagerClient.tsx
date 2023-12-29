@@ -7,11 +7,14 @@ import { getUrqlClient } from "@/services/urqlService";
 import { useAccount } from "wagmi";
 import ManagerStats from "./ManagerStats";
 import { motion } from "framer-motion";
+import MIME_TOKEN_ABI from "@/constants/abis/MimeToken.json";
+import { Chart } from "../Chart";
 
 const poolStatsQuery = `query ($currentPool: String!){
   osmoticPool(id: $currentPool) {
     address
     mimeToken {
+      id
       name
       symbol
     }
@@ -19,6 +22,7 @@ const poolStatsQuery = `query ($currentPool: String!){
     projectList {
       name
     }
+  
   }
   }
   `;
@@ -27,11 +31,12 @@ const ManagerClient = ({ pools }: { pools: any }) => {
   const [openManager, setOpenManager] = useState(false);
   const [currentPool, setCurrentPool] = useState("");
   const [poolStats, setPoolStats] = useState<any>([]);
+  const [govTokenAddress, setGovTokenAddress] = useState("");
 
   // current connected address
   const { address: participant } = useAccount();
 
-  //fetach pool stats
+  //fetch pool stats
   useEffect(() => {
     if (currentPool !== "") {
       const fetchPoolStats = async () => {
@@ -58,6 +63,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
             data: currentPool == "" ? "" : "1",
           },
         ]);
+        setGovTokenAddress(result.data.osmoticPool?.mimeToken.id);
       };
 
       fetchPoolStats();
@@ -103,30 +109,16 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg border p-4"
                 >
                   {/* claim voting power */}
-                  <div className="w-full ">
-                    <button>CLAIM</button>
-                  </div>
 
-                  <span className="sr-only">Pools Handle</span>
-                  <div className="flex w-full flex-col">
-                    {pools.length > 0 &&
-                      pools?.map((pool: any, idx: number) => (
-                        <>
-                          <button
-                            className="truncate py-2 text-left text-textSecondary hover:bg-surface hover:text-white"
-                            key={idx}
-                            onClick={() => setCurrentPool(pool.address)}
-                          >
-                            <p className="text-sm text-textSecondary">
-                              {formatAddress(pool.address)}
-                            </p>
-                          </button>
-                        </>
-                      ))}
-                    <div className="mt-20 truncate">
-                      Current Pool: {formatAddress(currentPool)}
-                    </div>
-                  </div>
+                  <Claimbutton govTokenAddress={govTokenAddress} />
+
+                  {/* pool selection + chart  */}
+                  <SelectedPoolAndChart
+                    pools={pools}
+                    setCurrentPool={setCurrentPool}
+                    currentPool={currentPool}
+                  />
+
                   <div className="text-textSecoondary flex w-full flex-col">
                     <span className="py-4">Alpha Demo v.1</span>
                     {/* TODO: add href to docs */}
@@ -154,3 +146,68 @@ const ManagerClient = ({ pools }: { pools: any }) => {
 };
 
 export default ManagerClient;
+
+type SelectedPoolAndChartProps = {
+  pools: [any];
+  setCurrentPool: (arg0: string) => void;
+  currentPool: string;
+};
+
+const SelectedPoolAndChart = ({
+  pools,
+  setCurrentPool,
+  currentPool,
+}: SelectedPoolAndChartProps) => {
+  return (
+    <>
+      <div className="flex w-full flex-col border">
+        {pools.length > 0 &&
+          pools?.map((pool: any, idx: number) => (
+            <>
+              <button
+                className="truncate py-2 text-left text-textSecondary hover:bg-surface hover:text-white"
+                key={idx}
+                onClick={() => setCurrentPool(pool.address)}
+              >
+                <p className="text-sm text-textSecondary">
+                  {formatAddress(pool.address)}
+                </p>
+              </button>
+            </>
+          ))}
+        <Chart maxValue={500} currentValue={300} />
+        <div className="mt-20 truncate">
+          Current Pool: {formatAddress(currentPool)}
+        </div>
+      </div>
+    </>
+  );
+};
+
+type ClaimbuttonProps = {
+  govTokenAddress?: string;
+};
+
+// TODO: add claim voting power functionality
+const Claimbutton = ({ govTokenAddress }: ClaimbuttonProps) => {
+  const [isClaimed, setIsClaimed] = useState(false);
+  return (
+    <>
+      <div className="flex w-full justify-center">
+        {isClaimed ? (
+          <span className="text-textSecondary">
+            Power Claimed for this pool
+          </span>
+        ) : (
+          <button className="relative rounded-full border px-4 py-2 hover:border-primary">
+            Claim Voting Power
+            <span className="absolute -top-1 right-1 flex h-3 w-3 ">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-primary"></span>
+            </span>
+          </button>
+        )}
+      </div>
+    </>
+  );
+};

@@ -127,6 +127,7 @@ export const SupporProjects = ({ pool }: any) => {
     return str?.[str.length - 1];
   }
 
+  //new logic which includes all projects in list and supported by participant
   useEffect(() => {
     const fetchSupportedProjectInList = async () => {
       try {
@@ -177,7 +178,7 @@ export const SupporProjects = ({ pool }: any) => {
           return idA - idB;
         });
 
-        // setParticipantSupports(mergedData);
+        setParticipantSupports(mergedData);
       } catch (error) {
         // Handle error appropriately
         console.error("Error fetching data:", error);
@@ -234,7 +235,7 @@ export const SupporProjects = ({ pool }: any) => {
           };
         },
       );
-      setParticipantSupports(participantSupports);
+      // setParticipantSupports(participantSupports);
     };
 
     fetchParticipantSupports();
