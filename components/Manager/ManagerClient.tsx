@@ -33,6 +33,8 @@ const ManagerClient = ({ pools }: { pools: any }) => {
   const [poolStats, setPoolStats] = useState<any>([]);
   const [govTokenAddress, setGovTokenAddress] = useState("");
 
+  const [currentStakedValue, setCurrentStakedValue] = useState(100);
+
   // current connected address
   const { address: participant } = useAccount();
 
@@ -117,6 +119,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                     pools={pools}
                     setCurrentPool={setCurrentPool}
                     currentPool={currentPool}
+                    currentStakedValue={currentStakedValue}
                   />
 
                   <div className="text-textSecoondary flex w-full flex-col">
@@ -132,7 +135,11 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                 <div className="items-start-2 col-start-2 col-end-5 h-full w-full">
                   <main className=" h-full w-full flex-1 p-2">
                     <Suspense>
-                      <SupporProjects pool={currentPool} />
+                      <SupporProjects
+                        pool={currentPool}
+                        setCurrentStakedValue={setCurrentStakedValue}
+                        currentStakedValue={currentStakedValue}
+                      />
                     </Suspense>
                   </main>
                 </div>
@@ -151,12 +158,14 @@ type SelectedPoolAndChartProps = {
   pools: [any];
   setCurrentPool: (arg0: string) => void;
   currentPool: string;
+  currentStakedValue: number;
 };
 
 const SelectedPoolAndChart = ({
   pools,
   setCurrentPool,
   currentPool,
+  currentStakedValue,
 }: SelectedPoolAndChartProps) => {
   return (
     <>
@@ -175,7 +184,7 @@ const SelectedPoolAndChart = ({
               </button>
             </>
           ))}
-        <Chart maxValue={500} currentValue={300} />
+        <Chart maxValue={500} currentValue={currentStakedValue} />
         <div className="mt-20 truncate">
           Current Pool: {formatAddress(currentPool)}
         </div>
@@ -190,7 +199,7 @@ type ClaimbuttonProps = {
 
 // TODO: add claim voting power functionality
 const Claimbutton = ({ govTokenAddress }: ClaimbuttonProps) => {
-  const [isClaimed, setIsClaimed] = useState(false);
+  const [isClaimed, setIsClaimed] = useState(true);
   return (
     <>
       <div className="flex w-full justify-center">

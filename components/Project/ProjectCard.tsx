@@ -61,7 +61,7 @@ export default function ProjectCard({
           alt="project img"
           height={400}
           width={300}
-          className="h-full w-full object-cover object-center"
+          className="h-full w-full object-cover object-center opacity-80"
         />
       </div>
       <div className="flex flex-1 flex-col  items-start justify-between overflow-hidden bg-surface p-4 transition-all duration-200 ease-out">

@@ -100,8 +100,14 @@ function extractSubstring(inputString: string) {
   }
 }
 
-export const SupporProjects = ({ pool }: any) => {
+export const SupporProjects = ({
+  pool,
+  currentStakedValue,
+  setCurrentStakedValue,
+}: any) => {
   const { address: participant } = useAccount();
+
+  console.log("current", currentStakedValue);
 
   //TODO! Info to show in the dashboard:
   //Pool: ListName - projects - support - total support - percentage of support - currentRound and time to end
@@ -165,18 +171,18 @@ export const SupporProjects = ({ pool }: any) => {
         });
 
         // Merge participantSupports and projectsInList based on the 'id' property
-        const mergedData = projectsInList.map((project: any) => ({
-          ...project,
-          ...participantSupports.find(
-            (participantSupport: any) => participantSupport.id === project.id,
-          ),
-        }));
-
-        mergedData.sort((a: { id: string }, b: { id: string }) => {
-          const idA = parseInt(a.id, 10);
-          const idB = parseInt(b.id, 10);
-          return idA - idB;
-        });
+        const mergedData = projectsInList
+          .map((project: any) => ({
+            ...project,
+            ...participantSupports.find(
+              (participantSupport: any) => participantSupport.id === project.id,
+            ),
+          }))
+          .sort((a: { id: string }, b: { id: string }) => {
+            const idA = parseInt(a.id, 10);
+            const idB = parseInt(b.id, 10);
+            return idA - idB;
+          });
 
         setParticipantSupports(mergedData);
       } catch (error) {
@@ -247,6 +253,8 @@ export const SupporProjects = ({ pool }: any) => {
       +acc + +curr.value,
     0,
   );
+
+  setCurrentStakedValue(actualCurrentValue ?? actualCurrentValue);
 
   //function that updates the values of participantSupport throw the range input
   const handleValueChange = (index: number, newValue: number) => {

@@ -15,9 +15,9 @@ export const ProfileHeader = () => {
               Manage your Pools, Projects and more
             </h2>
             <p className="text-lg font-thin text-textSecondary">
-              Bring your community ecosystem to the next level by managing all
-              your favorite proyects. Claim your voting power, supprt projects,
-              and let the conviction began!
+              Bring your organization ecosystem to the next level by managing
+              all your proyects. Claim your voting power and support projects,
+              activate them and more.
             </p>
           </div>
           {/* TODO: improve this section styles and data */}
