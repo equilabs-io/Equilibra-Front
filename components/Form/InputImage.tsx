@@ -62,10 +62,7 @@ export default function InputImage({
 
   return (
     <>
-      <label
-        htmlFor="cover-photo"
-        className="block"
-      >
+      <label htmlFor="cover-photo" className="block text-textSecondary">
         {label}
       </label>
       <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10">
@@ -86,9 +83,9 @@ export default function InputImage({
                 />
                 <label
                   htmlFor={name}
-                  className="relative cursor-pointer rounded-lg bg-gray-900 font-semibold focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-200 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-primary transition-colors duration-200 ease-in-out"
+                  className="relative cursor-pointer rounded-lg bg-highlight font-semibold focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-200 focus-within:ring-offset-2 focus-within:ring-offset-gray-900 hover:text-primary transition-colors duration-200 ease-in-out"
                 >
-                  <span>Upload a file</span>
+                  <span className="">Upload a file</span>
                   <input
                     id={name}
                     name={name}
@@ -100,10 +97,12 @@ export default function InputImage({
                   />
                 </label>
 
-                <p className="pl-1">or drag and drop</p>
-                <p className="text-xs leading-5 text-gray-400">
-                  PNG, JPG, GIF up to 10MB
-                </p>
+                <div className="space-y-1 mt-1">
+                  <p className="pl-1 text-textSecondary">or drag and drop</p>
+                  <p className="text-xs leading-5 text-textSecondary">
+                    PNG, JPG, GIF up to 10MB
+                  </p>
+                </div>
               </div>
             </>
           )}

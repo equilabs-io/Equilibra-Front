@@ -4,18 +4,14 @@ import { useBalance } from "wagmi";
 
 type BalanceProps = {
   address?: `0x${string}` | undefined;
+  token?: `0x${string}` | undefined;
+  symbol?: boolean | undefined;
 };
-const Balance = ({ address }: BalanceProps) => {
+const Balance = ({ address, token, symbol = true }: BalanceProps) => {
   const balance = useBalance({
     address: address,
     token: "0x5943F705aBb6834Cad767e6E4bB258Bc48D9C947",
     chainId: 5,
-    onSuccess(data) {
-      console.log("Success", data);
-    },
-    onError(error) {
-      console.log("Error fetching balance", error);
-    },
   });
   const { data, isError, isLoading } = balance;
 
@@ -28,7 +24,12 @@ const Balance = ({ address }: BalanceProps) => {
   if (isError) {
     return <div>Error...</div>;
   }
-  return <div>{tokenBalance}</div>;
+  return (
+    <div className="">
+      {tokenBalance}
+      <span className="ml-1">{symbol && tokenSymbol}</span>
+    </div>
+  );
 };
 
 export default Balance;

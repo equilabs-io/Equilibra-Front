@@ -3,8 +3,9 @@ const nextConfig = {
   images: {
     domains: [process.env.PINATA_GATEWAY],
   },
-  experimental: {
-    serverActions: true,
+  webpack: (config) => {
+    config.externals.push("pino-pretty", "lokijs", "encoding");
+    return config;
   },
 };
 

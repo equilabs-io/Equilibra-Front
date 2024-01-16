@@ -8,12 +8,19 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sora)"],
+        mono: ["var(--font-roboto-mono)"],
+      },
       colors: {
         primary: "var(--color-primary)",
         primary_var: "var(--color-primary-var)",
         secondary: "var(--color-secondary)",
+        secondary_var: "var(--color-secondary-content)",
         background: "var(--color-background)",
         surface: "var(--color-surface)",
+        surface_var: "var(--color-surface-var)",
+        highlight: "var(--color-highlight)",
         surface_secondary: "var(--color-surface-secondary)",
         textSecondary: "var(--color-text-secondary)",
         white: "var(--color-white)",

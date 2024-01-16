@@ -15,11 +15,11 @@ export const Link: React.FC<LinkProps> = function ({
   isExternal = false,
 }) {
   return (
-    <div className="truncate flex items-center justify-centers">
+    <div className="truncate flex items-center justify-center">
       <NextLink
         href={href}
         target={isExternal ? "_blank" : "_self"}
-        className="relative z-0 inline-flex max-w-full items-center hover:text-secondary"
+        className="relative z-0 inline-flex max-w-full items-center hover:text-primary"
       >
         <div className="flex w-full items-center">
           <span className="truncate">{children}</span>

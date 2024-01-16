@@ -17,7 +17,7 @@ export const CardProject = ({
   link,
   category = "DAO tooling",
   image,
-  description,
+  description = "In the jungles of Thailand lived majestic elephants, Their habitat was shrinking, they were vulnerable to danger, Passionate conservationists set up ",
 }: CardProjectProps) => {
   const [visible, setVisible] = useState(true);
   const { scrollYProgress } = useScroll();

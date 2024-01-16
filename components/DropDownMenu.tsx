@@ -1,7 +1,6 @@
 import { Fragment, useRef } from "react";
 import type { FC, ReactNode } from "react";
 import { useHover } from "@/hooks/useHover";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
@@ -23,7 +22,7 @@ const DropDownMenu: FC<MenuItemProps> = function ({
   return (
     <Popover.Button as={Link} href={href}>
       <div
-        className={`px-4 py-2 transition-all bg-surface hover:brightness-150`}
+        className={`bg-surface px-4 py-2 transition-all hover:brightness-150`}
       >
         {icon}
         <div className="text-md">{label}</div>
@@ -41,7 +40,7 @@ const NavItemBase: FC<{
     <div
       className={`flex items-center gap-2 ${
         isHovered ? "opacity-90" : ""
-      }   transition-colors uppercase text-md font-bold letter-spacing-[1px]`}
+      }   text-md letter-spacing-[1px] font-bold uppercase transition-colors`}
     >
       {/* If we wanna render in Icon next to the label */}
       <div className="h-4 w-4">{icon}</div>

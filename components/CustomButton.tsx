@@ -7,6 +7,7 @@ interface ButtonProps {
   text: string;
   link?: string;
   styles?: string;
+  disabled?: boolean;
 }
 
 function Button({
@@ -14,17 +15,20 @@ function Button({
   handleOnClick,
   type,
   styles,
+  disabled = false,
 }: {
   text: string;
   handleOnClick?: () => {};
   type: "button" | "submit" | "reset" | undefined;
   styles?: string;
+  disabled?: boolean;
 }) {
   return (
     <button
       type={type}
-      className={`text-md font-semibold bg-primary text-black py-2 px-4 rounded-full hover:bg-primary_var w-full sm:w-fit ${styles}`}
+      className={`text-md w-full rounded-full bg-primary px-4 py-2 font-semibold text-black hover:bg-primary_var sm:w-fit ${styles} transition-all duration-300 ease-in disabled:scale-75 disabled:cursor-not-allowed disabled:opacity-50`}
       onClick={handleOnClick}
+      disabled={disabled}
     >
       {text}
     </button>
@@ -37,6 +41,7 @@ export default function CustomButton({
   text,
   link,
   styles,
+  disabled = false,
 }: ButtonProps) {
   return (
     <>
@@ -55,6 +60,7 @@ export default function CustomButton({
           handleOnClick={handleOnClick}
           type={type}
           styles={styles}
+          disabled={disabled}
         />
       )}
     </>

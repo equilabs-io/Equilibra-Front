@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useEffect, FormEvent } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useContractWrite } from "wagmi";
 import { toast } from "react-toastify";
@@ -42,6 +42,7 @@ type createProjectForm = {
 };
 
 export default function CreateProjectForm({
+  // @ts-ignore
   handleFormChange,
   formState,
   beneficiary,
@@ -64,17 +65,6 @@ export default function CreateProjectForm({
         write({
           args: [debouncedBeneficiary, encodedData],
         });
-
-        // id, admin, beneficiary, data
-        // updateProject
-        // write({
-        //   args: [
-        //     7 as number,
-        //     "0x584ddfb0bdd922ff1fbf3e85e7e781d5816b4f23",
-        //     debouncedBeneficiary,
-        //     encodedData,
-        //   ],
-        // });
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -87,7 +77,7 @@ export default function CreateProjectForm({
     useContractWrite({
       address: projectRegistry.address,
       abi: projectRegistry.abi,
-      functionName: "updateProject",
+      functionName: "registerProject",
     });
 
   const ipfsJsonUpload = async () => {
@@ -122,12 +112,12 @@ export default function CreateProjectForm({
   return (
     <>
       <form
-        className="mx-auto w-full max-w-3xl p-6 rounded-lg bg-surface"
+        className="mx-auto w-full max-w-5xl rounded-lg bg-background p-6"
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="space-y-12">
           <div className="pb-12">
-            <h2>Create a project</h2>
+            <h4>Fill the form to create a project</h4>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <InputText
@@ -179,6 +169,7 @@ export default function CreateProjectForm({
               {/* category */}
               <div className="sm:col-span-4">
                 <InputSelect
+                  // @ts-ignore
                   list={categories}
                   label="Category"
                   name="category"
@@ -198,7 +189,7 @@ export default function CreateProjectForm({
             </div>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-end gap-x-6">
+        <div className="mt-6 flex items-center justify-center gap-x-6">
           <CustomButton text="Create project" type="submit" />
         </div>
       </form>
