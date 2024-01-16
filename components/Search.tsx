@@ -1,14 +1,13 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 
-import { useDebounce } from '../hooks/useDebounce';
+import { useDebounce } from "../hooks/useDebounce";
 
 const Search = ({ search }: { search?: string }) => {
   const router = useRouter();
-  const initialRender = useRef(true);
 
   const [text, setText] = useState(search);
   const query = useDebounce(text, 750);
@@ -16,33 +15,11 @@ const Search = ({ search }: { search?: string }) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission behavior
     if (!query) {
-      router.push('/demo/projects');
+      router.push("/demo/projects");
     } else {
       router.push(`/demo/projects?search=${query}`);
     }
   };
-
-  //   useEffect(() => {
-  //     if (initialRender.current) {
-  //       initialRender.current = false;
-  //       return;
-  //     }
-
-  //   }, [query, router]);
-
-  //   useEffect(() => {
-  //     if (initialRender.current) {
-  //       initialRender.current = false;
-  //       return;
-  //     }
-
-  //     if (!query) {
-  //       router.push(`/movies`);
-  //     } else {
-  //       router.push(`/movies?search=${query}`);
-  //     }
-  //   }, [query]);
-
   return (
     <form onSubmit={handleSubmit}>
       <div className="relative mx-auto max-w-md rounded-md border-2 shadow-sm">

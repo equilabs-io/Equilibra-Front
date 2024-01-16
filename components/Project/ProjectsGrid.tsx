@@ -5,11 +5,6 @@ import { SelectedList } from "./SelectedList";
 import { CheckoutProjectaCart } from "./CheckoutProjectsCart";
 import { getStringAfterFirstDash } from "@/lib/format";
 
-type ProjectGridProps = {
-  children?: React.FC;
-  projects: Project[];
-};
-
 type Project =
   | {
       flowLastRates: any;
@@ -25,7 +20,12 @@ type Project =
     }
   | undefined;
 
-const ProjectGrid = ({ projects }: ProjectGridProps) => {
+type ProjectGridProps = {
+  children?: React.FC;
+  projects: Project[];
+};
+
+const ProjectGrid = ({ projects }: { projects: Project[] }) => {
   const [projectsCheckoutInfo, setprojectsCheckoutInfo] = useState<
     { id: number; name?: string; catogory?: string }[]
   >([]);
@@ -87,7 +87,7 @@ const ProjectGrid = ({ projects }: ProjectGridProps) => {
                 return (
                   <div key={idx}>
                     <ProjectCard
-                      project={project}
+                      project={{ ...project, list: [] }}
                       projectCheckout={createProjectsCheckoutInfo}
                     />
                   </div>

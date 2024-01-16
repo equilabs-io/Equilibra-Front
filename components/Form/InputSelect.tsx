@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, Key } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
@@ -8,6 +8,7 @@ function classNames(...classes: string[]) {
 }
 
 interface List {
+  [x: string]: Key | null | undefined;
   name: string;
   symbol: string;
   address: string;

@@ -381,6 +381,7 @@ export const SupporProjects = ({
                         name={`range${index + 1}`}
                         min="0"
                         max={maxValue}
+                        // @ts-ignore
                         value={project.value}
                         onChange={(e) =>
                           handleValueChange(index, parseInt(e.target.value))
@@ -655,69 +656,5 @@ const Checkout = ({ ...props }: CheckoutProps) => {
         </Dialog>
       </Transition.Root>
     </>
-  );
-};
-
-// TODO: delete after
-const TiltCard = ({ children, balance, staked }: any) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["3deg", "-3deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-3deg", "3deg"]);
-
-  const handleMouseMove = (e: {
-    target: { getBoundingClientRect: () => any };
-    clientX: number;
-    clientY: number;
-  }) => {
-    const rect = e.target.getBoundingClientRect();
-
-    const width = rect.width;
-    const height = rect.height;
-
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.div
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        rotateY,
-        rotateX,
-        transformStyle: "preserve-3d",
-      }}
-      className="h-96 w-72 rounded-xl  bg-highlight"
-    >
-      <div
-        style={{
-          transform: "translateZ(75px)",
-          transformStyle: "preserve-3d",
-        }}
-        className="absolute inset-4 flex flex-col items-center justify-evenly rounded-xl bg-surface  shadow-lg"
-      >
-        <div className="absolute left-1/2 top-1/2 z-50 flex min-h-[100px] -translate-x-1/2 -translate-y-1/2 transform flex-col items-center justify-between text-lg text-textSecondary">
-          <span>Balance: {balance}</span>
-          <span>Staked: {staked}</span>
-        </div>
-        {children}
-      </div>
-    </motion.div>
   );
 };

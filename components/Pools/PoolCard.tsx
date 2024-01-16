@@ -3,7 +3,7 @@ import { extractColor } from "@/utils";
 import { PoolCardProps, PoolProps } from "@/types";
 import Balance from "@/components/Balance";
 
-const PoolCard = ({ pool }: PoolProps) => {
+const PoolCard = ({ pool }: { pool: PoolProps }) => {
   const bgColor = extractColor(pool?.address || "");
 
   return (
@@ -33,14 +33,14 @@ const PoolCard = ({ pool }: PoolProps) => {
             <div className="mb-8 text-center">
               <h5 className="text-xs text-primary">
                 Governance Token:{" "}
-                <span className="bg-secondary_var ml-2 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-secondary">
+                <span className="ml-2 inline-flex items-center rounded-md bg-secondary_var px-2 py-1 text-xs font-medium text-secondary">
                   {pool?.mimeToken.name}
                 </span>
               </h5>
             </div>
             <div className="">
               <button className="text-md  inline-flex w-full items-center justify-center rounded-lg bg-primary px-3 py-2 font-bold text-background">
-                <Balance address={pool?.address} />
+                <Balance address={pool?.address as `0x${string}`} />
                 {/* <span className="h-4 w-4 border-2 rounded-full ml-2 border-slate-900"></span> */}
               </button>
             </div>

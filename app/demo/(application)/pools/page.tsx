@@ -3,7 +3,7 @@ import Link from "next/link";
 import PoolCard from "@/components/Pools/PoolCard";
 import { InsideHeader } from "@/components/InsideHeader";
 import { getUrqlClient } from "@/services/urqlService";
-import { PoolCardProps } from "@/types";
+import { PoolCardProps, PoolProps } from "@/types";
 
 const poolsQuery = `
   query {
@@ -42,14 +42,14 @@ export default async function Pools() {
         role="list"
         className="mt-36 grid w-full grid-cols-1 justify-center gap-6 p-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:p-0"
       >
-        {poolsQuery.osmoticPools.map((pool: PoolCardProps, index: number) => (
+        {poolsQuery.osmoticPools.map((pool: PoolProps) => (
           <li
             key={pool.name}
             className="col-span-1 flex flex-col overflow-hidden rounded-lg"
           >
             <Link href={`/demo/pools/${pool.id}`}>
               <div className="flex flex-1 flex-col p-1">
-                <PoolCard pool={pool} index={index} />
+                <PoolCard pool={pool} />
               </div>
             </Link>
           </li>

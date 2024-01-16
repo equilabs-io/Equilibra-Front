@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useEffect, FormEvent } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useContractWrite } from "wagmi";
 import { toast } from "react-toastify";
@@ -42,6 +42,7 @@ type createProjectForm = {
 };
 
 export default function CreateProjectForm({
+  // @ts-ignore
   handleFormChange,
   formState,
   beneficiary,
@@ -168,6 +169,7 @@ export default function CreateProjectForm({
               {/* category */}
               <div className="sm:col-span-4">
                 <InputSelect
+                  // @ts-ignore
                   list={categories}
                   label="Category"
                   name="category"

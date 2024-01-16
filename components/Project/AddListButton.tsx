@@ -43,7 +43,7 @@ const AddListButton = ({
     <>
       <div className="absolute right-4 top-4  flex  justify-end">
         <button
-          disabled={isProjectInList}
+          disabled={isProjectInList as boolean}
           onClick={() => hanlde(id)}
           className={`flex w-full min-w-[170px] items-center justify-center rounded-md px-4 transition-all duration-200 ease-in ${
             isProjectInList

@@ -120,30 +120,30 @@ const Form = () => {
   const [encodedData, setEncodedData] = useState<string | null>(null);
 
   //handle form changes
-  const handleChange = useCallback(
-    (value: string | number | boolean, name: string, index?: number) => {
-      setFormState((prevFormState) => {
-        const updatedState = { ...prevFormState };
 
-        if (index !== undefined) {
-          // Handle array updates
-          updatedState[name] = [...prevFormState[name]];
-          updatedState[name][index] = value;
-        } else {
-          // Handle regular field updates
-          updatedState[name] = value;
-        }
-        if (name === "fundingToken") {
-          const selectedToken = tokens.find((token) => token.address === value);
+  const handleChange = useCallback((value: any, name: any, index?: any) => {
+    setFormState((prevFormState) => {
+      const updatedState = { ...prevFormState };
 
-          // updatedState.listAddress = selectedToken ? selectedToken.address : "";
-        }
+      if (index !== undefined) {
+        // Handle array updates
+        // @ts-ignore
+        updatedState[name] = [...(prevFormState[name] as any)];
+        // @ts-ignore
+        updatedState[name][index] = value;
+      } else {
+        // Handle regular field updates
+        updatedState[name] = value;
+      }
+      if (name === "fundingToken") {
+        const selectedToken = tokens.find((token) => token.address === value);
 
-        return updatedState;
-      });
-    },
-    [],
-  );
+        // updatedState.listAddress = selectedToken ? selectedToken.address : "";
+      }
+
+      return updatedState;
+    });
+  }, []);
 
   const handleEncodeData = async () => {
     try {
@@ -173,7 +173,7 @@ const Form = () => {
       return poolInitCode;
     } catch (error) {
       // Handle the error
-      console.error("Error in handleEncodeData:", error.message);
+      console.error("Error in handleEncodeData:", (error as Error).message);
 
       return "";
     }
@@ -305,7 +305,7 @@ const Form = () => {
             isLoading={isLoading}
             isSuccess={isWaitSuccess}
             isError={isWaitError}
-            handle={handleEncodeData}
+            writeFunction={handleEncodeData}
             disabledButton={
               formState.governanceToken === "" || formState.listAddress === ""
             }
@@ -415,7 +415,7 @@ const AddFunds = () => {
             isWaitSuccess={isWaitSuccess}
             isError={isError}
             error={error}
-            handle={write}
+            writeFunction={write}
             label="Deposit"
           />
         </div>

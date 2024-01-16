@@ -5,6 +5,20 @@ import { getProjects } from "@/services/getProjectsService";
 import { getUrqlClient } from "@/services/urqlService";
 import ProjectGrid from "@/components/Project/ProjectsGrid";
 
+type Project =
+  | {
+      flowLastRates: any;
+      flowLastTime: any;
+      active: any;
+      content: any;
+      contentHash: any;
+      admin: string;
+      beneficiary: string;
+      id: string;
+      projectLists: any;
+      __typename: string;
+    }
+  | undefined;
 const projectsQuery = `
   query {
     poolProjects {
@@ -82,7 +96,7 @@ export default async function Projects({}) {
         href="./create-project"
       />
 
-      <ProjectGrid projects={PROJECTS} />
+      <ProjectGrid projects={PROJECTS as Project[]} />
     </>
   );
 }

@@ -1,22 +1,22 @@
-export default function ProjectId({ params }) {
+export default function ProjectId({ params }: { params: any }) {
   const { id } = params;
   return (
     <>
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-0">
-        <div className="w-full max-h-[160px]">
+        <div className="max-h-[160px] w-full">
           <div className="flex-none rounded-full bg-green-400/10 p-1 text-green-400">
             <img
               src={`https://effigy.im/a/0x5BE8Bb8d7923879c3DDc9c551C5Aa85Ad0Fa4dE3`}
-              className="object-cover overflow-hidden w-full h-[full] max-h-[160px] rounded-t-2xl"
+              className="h-[full] max-h-[160px] w-full overflow-hidden rounded-t-2xl object-cover"
             />
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 ">
-            <div className="min-h-[100px]  col-span-2 p-4 space-y-4">
+          <div className="grid grid-cols-1 gap-1 lg:grid-cols-3 ">
+            <div className="col-span-2  min-h-[100px] space-y-4 p-4">
               <div className=" flex justify-between">
                 <h1 className="flex gap-x-3 text-base leading-7">
-                  <span className="font-semibold text-4xl">
+                  <span className="text-4xl font-semibold">
                     Project
-                    <span className="text-primary ml-2">
+                    <span className="ml-2 text-primary">
                       {id.slice(0, 5)}...
                     </span>
                   </span>
@@ -73,7 +73,7 @@ export default function ProjectId({ params }) {
             </div>
             <div className=" border-red-300">
               <div className="grid grid-cols-1 bg-gray-700/10 sm:grid-cols-2 lg:grid-cols-2">
-                <div className="border-2 w-full col-span-2 h-96">
+                <div className="col-span-2 h-96 w-full border-2">
                   <h3>Recieving x from:</h3>
                 </div>
               </div>

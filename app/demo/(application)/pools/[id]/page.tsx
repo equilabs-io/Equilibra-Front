@@ -32,9 +32,18 @@ type PoolIdProps = {
   id: string;
 };
 //helper function
-function classNames(...classes) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+type ItemType = {
+  id: string;
+  address: string;
+  active: boolean;
+  flowLastRate: number;
+  flowLastTime: number;
+  currentRound: number;
+};
 
 export default async function PoolId({ params }: { params: PoolIdProps }) {
   // Logic to get pool data
@@ -69,28 +78,19 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
   const poolName = getLastFourLetters(pool?.id);
 
   //all pool projects {}
-  const allPoolsProjects = pool.poolProjects.map(
-    (project: {
-      id: string;
-      active: boolean;
-      address: string;
-      flowLastRate: number;
-      flowLastTime: number;
-      currentRound: number;
-    }) => {
-      return {
-        id: getLastFourLetters(project.id, 4),
+  const allPoolsProjects = pool.poolProjects.map((project: ItemType) => {
+    return {
+      id: getLastFourLetters(project.id, 4),
 
-        // TODO! change to real address
+      // TODO! change to real address
 
-        address: "0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b",
-        active: project.active,
-        flowLastRate: project.flowLastRate,
-        flowLastTime: 1701128880,
-        currentRound: project.currentRound,
-      };
-    },
-  );
+      address: "0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b",
+      active: project.active,
+      flowLastRate: project.flowLastRate,
+      flowLastTime: 1701128880,
+      currentRound: project.currentRound,
+    };
+  });
 
   //helper function to format date from flow Last Time
   function formatDate(timestamp: number): string {
@@ -101,7 +101,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
     return `${day} / ${month} / ${year}`;
   }
 
-  function convertUnixTimestampWithDifference(timestamp) {
+  function convertUnixTimestampWithDifference(timestamp: number) {
     if (timestamp === 0) {
       return {};
     }
@@ -115,7 +115,8 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
     const currentDate = new Date();
 
     // Calculate the time difference in milliseconds
-    const timeDifference = currentDate - dateObject;
+    // const timeDifference = currentDate - dateObject;
+    const timeDifference = currentDate.getTime() - dateObject.getTime();
 
     // Calculate days and hours
     const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
@@ -331,7 +332,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800">
-                {allPoolsProjects.map((item) => (
+                {allPoolsProjects.map((item: ItemType) => (
                   <tr key={item.id}>
                     <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
                       <div className="flex items-center gap-x-4">
@@ -373,7 +374,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                       {item.flowLastRate}
                     </td>
                     <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-textSecondary sm:table-cell sm:pr-6 lg:pr-8">
-                      <time dateTime={item.flowLastTime}>
+                      <time dateTime={item.flowLastTime.toString()}>
                         {formatDate(item.flowLastTime)}
                       </time>
                     </td>

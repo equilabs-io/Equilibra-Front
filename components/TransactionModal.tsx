@@ -12,7 +12,7 @@ type TransactionModalProps = {
   error?: any;
   disabledButton?: any;
   label: string;
-  handle?: () => void;
+  writeFunction?: () => void;
 };
 
 export default function TransactionModal({
@@ -24,7 +24,7 @@ export default function TransactionModal({
   error,
   disabledButton,
   label,
-  handle,
+  writeFunction,
 }: TransactionModalProps) {
   const [openModal, setOpenModal] = useState(false);
 
@@ -36,7 +36,7 @@ export default function TransactionModal({
 
   const handleModal = () => {
     setOpenModal(true);
-    handle?.();
+    writeFunction?.();
   };
 
   return (

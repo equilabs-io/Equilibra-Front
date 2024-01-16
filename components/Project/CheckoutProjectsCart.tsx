@@ -131,7 +131,7 @@ export const CheckoutProjectaCart = ({ ...props }) => {
                             isError={isError}
                             isSuccess={isSuccess}
                             label="Add Projects"
-                            handle={handle}
+                            writeFunction={handle}
                           />
                         </div>
                       </div>
