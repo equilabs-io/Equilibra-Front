@@ -125,12 +125,12 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   />
 
                   <div className="text-textSecoondary flex w-full flex-col ">
-                    {/* TODO: add href to docs */}
-                    <a href="#" target="_blank">
+                    {/* TODO: add href to docs ??? */}
+                    {/* <a href="#" target="_blank">
                       <button className="w-full py-2  text-center text-sm text-textSecondary  hover:bg-surface">
                         Documentation
                       </button>
-                    </a>
+                    </a> */}
                     <span className="flex justify-center py-2 text-center text-xs text-primary">
                       Alpha Demo v.1
                     </span>
@@ -178,17 +178,19 @@ const SelectedPoolAndChart = ({
       <Disclosure>
         {({ open }) => (
           <>
-            <Disclosure.Button className="py-2">
-              Select a pool to manage
+            <Disclosure.Button className="hover: flex items-center space-x-4 py-2 hover:opacity-80">
+              <span>Select a pool to manage</span>
               <ChevronUpIcon
                 className={`${
-                  open ? "rotate-180 transform" : ""
-                } h-5 w-5 text-purple-500`}
+                  open
+                    ? "rotate-180 transform transition-all duration-200 ease-in-out"
+                    : ""
+                } h-5 w-5 text-primary`}
               />
             </Disclosure.Button>
             <Disclosure.Panel className="text-gray-500">
               {({ close }) => (
-                <div className="flex w-full flex-col ">
+                <div className="flex w-full flex-col">
                   {pools.length > 0 &&
                     pools?.map((pool: any, idx: number) => (
                       <>
@@ -213,26 +215,12 @@ const SelectedPoolAndChart = ({
         )}
       </Disclosure>
       <Chart maxValue={500} currentValue={currentStakedValue} />
-      <div className="mt-20 truncate text-center">
+      <div className="truncate text-center text-xl">
         Pool: {formatAddress(currentPool)}
       </div>
     </>
   );
 };
-
-function MyDisclosure() {
-  return (
-    <Disclosure>
-      <Disclosure.Button className="py-2">
-        Select a pool to manage
-      </Disclosure.Button>
-      <Disclosure.Panel className="text-gray-500">
-        Yes! You can purchase a license that you can share with your entire
-        team.
-      </Disclosure.Panel>
-    </Disclosure>
-  );
-}
 
 type ClaimbuttonProps = {
   govTokenAddress?: string;
@@ -246,7 +234,8 @@ const Claimbutton = ({ govTokenAddress }: ClaimbuttonProps) => {
       <div className="flex w-full justify-center">
         {isClaimed ? (
           <span className="text-textSecondary">
-            Support Power Claimed for this round
+            Support claimed: <span className="text-xl text-primary">500</span>{" "}
+            points
           </span>
         ) : (
           <button className="relative rounded-full border px-4 py-2 hover:border-primary">

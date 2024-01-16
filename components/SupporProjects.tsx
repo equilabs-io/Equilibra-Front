@@ -107,8 +107,6 @@ export const SupporProjects = ({
 }: any) => {
   const { address: participant } = useAccount();
 
-  console.log("current", currentStakedValue);
-
   //TODO! Info to show in the dashboard:
   //Pool: ListName - projects - support - total support - percentage of support - currentRound and time to end
   //MimeToken: name, symbol, balance, total supply
@@ -120,6 +118,7 @@ export const SupporProjects = ({
   const [participantSupports, setParticipantSupports] = useState<any>([{}]);
   const [maxValue, setMaxValue] = useState(350);
   const [newData, setNewData] = useState<any>([]);
+  const [projectSelected, setProjectSelected] = useState<any>([]);
 
   function getFourChars(str: string, indexFunc: any): string {
     if (!str) return "";
@@ -313,7 +312,7 @@ export const SupporProjects = ({
   };
   return (
     <>
-      <div className="relative flex h-full gap-2">
+      <div className="relative flex h-full gap-2 border-2">
         <ul
           role="list"
           className="flex h-full w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden "
@@ -323,6 +322,7 @@ export const SupporProjects = ({
             participantSupports.map(
               (
                 project: {
+                  idOriginal: any;
                   id:
                     | boolean
                     | React.Key
@@ -356,21 +356,11 @@ export const SupporProjects = ({
                     variants={variants}
                     custom={index}
                     key={index}
+                    onMouseEnter={() => setProjectSelected(project.id)}
                     className="flex items-center justify-between gap-x-4 rounded-xl  bg-surface px-2 py-2 hover:border"
                   >
+                    {/* projectId */}
                     <ProjectIdBadge id={project.id} size="lg" />
-                    {/* <div className="flex max-w-[150px] items-center justify-start gap-x-4 border">
-                      <span
-                        className="h-12 w-12 flex-none rounded-full bg-slate-800"
-                        // src={`https://effigy.im/a/${project.address}`}
-                        // alt=""
-                      />
-                      <div className="truncate">
-                        <p className="text-sm text-textSecondary">
-                          {String(project.id)}
-                        </p>
-                      </div>
-                    </div> */}
 
                     {/* Range inputs */}
                     <div className="flex flex-1 items-center justify-center bg-surface">
@@ -380,13 +370,14 @@ export const SupporProjects = ({
                         disabled={isMaxValueReached}
                         name={`range${index + 1}`}
                         min="0"
+                        list="tickmarks"
                         max={maxValue}
                         // @ts-ignore
                         value={project.value}
                         onChange={(e) =>
                           handleValueChange(index, parseInt(e.target.value))
                         }
-                        className="h-4 w-[80%]"
+                        className="h-4 w-[80%] cursor-pointer"
                         step={10}
                       />
                     </div>
@@ -417,13 +408,10 @@ export const SupporProjects = ({
                             {({ active }) => (
                               <Link
                                 // TODO: adjust id param
-                                href={`/demo/projects/${project.id}`}
+                                href={`/demo/projects/${project.idOriginal}`}
                                 className="block bg-surface px-3 py-1 text-sm leading-6 text-textSecondary hover:text-primary"
                               >
                                 View Project
-                                <span className="sr-only">
-                                  , {String(project.id)}
-                                </span>
                               </Link>
                             )}
                           </Menu.Item>
@@ -455,31 +443,31 @@ export const SupporProjects = ({
         </>
       )} */}
 
-        {/* Checkout button and & sliderOver comp */}
-        <div className="mt-0">
-          <Checkout
-            open={open}
-            setOpen={setOpen}
-            checkoutValues={checkoutValues}
-            balance={350}
-            staked={actualCurrentValue}
-            poolAddress={pool}
-          />
-          <button
-            onClick={handleCheckout}
-            disabled={checkoutValues.length === 0}
-            className="absolute bottom-0 left-0 cursor-pointer rounded-md bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all  duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Checkout
-          </button>
-        </div>
+        <Checkout
+          open={open}
+          setOpen={setOpen}
+          checkoutValues={checkoutValues}
+          balance={350}
+          staked={actualCurrentValue}
+          poolAddress={pool}
+        />
+        <button
+          onClick={handleCheckout}
+          disabled={checkoutValues.length === 0}
+          className="absolute bottom-0 left-0 cursor-pointer rounded-md bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all  duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Checkout
+        </button>
 
         {/* Right column area */}
         <aside className="grid h-full flex-1 shrink-0 grid-rows-2 gap-4  p-2 shadow">
           <div className="flex items-center justify-center border">
-            <Chart maxValue={maxValue} currentValue={actualCurrentValue} />
+            {/* chart */}
           </div>
-          <div className="border text-center">Minimal project info</div>
+          <div className="border text-center">
+            {/* project basico info */}
+            <h4>Project: {projectSelected} </h4>
+          </div>
         </aside>
       </div>
     </>
