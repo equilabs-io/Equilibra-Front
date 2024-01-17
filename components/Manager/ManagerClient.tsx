@@ -11,6 +11,7 @@ import MIME_TOKEN_ABI from "@/constants/abis/MimeToken.json";
 import { Chart } from "../Chart";
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
+import EChartsReact from "echarts-for-react";
 
 const poolStatsQuery = `query ($currentPool: String!){
   osmoticPool(id: $currentPool) {
@@ -34,6 +35,8 @@ const ManagerClient = ({ pools }: { pools: any }) => {
   const [currentPool, setCurrentPool] = useState("");
   const [poolStats, setPoolStats] = useState<any>([]);
   const [govTokenAddress, setGovTokenAddress] = useState("");
+
+  console.log(currentPool);
 
   const [currentStakedValue, setCurrentStakedValue] = useState(100);
 
@@ -110,7 +113,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   initial={{ x: -100 }}
                   animate={{ x: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg p-4"
+                  className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg  py-2"
                 >
                   {/* claim voting power */}
 
@@ -124,7 +127,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                     currentStakedValue={currentStakedValue}
                   />
 
-                  <div className="text-textSecoondary flex w-full flex-col ">
+                  <div className="text-textSecoondary flex w-full flex-col">
                     {/* TODO: add href to docs ??? */}
                     {/* <a href="#" target="_blank">
                       <button className="w-full py-2  text-center text-sm text-textSecondary  hover:bg-surface">
@@ -139,7 +142,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
 
                 {/* Main section: vote inputs + and chart + checkout */}
                 <div className="items-start-2 col-start-2 col-end-5 h-full w-full">
-                  <main className=" h-full w-full flex-1 p-2">
+                  <main className="h-full w-full flex-1 p-2">
                     <Suspense>
                       <SupporProjects
                         pool={currentPool}
@@ -173,55 +176,148 @@ const SelectedPoolAndChart = ({
   currentPool,
   currentStakedValue,
 }: SelectedPoolAndChartProps) => {
+  const [available, setAvailable] = useState(0);
+
+  useEffect(() => {
+    const totalPoints = 500;
+    setAvailable(totalPoints - currentStakedValue);
+  }, [currentStakedValue]);
+
+  const option = {
+    titile: {
+      text: "Points distribution",
+      color: "#ccc",
+      top: 20,
+      left: "center",
+      textStyle: {
+        color: "#ccc",
+      },
+    },
+    tooltip: {
+      trigger: "item",
+    },
+    legend: {
+      top: "5%",
+      left: "center",
+      lineStyle: {
+        color: "#fff",
+      },
+    },
+
+    series: [
+      {
+        name: "Points distribution",
+        type: "pie",
+        radius: ["40%", "75%"],
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: "center",
+        },
+        textStyle: {
+          color: "#000",
+        },
+        animationType: "scale",
+        animationEasing: "elasticOut",
+
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 14,
+            fontWeight: "bolder",
+            fontFamily: "sans-serif",
+            distance: 5,
+            color: "#fff",
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: "rgba(250, 250, 250, 0.9)",
+          },
+        },
+        labelLine: {
+          show: true,
+        },
+        data: [
+          { value: currentStakedValue, name: "Staked points" },
+          { value: available, name: "Available points" },
+        ],
+      },
+    ],
+  };
+
   return (
     <>
-      <Disclosure>
-        {({ open }) => (
-          <>
-            <Disclosure.Button className="hover: flex items-center space-x-4 py-2 hover:opacity-80">
-              <span>Select a pool to manage</span>
-              <ChevronUpIcon
-                className={`${
-                  open
-                    ? "rotate-180 transform transition-all duration-200 ease-in-out"
-                    : ""
-                } h-5 w-5 text-primary`}
-              />
-            </Disclosure.Button>
-            <Disclosure.Panel className="text-gray-500">
-              {({ close }) => (
-                <div className="flex w-full flex-col">
-                  {pools.length > 0 &&
-                    pools?.map((pool: any, idx: number) => (
-                      <>
-                        <button
-                          className="truncate py-2 text-left text-textSecondary hover:bg-surface hover:text-white"
-                          key={idx}
-                          onClick={async () => {
-                            setCurrentPool(pool.address);
-                            close();
-                          }}
-                        >
-                          <p className="text-sm text-textSecondary">
-                            {formatAddress(pool.address)}
-                          </p>
-                        </button>
-                      </>
-                    ))}
-                </div>
-              )}
-            </Disclosure.Panel>
-          </>
-        )}
-      </Disclosure>
-      <Chart maxValue={500} currentValue={currentStakedValue} />
-      <div className="truncate text-center text-xl">
-        Pool: {formatAddress(currentPool)}
+      <div className="">
+        <Disclosure>
+          {({ open }) => (
+            <>
+              <Disclosure.Button className="hover: flex items-center space-x-4  py-2 hover:opacity-80">
+                <span>pool selection: </span>
+                <ChevronUpIcon
+                  className={`${
+                    open
+                      ? "rotate-180 transform transition-all duration-200 ease-in-out"
+                      : ""
+                  } h-5 w-5 text-primary`}
+                />
+              </Disclosure.Button>
+              <Disclosure.Panel className=" text-gray-500">
+                {({ close }) => (
+                  <div className="flex w-full flex-col">
+                    {pools.length > 0 &&
+                      pools?.map((pool: any, idx: number) => (
+                        <>
+                          <button
+                            className="truncate py-2 text-center text-textSecondary hover:bg-surface hover:text-white"
+                            key={idx}
+                            onClick={async () => {
+                              setCurrentPool(pool.address);
+                              close();
+                            }}
+                          ></button>
+                        </>
+                      ))}
+                  </div>
+                )}
+              </Disclosure.Panel>
+            </>
+          )}
+        </Disclosure>
       </div>
+      {currentPool === "" ? (
+        <>
+          {" "}
+          <div className="animate-pulse text-center text-textSecondary">
+            Select a pool to manage!
+          </div>
+        </>
+      ) : (
+        <>
+          {" "}
+          <div className="w-full">
+            <EChartsReact
+              // handles everything for the chart
+              option={option}
+              // add className to chart container, is it neccesary ??
+              className=""
+              // controls width and height of chart
+              style={{ height: "400px", width: "100%" }}
+              // echarts renderer, default is canvas ??
+              opts={{ renderer: "svg" }}
+              // callback
+              onChartReady={() => console.log("Chart is ready")}
+            />
+          </div>
+          {/* <Chart maxValue={500} currentValue={currentStakedValue} /> */}
+          {/* <div className="text-md -mt-20 truncate text-center">
+            Pool: {formatAddress(currentPool)}
+          </div>{" "} */}
+        </>
+      )}
     </>
   );
 };
 
+//CLAIM BUTTON COMPONENT
 type ClaimbuttonProps = {
   govTokenAddress?: string;
 };
@@ -234,12 +330,12 @@ const Claimbutton = ({ govTokenAddress }: ClaimbuttonProps) => {
       <div className="flex w-full justify-center">
         {isClaimed ? (
           <span className="text-textSecondary">
-            Support claimed: <span className="text-xl text-primary">500</span>{" "}
-            points
+            Points claimed:{" "}
+            <span className="ml-2 text-xl font-thin text-primary">500</span>
           </span>
         ) : (
           <button className="relative rounded-full border px-4 py-2 hover:border-primary">
-            Claim Voting Power
+            Claim Points
             <span className="absolute -top-1 right-1 flex h-3 w-3 ">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex h-3 w-3 rounded-full bg-primary"></span>

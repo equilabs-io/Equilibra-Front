@@ -312,10 +312,10 @@ export const SupporProjects = ({
   };
   return (
     <>
-      <div className="relative flex h-full gap-2 border-2">
+      <div className="relative flex h-full items-center gap-2 border border-red-500 p-4">
         <ul
           role="list"
-          className="flex h-full w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden "
+          className="flex h-fit w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden "
         >
           {/* Data and inputs to support and change support for projects */}
           {participantSupports &&
@@ -357,7 +357,7 @@ export const SupporProjects = ({
                     custom={index}
                     key={index}
                     onMouseEnter={() => setProjectSelected(project.id)}
-                    className="flex items-center justify-between gap-x-4 rounded-xl  bg-surface px-2 py-2 hover:border"
+                    className="flex items-center justify-between gap-x-4 rounded-xl bg-surface px-2 py-5 hover:border"
                   >
                     {/* projectId */}
                     <ProjectIdBadge id={project.id} size="lg" />
@@ -382,7 +382,7 @@ export const SupporProjects = ({
                       />
                     </div>
                     <div className="">
-                      <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 font-mono text-2xl font-medium text-white">
+                      <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-2xl font-medium text-white">
                         {project.value}
                       </span>
                     </div>
@@ -451,22 +451,28 @@ export const SupporProjects = ({
           staked={actualCurrentValue}
           poolAddress={pool}
         />
-        <button
+        {/* <button
           onClick={handleCheckout}
           disabled={checkoutValues.length === 0}
-          className="absolute bottom-0 left-0 cursor-pointer rounded-md bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all  duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+          className="absolute bottom-0 left-0 w-full cursor-pointer rounded-md border-2  bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
         >
           Checkout
-        </button>
+        </button> */}
 
         {/* Right column area */}
-        <aside className="grid h-full flex-1 shrink-0 grid-rows-2 gap-4  p-2 shadow">
-          <div className="flex items-center justify-center border">
-            {/* chart */}
-          </div>
-          <div className="border text-center">
+        <aside className="grid h-full flex-1 shrink-0 grid-rows-2 gap-4 p-2 shadow">
+          <div className="text-center">
             {/* project basico info */}
             <h4>Project: {projectSelected} </h4>
+          </div>
+          <div className="p-6">
+            <button
+              onClick={handleCheckout}
+              disabled={checkoutValues.length === 0}
+              className="w-full cursor-pointer rounded-md  bg-surface px-4 py-4 text-textSecondary transition-all duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Checkout
+            </button>
           </div>
         </aside>
       </div>
