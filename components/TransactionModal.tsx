@@ -1,6 +1,9 @@
 "use client";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import {
+  ExclamationTriangleIcon,
+  ArrowUpTrayIcon,
+} from "@heroicons/react/24/outline";
 import { useState, useEffect, Fragment } from "react";
 
 type TransactionModalProps = {
@@ -12,6 +15,8 @@ type TransactionModalProps = {
   error?: any;
   disabledButton?: any;
   label: string;
+  action?: string;
+  hash?: string;
   writeFunction?: () => void;
 };
 
@@ -24,6 +29,8 @@ export default function TransactionModal({
   error,
   disabledButton,
   label,
+  action,
+  hash,
   writeFunction,
 }: TransactionModalProps) {
   const [openModal, setOpenModal] = useState(false);
@@ -73,7 +80,7 @@ export default function TransactionModal({
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative flex min-h-[184px] transform flex-col items-center justify-center overflow-hidden rounded-lg bg-surface px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+                <Dialog.Panel className="relative flex min-h-[284px] min-w-[520px] transform flex-col items-center justify-between overflow-hidden rounded-lg bg-surface px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                   <div className="flex justify-center">
                     {(isLoading || isWaitLoading) && (
                       <div className="h-16 w-16 animate-spin rounded-full border-b-2 border-t-2 border-primary" />
@@ -84,29 +91,57 @@ export default function TransactionModal({
                     )}
                   </div>
 
+                  {!isWaitSuccess && (
+                    <div>
+                      <span className="text-lg">Action: {action}</span>
+                    </div>
+                  )}
+
                   <div className="mt-4 flex flex-col space-y-2 text-center">
                     {isLoading && (
                       <>
-                        <span className="text-textSecondary">
-                          Awaiting User Approval
+                        <span className="text-sm text-textSecondary">
+                          Awaiting User Signature
                         </span>
-                        <span className="text-textSecondary">
-                          Check Your Wallet
+                        <span className="text-sm text-textSecondary">
+                          Check Your Wallet ...
                         </span>
                       </>
                     )}
                     {isWaitLoading && (
                       <>
-                        <span className="animate-pulse text-textSecondary">
-                          Broadcasting Transaction to Goerli ...
-                        </span>
+                        <div className="flex flex-col items-center justify-center">
+                          <ArrowUpTrayIcon
+                            className="h-6 w-6 animate-pulse text-textSecondary"
+                            aria-hidden="true"
+                          />
+                          <span className="animate-pulse text-textSecondary">
+                            Broadcasting Transaction to Goerli ...
+                          </span>
+                        </div>
                       </>
+                    )}
+                    {(isWaitSuccess || isError) && (
+                      <button
+                        className="absolute right-3 top-3 hover:opacity-70"
+                        onClick={() => setOpenModal(false)}
+                      >
+                        close
+                      </button>
                     )}
                     {isWaitSuccess && (
                       <>
-                        <span className="ani text-textSecondary">
+                        <span className="ani text-primary">
                           Transaction Succesful
                         </span>
+                        <a
+                          target="_blank"
+                          href={`https://goerli.etherscan.io/tx/${hash}`}
+                        >
+                          <span className="text-sm text-textSecondary underline">
+                            View on Etherscan
+                          </span>
+                        </a>
                       </>
                     )}
 

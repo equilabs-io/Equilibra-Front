@@ -35,27 +35,28 @@ const OSMOTIC_CONTROLLER_ADDRESS = "0x0b9f52138050881C4d061e6A92f72d8851B59F8e";
 const OSMOTIC_POOL_ABI = [
   "function initialize(address,address,address,tuple(uint256,uint256,uint256,uint256))",
 ]; //used for encoding data
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
+//
+//
 
 export default function CreatePool() {
-  function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(" ");
-  }
-
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [poolCreatedAddress, setPoolCreatedAddress] = useState<
+    string | undefined
+  >("");
   let [categories] = useState([
     {
       name: "Info",
       component: <Form />,
     },
     {
-      name: "Add Projects",
-      component: <AddProjectList />,
-    },
-    {
       name: "Fund",
-      component: <AddFunds />,
+      component: <AddFunds pool={poolCreatedAddress} />,
     },
   ]);
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   return (
     <div className="w-full  space-y-4 px-2 py-0 sm:px-0">
@@ -111,15 +112,56 @@ export default function CreatePool() {
 
 const Form = () => {
   const [formState, setFormState] = useState<FormState>({
-    fundingToken: tokens[0].address,
+    fundingToken: "",
     governanceToken: "",
     listAddress: "",
     MinStake: "",
     MaxStreaming: "",
   });
   const [encodedData, setEncodedData] = useState<string | null>(null);
+  const [listName, setListName] = useState<string>("");
 
-  //handle form changes
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setListName(event.target.value);
+  };
+
+  // handle the create list transaction
+  const { config: createListConfig } = usePrepareContractWrite({
+    address: OSMOTIC_CONTROLLER_ADDRESS,
+    abi: POOL_ABI,
+    functionName: "createProjectList",
+    args: [listName],
+    onError: (error) => {
+      console.log("error", error);
+    },
+    onSuccess: (data) => {
+      setFormState((prevFormState) => {
+        const updatedState = { ...prevFormState };
+        updatedState.listAddress = data?.result as string;
+        return updatedState;
+      });
+    },
+  });
+  const {
+    data: listNameData,
+    isLoading: listNameLoading,
+    isSuccess: listNameSuccess,
+    write: listNameWrite,
+    isError,
+    error,
+  } = useContractWrite(createListConfig);
+
+  const { isLoading: isWaitListNameLoading, isSuccess: isWaitListNameSuccess } =
+    useWaitForTransaction({
+      hash: listNameData?.hash,
+      onError: (error) => {
+        console.log("error", error);
+      },
+    });
+  //
+  //
+  //
+  //
 
   const handleChange = useCallback((value: any, name: any, index?: any) => {
     setFormState((prevFormState) => {
@@ -138,7 +180,7 @@ const Form = () => {
       if (name === "fundingToken") {
         const selectedToken = tokens.find((token) => token.address === value);
 
-        // updatedState.listAddress = selectedToken ? selectedToken.address : "";
+        updatedState.listAddress = selectedToken ? selectedToken.address : "";
       }
 
       return updatedState;
@@ -186,26 +228,32 @@ const Form = () => {
     functionName: "createOsmoticPool",
     args: [encodedData],
     onSettled: (data) => {
-      console.log("settled", data?.result);
+      console.log("data", data?.result);
+    },
+    onSuccess: (data) => {
+      console.log("poolAddress", data?.result);
     },
   });
 
   // Shoots transaction to the blockchain ..
-  const { write, data, isLoading } = useContractWrite(config);
+  const {
+    data,
+    isLoading: isPoolLoading,
+    isSuccess: isPoolSuccess,
+    isError: poolError,
+    error: poolErrorMessage,
+    write: poolWrite,
+  } = useContractWrite(config);
 
   // Wait for transaction to be mined!
-  const {
-    isError: isWaitError,
-    isLoading: isWaitLoading,
-    isSuccess: isWaitSuccess,
-  } = useWaitForTransaction({
-    hash: data?.hash,
-    onError: (error) => {
-      console.log("error", error);
-    },
-  });
-
-  console.log("loading", isLoading, isWaitLoading);
+  const { isLoading: isWaitPoolLoading, isSuccess: isWaitPoolSuccess } =
+    useWaitForTransaction({
+      hash: data?.hash,
+      confirmations: 2,
+      onError: (error) => {
+        console.log("error", error);
+      },
+    });
 
   //handle form to submit to the blockchain and create the pool
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -218,13 +266,14 @@ const Form = () => {
       // Check if encodedData is not empty
       if (encodedData) {
         //shoot!
-        write?.();
+        poolWrite?.();
       }
     } catch (error) {
       console.error("Error in handleSubmit:", error ?? "");
     }
   };
 
+  console.log(formState);
   return (
     <>
       <h4 className="text-textSecondary">Fill the form to create a pool</h4>
@@ -238,6 +287,41 @@ const Form = () => {
         <div className="space-y-2">
           <div className="pb-12">
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              {/* Create List Here! */}
+              <div className="mb-10 sm:col-span-4">
+                <div className="flex items-center justify-between  p-2">
+                  <span className="w-96 text-textSecondary">
+                    First!: create a Management List ..
+                  </span>
+                  <div className="">
+                    <TransactionModal
+                      isLoading={listNameLoading}
+                      isWaitLoading={isWaitListNameLoading}
+                      isSuccess={listNameSuccess}
+                      isWaitSuccess={isWaitListNameSuccess}
+                      isError={isError}
+                      error={error}
+                      writeFunction={listNameWrite}
+                      disabledButton={listName === ""}
+                      label="Create Management List"
+                      action="Creating Management List"
+                      hash={listNameData?.hash}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    id="list-name"
+                    placeholder={"List Name"}
+                    value={listName}
+                    onChange={handleInputChange}
+                    className="block h-full w-full  border-0 bg-surface px-3 py-4 text-sm leading-6 placeholder-grey_light shadow-sm ring-1 ring-inset ring-grey_mlight first:rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+              </div>
+              {/* create list ends  */}
               <div className="sm:col-span-4">
                 <InputSelect
                   list={tokens}
@@ -258,17 +342,20 @@ const Form = () => {
                   type="text"
                   placeholder="Governance token contract address..."
                   required
+                  disabled={false}
                 />
               </div>
-              <div className="sm:col-span-4">
+
+              <div className="mb-10 sm:col-span-4">
                 <InputText
-                  label="List address"
-                  name="list address"
+                  label="Add your Management List Address"
+                  name="list name"
                   handleChange={(value) => handleChange(value, "listAddress")}
                   value={formState.listAddress}
                   type="text"
-                  placeholder="Governance token contract address..."
+                  placeholder="Management list address..."
                   required
+                  disabled={false}
                 />
               </div>
               <div className="sm:col-span-4">
@@ -302,14 +389,19 @@ const Form = () => {
 
         <div className="flex items-center justify-center gap-x-6">
           <TransactionModal
-            isLoading={isLoading}
-            isSuccess={isWaitSuccess}
-            isError={isWaitError}
+            isLoading={isPoolLoading}
+            isWaitLoading={isWaitPoolLoading}
+            isSuccess={isPoolSuccess}
+            isWaitSuccess={isWaitPoolSuccess}
+            isError={poolError}
+            error={poolErrorMessage}
             writeFunction={handleEncodeData}
             disabledButton={
               formState.governanceToken === "" || formState.listAddress === ""
             }
             label="Create Pool"
+            action="Creating a Pool"
+            hash={data?.hash}
           />
           {/* <CustomButton
             text={`${isLoading ? "Creating ..." : "Create pool"}`}
@@ -325,19 +417,19 @@ const Form = () => {
   );
 };
 
-const AddProjectList = () => {
-  return (
-    <>
-      {/* TODO: add projects and logic  */}
-      <h2>Congratulation! ..you just create a pool with the addres:</h2>
-      <h4>
-        Select the projects you would like to be elegible bt the community
-      </h4>
-    </>
-  );
-};
+// const AddProjectList = () => {
+//   return (
+//     <>
+//       {/* TODO: add projects and logic  */}
+//       <h2>Congratulation! ..you just create a pool with the addres:</h2>
+//       <h4>
+//         Select the projects you would like to be elegible bt the community
+//       </h4>
+//     </>
+//   );
+// };
 
-const AddFunds = () => {
+const AddFunds = ({ pool }: { pool: string | undefined }) => {
   const [value, setValue] = useState("");
   const [to, setTo] = useState("0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b");
 
@@ -409,7 +501,7 @@ const AddFunds = () => {
         </div>
         <div>
           <TransactionModal
-            isLoading={isLoading}
+            isLoading={isWaitLoading}
             isWaitLoading={isWaitLoading}
             isSuccess={isSuccess}
             isWaitSuccess={isWaitSuccess}
@@ -417,6 +509,8 @@ const AddFunds = () => {
             error={error}
             writeFunction={write}
             label="Deposit"
+            action="Deposite Funds into Pool"
+            hash={data?.hash}
           />
         </div>
 
@@ -438,7 +532,6 @@ const AddFunds = () => {
             </div>
           </>
         )} */}
-        <button onClick={() => write?.()}>Depo</button>
       </div>
     </>
   );

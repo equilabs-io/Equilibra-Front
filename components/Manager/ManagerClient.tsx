@@ -8,7 +8,7 @@ import { useAccount } from "wagmi";
 import ManagerStats from "./ManagerStats";
 import { motion } from "framer-motion";
 import MIME_TOKEN_ABI from "@/constants/abis/MimeToken.json";
-import { Chart } from "../Chart";
+
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import EChartsReact from "echarts-for-react";
@@ -36,12 +36,11 @@ const ManagerClient = ({ pools }: { pools: any }) => {
   const [poolStats, setPoolStats] = useState<any>([]);
   const [govTokenAddress, setGovTokenAddress] = useState("");
 
-  console.log(currentPool);
-
   const [currentStakedValue, setCurrentStakedValue] = useState(100);
 
   // current connected address
   const { address: participant } = useAccount();
+  console.log("participant", participant);
 
   //fetch pool stats
   useEffect(() => {
@@ -113,7 +112,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   initial={{ x: -100 }}
                   animate={{ x: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg  py-2"
+                  className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg py-2"
                 >
                   {/* claim voting power */}
 
@@ -178,11 +177,13 @@ const SelectedPoolAndChart = ({
 }: SelectedPoolAndChartProps) => {
   const [available, setAvailable] = useState(0);
 
+  //calculate available points based on current staked value
   useEffect(() => {
     const totalPoints = 500;
     setAvailable(totalPoints - currentStakedValue);
   }, [currentStakedValue]);
 
+  //chart config
   const option = {
     titile: {
       text: "Points distribution",
@@ -273,7 +274,9 @@ const SelectedPoolAndChart = ({
                               setCurrentPool(pool.address);
                               close();
                             }}
-                          ></button>
+                          >
+                            {formatAddress(pool.address)}
+                          </button>
                         </>
                       ))}
                   </div>
