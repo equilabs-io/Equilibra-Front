@@ -312,7 +312,7 @@ export const SupporProjects = ({
   };
   return (
     <>
-      <div className="relative flex h-full items-center gap-2 border border-red-500 p-4">
+      <div className="relative flex h-full items-center gap-2  p-4">
         <ul
           role="list"
           className="flex h-fit w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden "
@@ -480,6 +480,7 @@ export const SupporProjects = ({
   );
 };
 
+//CHECKOUT COMPONENT
 type CheckoutProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -507,11 +508,13 @@ const Checkout = ({ ...props }: CheckoutProps) => {
     args: [argValues],
   });
 
-  const { data, error, write } = useContractWrite(config);
+  const { data, isLoading, isSuccess, error, isError, write } =
+    useContractWrite(config);
 
-  const { isLoading, isSuccess, isError } = useWaitForTransaction({
-    hash: data?.hash,
-  });
+  const { isLoading: isWaitLoading, isSuccess: isWaitSuccess } =
+    useWaitForTransaction({
+      hash: data?.hash,
+    });
 
   const handle = () => {
     setOpen(false);
@@ -636,9 +639,13 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                       {/*Modal*/}
                       <TransactionModal
                         isLoading={isLoading}
+                        isWaitLoading={isWaitLoading}
                         isSuccess={isSuccess}
+                        isWaitSuccess={isWaitSuccess}
                         label={"Support Projects"}
                         writeFunction={handle}
+                        action="Support Projects"
+                        hash={data?.hash}
                       />
                       {/*  */}
                     </div>

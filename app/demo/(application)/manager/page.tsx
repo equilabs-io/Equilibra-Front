@@ -22,7 +22,7 @@ query ($owner: String!) {
           name
           symbol
         }    
-        poolProjects(first: 10) {
+        poolProjects(first: 50) {
             id
             poolProjectSupports {
               support

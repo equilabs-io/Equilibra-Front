@@ -40,7 +40,6 @@ const ManagerClient = ({ pools }: { pools: any }) => {
 
   // current connected address
   const { address: participant } = useAccount();
-  console.log("participant", participant);
 
   //fetch pool stats
   useEffect(() => {
@@ -252,7 +251,7 @@ const SelectedPoolAndChart = ({
           {({ open }) => (
             <>
               <Disclosure.Button className="hover: flex items-center space-x-4  py-2 hover:opacity-80">
-                <span>pool selection: </span>
+                <span className="text-textSecondary">Dive into a pool: </span>
                 <ChevronUpIcon
                   className={`${
                     open
@@ -311,9 +310,9 @@ const SelectedPoolAndChart = ({
             />
           </div>
           {/* <Chart maxValue={500} currentValue={currentStakedValue} /> */}
-          {/* <div className="text-md -mt-20 truncate text-center">
+          <div className="text-md -mt-20 truncate text-center">
             Pool: {formatAddress(currentPool)}
-          </div>{" "} */}
+          </div>{" "}
         </>
       )}
     </>
