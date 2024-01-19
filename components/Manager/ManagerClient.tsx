@@ -115,7 +115,10 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                 >
                   {/* claim voting power */}
 
-                  <Claimbutton govTokenAddress={govTokenAddress} />
+                  <Claimbutton
+                    govTokenAddress={govTokenAddress}
+                    currentPool={currentPool}
+                  />
 
                   {/* pool selection + chart  */}
                   <SelectedPoolAndChart
@@ -133,7 +136,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                       </button>
                     </a> */}
                     <span className="flex justify-center py-2 text-center text-xs text-primary">
-                      Alpha Demo v.1
+                      osmoticFund - Demo v.1
                     </span>
                   </div>
                 </motion.aside>
@@ -251,7 +254,15 @@ const SelectedPoolAndChart = ({
           {({ open }) => (
             <>
               <Disclosure.Button className="hover: flex items-center space-x-4  py-2 hover:opacity-80">
-                <span className="text-textSecondary">Dive into a pool: </span>
+                <span
+                  className={`text-sm text-textSecondary ${
+                    currentPool === ""
+                      ? "animate-pulse text-xl text-red-300"
+                      : "text-md"
+                  }`}
+                >
+                  {currentPool === "" ? "Select a pool" : "Select another pool"}
+                </span>
                 <ChevronUpIcon
                   className={`${
                     open
@@ -267,7 +278,7 @@ const SelectedPoolAndChart = ({
                       pools?.map((pool: any, idx: number) => (
                         <>
                           <button
-                            className="truncate py-2 text-center text-textSecondary hover:bg-surface hover:text-white"
+                            className="text-md truncate py-2 text-center text-textSecondary hover:bg-surface hover:text-white"
                             key={idx}
                             onClick={async () => {
                               setCurrentPool(pool.address);
@@ -288,9 +299,9 @@ const SelectedPoolAndChart = ({
       {currentPool === "" ? (
         <>
           {" "}
-          <div className="animate-pulse text-center text-textSecondary">
+          {/* <div className="animate-pulse text-center text-textSecondary">
             Select a pool to manage!
-          </div>
+          </div> */}
         </>
       ) : (
         <>
@@ -306,7 +317,7 @@ const SelectedPoolAndChart = ({
               // echarts renderer, default is canvas ??
               opts={{ renderer: "svg" }}
               // callback
-              onChartReady={() => console.log("Chart is ready")}
+              //onChartReady={() => console.log("Chart is ready")}
             />
           </div>
           {/* <Chart maxValue={500} currentValue={currentStakedValue} /> */}
@@ -322,27 +333,32 @@ const SelectedPoolAndChart = ({
 //CLAIM BUTTON COMPONENT
 type ClaimbuttonProps = {
   govTokenAddress?: string;
+  currentPool?: string;
 };
 
 // TODO: add claim voting power functionality
-const Claimbutton = ({ govTokenAddress }: ClaimbuttonProps) => {
-  const [isClaimed, setIsClaimed] = useState(true);
+const Claimbutton = ({ govTokenAddress, currentPool }: ClaimbuttonProps) => {
+  const [isClaimed, setIsClaimed] = useState(false);
   return (
     <>
       <div className="flex w-full justify-center">
-        {isClaimed ? (
-          <span className="text-textSecondary">
-            Points claimed:{" "}
-            <span className="ml-2 text-xl font-thin text-primary">500</span>
-          </span>
-        ) : (
-          <button className="relative rounded-full border px-4 py-2 hover:border-primary">
-            Claim Points
-            <span className="absolute -top-1 right-1 flex h-3 w-3 ">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-primary"></span>
-            </span>
-          </button>
+        {currentPool === "" ? null : (
+          <>
+            {isClaimed ? (
+              <span className="text-textSecondary">
+                Points claimed:{" "}
+                <span className="ml-2 text-xl font-thin text-primary">500</span>
+              </span>
+            ) : (
+              <button className="relative rounded-full border px-4 py-2 hover:border-primary">
+                Claim Points
+                <span className="absolute -top-1 right-1 flex h-3 w-3 ">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-primary"></span>
+                </span>
+              </button>
+            )}
+          </>
         )}
       </div>
     </>

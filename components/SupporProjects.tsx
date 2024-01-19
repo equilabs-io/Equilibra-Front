@@ -357,7 +357,7 @@ export const SupporProjects = ({
                     custom={index}
                     key={index}
                     onMouseEnter={() => setProjectSelected(project.id)}
-                    className="flex items-center justify-between gap-x-4 rounded-xl bg-surface px-2 py-5 hover:border"
+                    className="flex items-center justify-between gap-x-4 rounded-xl  bg-surface px-2 py-4  hover:border"
                   >
                     {/* projectId */}
                     <ProjectIdBadge id={project.id} size="lg" />
@@ -382,9 +382,9 @@ export const SupporProjects = ({
                       />
                     </div>
                     <div className="">
-                      <span className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-2xl font-medium text-white">
-                        {project.value}
-                      </span>
+                      <p className="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-2xl font-medium text-white">
+                        {project.value} <span className="text-xs">pts</span>
+                      </p>
                     </div>
                     <Menu as="div" className="relative flex-none">
                       <Menu.Button className="-m-2.5 block p-2.5 text-gray-500 hover:text-textSecondary">
@@ -465,7 +465,7 @@ export const SupporProjects = ({
             {/* project basico info */}
             <h4>Project: {projectSelected} </h4>
           </div>
-          <div className="p-6">
+          <div className="flex items-end px-6">
             <button
               onClick={handleCheckout}
               disabled={checkoutValues.length === 0}

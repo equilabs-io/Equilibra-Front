@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent, useCallback } from "react";
+import { useState, FormEvent, useCallback, useEffect } from "react";
 import {
   useContractWrite,
   usePrepareContractWrite,
@@ -13,6 +13,21 @@ import InputText from "@/components/Form/InputText";
 import InputSelect from "@/components/Form/InputSelect";
 import { motion } from "framer-motion";
 import { parseEther } from "viem";
+import { useHover } from "@/hooks/useHover";
+import { time } from "console";
+
+const MIME_TOKEN_ABI = [
+  "function initialize(string,string,bytes32,uint256,uint256)",
+];
+
+const MIME_TOKENS_DATA = [
+  {
+    name: "Demo Fede",
+    symbol: "DFT",
+    merkleRoot:
+      "0x659d9490a902c959e5229c5e585281e2bbd0f643256c8561526381fe82ef2ff0",
+  },
+];
 
 interface FormState {
   governanceToken: string;
@@ -119,6 +134,7 @@ const Form = () => {
     MaxStreaming: "",
   });
   const [encodedData, setEncodedData] = useState<string | null>(null);
+  const [mimeEncodeData, setMimeEncodeData] = useState<string | null>(null);
   const [listName, setListName] = useState<string>("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -273,7 +289,66 @@ const Form = () => {
     }
   };
 
-  console.log(formState);
+  const providerUrl = `https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`;
+
+  const provider = new ethers.providers.JsonRpcProvider(providerUrl);
+
+  async function getBlockTimestamp() {
+    try {
+      const blockNumber = await provider.getBlockNumber();
+      const block = await provider.getBlock(blockNumber);
+
+      if (block) {
+        const timestamp = block.timestamp;
+        console.log(`Current block timestamp: ${timestamp}`);
+        return timestamp;
+      } else {
+        console.error("Unable to retrieve block information.");
+      }
+    } catch (error) {
+      console.error("Error:", (error as Error)?.message);
+    }
+  }
+
+  console.log("timestamp", getBlockTimestamp());
+  //CREATE MIME
+  const createMimeTokenEncodedData = async () => {
+    try {
+      // Encoding the data ...
+      const blockNumber = await provider.getBlockNumber();
+      const block = await provider.getBlock(blockNumber);
+
+      const timestamp = block.timestamp;
+
+      const mimeTokenInitCode = new ethers.utils.Interface(
+        MIME_TOKEN_ABI,
+      ).encodeFunctionData("initialize", [
+        MIME_TOKENS_DATA[0].name,
+        MIME_TOKENS_DATA[0].symbol,
+        MIME_TOKENS_DATA[0].merkleRoot,
+        1699722000, // claim timeStamp from osmotic controller proxy // 0x0b9f52138050881C4d061e6A92f72d8851B59F8e
+        2419200, // claim duration 28 days
+      ]);
+
+      console.log("mimeTokenInitCode", mimeTokenInitCode);
+      setMimeEncodeData(mimeTokenInitCode);
+
+      return mimeTokenInitCode;
+    } catch (error) {
+      // Handle the error
+      console.error(
+        "Error in createMimeTokenEncodedData:",
+        (error as Error).message,
+      );
+
+      return "";
+    }
+  };
+
+  useEffect(() => {
+    createMimeTokenEncodedData();
+  }, []);
+
   return (
     <>
       <h4 className="text-textSecondary">Fill the form to create a pool</h4>
