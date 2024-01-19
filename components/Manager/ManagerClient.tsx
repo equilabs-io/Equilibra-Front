@@ -18,6 +18,8 @@ import {
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import EChartsReact from "echarts-for-react";
+import TransactionModal from "../TransactionModal";
+import { BigNumber } from "ethers";
 
 const poolStatsQuery = `query ($currentPool: String!){
   osmoticPool(id: $currentPool) {
@@ -42,7 +44,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
   const [poolStats, setPoolStats] = useState<any>([]);
   const [govTokenAddress, setGovTokenAddress] = useState("");
 
-  const [currentStakedValue, setCurrentStakedValue] = useState(100);
+  const [currentStakedValue, setCurrentStakedValue] = useState(0);
 
   // current connected address
   const { address: participant } = useAccount();
@@ -120,10 +122,10 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg py-2"
                 >
                   {/* claim voting power */}
-
                   <Claimbutton
                     govTokenAddress={govTokenAddress}
                     currentPool={currentPool}
+                    participant={participant}
                   />
 
                   {/* pool selection + chart  */}
@@ -150,13 +152,11 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                 {/* Main section: vote inputs + and chart + checkout */}
                 <div className="items-start-2 col-start-2 col-end-5 h-full w-full">
                   <main className="h-full w-full flex-1 p-2">
-                    <Suspense>
-                      <SupporProjects
-                        pool={currentPool}
-                        setCurrentStakedValue={setCurrentStakedValue}
-                        currentStakedValue={currentStakedValue}
-                      />
-                    </Suspense>
+                    <SupporProjects
+                      pool={currentPool}
+                      setCurrentStakedValue={setCurrentStakedValue}
+                      currentStakedValue={currentStakedValue}
+                    />
                   </main>
                 </div>
               </div>
@@ -338,55 +338,35 @@ const SelectedPoolAndChart = ({
 
 //CLAIM BUTTON COMPONENT
 type ClaimbuttonProps = {
-  govTokenAddress?: string;
-  currentPool?: string;
+  govTokenAddress: string;
+  currentPool: string;
+  participant: `0x${string}` | undefined;
 };
 
-// TODO: add claim voting power functionality
-const Claimbutton = ({ govTokenAddress, currentPool }: ClaimbuttonProps) => {
-  const [isClaimed, setIsClaimed] = useState(false);
+type ClaimConfig = {
+  index: number;
+  amount: number;
+  proofs: string[];
+};
 
-  const { config } = usePrepareContractWrite({
-    address: "0xf882d8bB3B2F074C870a5C55222a927664e01844",
-    abi: MIME_TOKEN_ABI,
-    functionName: "claim",
-    args: [
-      5,
-      "0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b",
-      500,
-      [
-        "0x38cbea42a237bb651a36fec7128edd3fae5b3ef44c63bf6e7c3b7ba3af745303",
-        "0x99a3edad63adc1a6c2b2dce246c1108266a517f5692e20d4eba312cf087dccbb",
-        "0x262d77c3cd83f6f09455e21af4f768762aba17f6f20faed8af920d895fb16d88",
-      ],
-    ],
-    onSettled: (data) => {
-      console.log(data);
-    },
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
+const Claimbutton = ({
+  govTokenAddress,
+  currentPool,
+  participant,
+}: ClaimbuttonProps) => {
+  const [isClaimed, setIsClaimed] = useState<boolean | undefined>();
+  const [claimConfig, setClaimConfig] = useState<ClaimConfig>();
 
-  const { write } = useContractWrite(config);
-
-  // func top retrive data from merkle proof
+  // funcion to  retrive data from merkle proof
   const getAddressData = (address: any) => {
-    const addressData = MERKLE_PROOF[address as keyof typeof MERKLE_PROOF] as {
-      index: number;
-      amount: number;
-      proofs: string[];
-    };
+    const addressData = MERKLE_PROOF[
+      address as keyof typeof MERKLE_PROOF
+    ] as ClaimConfig;
     if (addressData) {
       const { index, amount, proofs } = addressData;
-      // console.log(`Address: ${address}`);
-      // console.log(`Index: ${index}`);
-      // console.log(`Amount: ${amount}`);
-      console.log(`Proofs: ${proofs.join(",")}`);
-      // console.log("---------------------------");
+
+      setClaimConfig({ index, amount, proofs });
+
       return { index, amount, proofs };
     } else {
       console.error(`Address ${address} not found in the JSON data.`);
@@ -394,33 +374,98 @@ const Claimbutton = ({ govTokenAddress, currentPool }: ClaimbuttonProps) => {
     }
   };
 
-  const yourAddress = "0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b";
-  console.log(getAddressData(yourAddress));
+  useEffect(() => {
+    getAddressData(participant);
+    console.log(claimConfig);
+  }, [participant]);
+
+  //isClaimed:
+  const { data: claim } = usePrepareContractWrite({
+    address: "0xf882d8bB3B2F074C870a5C55222a927664e01844",
+    abi: MIME_TOKEN_ABI,
+    functionName: "isClaimed",
+    args: [claimConfig?.index],
+    onSuccess: (claim) => {
+      setIsClaimed(claim?.result as boolean);
+    },
+  });
+
+  //balanceOf:
+  const { data: balance } = usePrepareContractWrite({
+    address: "0xf882d8bB3B2F074C870a5C55222a927664e01844",
+    abi: MIME_TOKEN_ABI,
+    functionName: "balanceOf",
+    args: [participant],
+
+    onSuccess: (balance) => {
+      console.log(balance?.result);
+    },
+  });
+
+  //claim:
+  const { config } = usePrepareContractWrite({
+    address: "0xf882d8bB3B2F074C870a5C55222a927664e01844",
+    abi: MIME_TOKEN_ABI,
+    functionName: "claim",
+    args: [
+      claimConfig?.index,
+      participant,
+      claimConfig?.amount,
+      claimConfig?.proofs,
+    ],
+    onSuccess: (data) => {
+      console.log(data?.mode);
+    },
+    onError: (error) => {
+      console.log("error-claim", error);
+    },
+  });
+
+  const { write, data, isLoading, isSuccess, error, isError } =
+    useContractWrite(config);
+
+  const { isLoading: isWaitLoading, isSuccess: isWaitSuccess } =
+    useWaitForTransaction({
+      hash: data?.hash,
+    });
   //
   //
   //
   //
+
   return (
     <>
       <div className="flex w-full justify-center">
         {currentPool === "" ? null : (
           <>
             {isClaimed ? (
-              <span className="text-textSecondary">
-                Points claimed:{" "}
-                <span className="ml-2 text-xl font-thin text-primary">500</span>
+              <span className="max-w-[200px] text-textSecondary">
+                {/* //TODO: add current round  */}
+                Points claimed{" "}
+                <span className="ml-2 text-xl font-thin text-primary">
+                  {Number(balance?.result)}
+                </span>
               </span>
             ) : (
-              <button
-                onClick={() => write?.()}
-                className="relative rounded-full border px-4 py-2 hover:border-primary"
-              >
-                Claim Points
-                <span className="absolute -top-1 right-1 flex h-3 w-3 ">
+              <div className="relative rounded-full  px-4 py-2 hover:border-primary">
+                <TransactionModal
+                  label="Claim Voting Power"
+                  isLoading={isLoading}
+                  isSuccess={isSuccess}
+                  isError={isError}
+                  error={error}
+                  isWaitLoading={isWaitLoading}
+                  isWaitSuccess={isWaitSuccess}
+                  action="Claim voting power"
+                  writeFunction={write}
+                  hash={data?.hash}
+                />
+
+                <span className="absolute right-5 top-1 flex h-3 w-3 ">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
                   <span className="relative inline-flex h-3 w-3 rounded-full bg-primary"></span>
                 </span>
-              </button>
+              </div>
             )}
           </>
         )}

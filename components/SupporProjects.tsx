@@ -32,11 +32,11 @@ const osmoticPool = `query (id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
     }
   }`;
 
-const queryBySupportAndList = `query  ($pool: String!, $participant: String!) {
+const queryBySupportAndListed = `query  ($pool: String!, $participant: String!) {
     osmoticPool(id: $pool) {
       poolProjects(first: 25) {
         id
-        poolProjectSupports(first: 10) {
+        poolProjectSupports(first: 20) {
           support
           poolProjectParticipantsSupports(
             where: {participant: $participant}
@@ -48,7 +48,6 @@ const queryBySupportAndList = `query  ($pool: String!, $participant: String!) {
         id
       }
       projectList {
-       
         projects(first: 25) {
           id
         }
@@ -67,7 +66,7 @@ const queryByPoolAndParticipant = `query ($pool: String!, $participant: String!)
           name
           symbol
         }
-        poolProjects(first: 10) {
+        poolProjects(first: 25) {
           id
           poolProjectSupports {
             support
@@ -81,6 +80,7 @@ const queryByPoolAndParticipant = `query ($pool: String!, $participant: String!)
         }
       }
 }`;
+
 function extractSubstring(inputString: string) {
   // Split the string by hyphen ('-')
   let parts = inputString.split("-");
@@ -136,7 +136,7 @@ export const SupporProjects = ({
   useEffect(() => {
     const fetchSupportedProjectInList = async () => {
       try {
-        const result = await getUrqlClient().query(queryBySupportAndList, {
+        const result = await getUrqlClient().query(queryBySupportAndListed, {
           pool,
           participant,
         });
@@ -185,8 +185,11 @@ export const SupporProjects = ({
 
         setParticipantSupports(mergedData);
       } catch (error) {
-        // Handle error appropriately
-        console.error("Error fetching data:", error);
+        // Handle error
+        console.error(
+          "Error fetching data from `fetchSupportedProjectInList`",
+          error,
+        );
       }
     };
 
@@ -221,25 +224,25 @@ export const SupporProjects = ({
         },
       ]);
 
-      const participantSupports = result.data?.osmoticPool?.poolProjects.map(
-        (project: {
-          id: string;
-          poolProjectSupports: {
-            support: any;
-            poolProjectParticipantsSupports: { support: any }[];
-          }[];
-        }) => {
-          return {
-            idOriginal: project.id,
-            id: getIdOfProyectId(project.id),
-            value: project.poolProjectSupports?.[0].support,
-            static: project.poolProjectSupports?.[0].support,
-            participantSupport:
-              project.poolProjectSupports?.[0]
-                .poolProjectParticipantsSupports?.[0].support,
-          };
-        },
-      );
+      // const participantSupports = result.data?.osmoticPool?.poolProjects.map(
+      //   (project: {
+      //     id: string;
+      //     poolProjectSupports: {
+      //       support: any;
+      //       poolProjectParticipantsSupports: { support: any }[];
+      //     }[];
+      //   }) => {
+      //     return {
+      //       idOriginal: project.id,
+      //       id: getIdOfProyectId(project.id),
+      //       value: project.poolProjectSupports?.[0].support,
+      //       static: project.poolProjectSupports?.[0].support,
+      //       participantSupport:
+      //         project.poolProjectSupports?.[0]
+      //           .poolProjectParticipantsSupports?.[0].support,
+      //     };
+      //   },
+      // );
       // setParticipantSupports(participantSupports);
     };
 
@@ -266,7 +269,7 @@ export const SupporProjects = ({
   };
 
   const resetToInitialState = () => {
-    setMaxValue(350);
+    setMaxValue(500);
     // Reset any other state letiables
   };
 
