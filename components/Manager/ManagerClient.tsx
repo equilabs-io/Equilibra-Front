@@ -8,6 +8,12 @@ import { useAccount } from "wagmi";
 import ManagerStats from "./ManagerStats";
 import { motion } from "framer-motion";
 import MIME_TOKEN_ABI from "@/constants/abis/MimeToken.json";
+import MERKLE_PROOF from "@/constants/merkle/MerkleProof.json";
+import {
+  usePrepareContractWrite,
+  useContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
 
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
@@ -339,6 +345,61 @@ type ClaimbuttonProps = {
 // TODO: add claim voting power functionality
 const Claimbutton = ({ govTokenAddress, currentPool }: ClaimbuttonProps) => {
   const [isClaimed, setIsClaimed] = useState(false);
+
+  const { config } = usePrepareContractWrite({
+    address: "0xf882d8bB3B2F074C870a5C55222a927664e01844",
+    abi: MIME_TOKEN_ABI,
+    functionName: "claim",
+    args: [
+      5,
+      "0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b",
+      500,
+      [
+        "0x38cbea42a237bb651a36fec7128edd3fae5b3ef44c63bf6e7c3b7ba3af745303",
+        "0x99a3edad63adc1a6c2b2dce246c1108266a517f5692e20d4eba312cf087dccbb",
+        "0x262d77c3cd83f6f09455e21af4f768762aba17f6f20faed8af920d895fb16d88",
+      ],
+    ],
+    onSettled: (data) => {
+      console.log(data);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const { write } = useContractWrite(config);
+
+  // func top retrive data from merkle proof
+  const getAddressData = (address: any) => {
+    const addressData = MERKLE_PROOF[address as keyof typeof MERKLE_PROOF] as {
+      index: number;
+      amount: number;
+      proofs: string[];
+    };
+    if (addressData) {
+      const { index, amount, proofs } = addressData;
+      // console.log(`Address: ${address}`);
+      // console.log(`Index: ${index}`);
+      // console.log(`Amount: ${amount}`);
+      console.log(`Proofs: ${proofs.join(",")}`);
+      // console.log("---------------------------");
+      return { index, amount, proofs };
+    } else {
+      console.error(`Address ${address} not found in the JSON data.`);
+      return null;
+    }
+  };
+
+  const yourAddress = "0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b";
+  console.log(getAddressData(yourAddress));
+  //
+  //
+  //
+  //
   return (
     <>
       <div className="flex w-full justify-center">
@@ -350,7 +411,10 @@ const Claimbutton = ({ govTokenAddress, currentPool }: ClaimbuttonProps) => {
                 <span className="ml-2 text-xl font-thin text-primary">500</span>
               </span>
             ) : (
-              <button className="relative rounded-full border px-4 py-2 hover:border-primary">
+              <button
+                onClick={() => write?.()}
+                className="relative rounded-full border px-4 py-2 hover:border-primary"
+              >
                 Claim Points
                 <span className="absolute -top-1 right-1 flex h-3 w-3 ">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>

@@ -289,36 +289,10 @@ const Form = () => {
     }
   };
 
-  const providerUrl = `https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`;
-
-  const provider = new ethers.providers.JsonRpcProvider(providerUrl);
-
-  async function getBlockTimestamp() {
-    try {
-      const blockNumber = await provider.getBlockNumber();
-      const block = await provider.getBlock(blockNumber);
-
-      if (block) {
-        const timestamp = block.timestamp;
-        console.log(`Current block timestamp: ${timestamp}`);
-        return timestamp;
-      } else {
-        console.error("Unable to retrieve block information.");
-      }
-    } catch (error) {
-      console.error("Error:", (error as Error)?.message);
-    }
-  }
-
-  console.log("timestamp", getBlockTimestamp());
-  //CREATE MIME
+  //CREATE MIMETOKEN ENCODE DATA
   const createMimeTokenEncodedData = async () => {
     try {
       // Encoding the data ...
-      const blockNumber = await provider.getBlockNumber();
-      const block = await provider.getBlock(blockNumber);
-
-      const timestamp = block.timestamp;
 
       const mimeTokenInitCode = new ethers.utils.Interface(
         MIME_TOKEN_ABI,
@@ -326,11 +300,10 @@ const Form = () => {
         MIME_TOKENS_DATA[0].name,
         MIME_TOKENS_DATA[0].symbol,
         MIME_TOKENS_DATA[0].merkleRoot,
-        1699722000, // claim timeStamp from osmotic controller proxy // 0x0b9f52138050881C4d061e6A92f72d8851B59F8e
-        2419200, // claim duration 28 days
+        1699722000, // claim timeStamp from osmotic controller proxy // 0x0b9f52138050881C4d061e6A92f72d8851B59F8e //
+        2419200, // claim duration 28 days //
       ]);
-
-      console.log("mimeTokenInitCode", mimeTokenInitCode);
+      //console.log("mimeTokenInitCode", mimeTokenInitCode);
       setMimeEncodeData(mimeTokenInitCode);
 
       return mimeTokenInitCode;
