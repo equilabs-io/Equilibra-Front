@@ -8,18 +8,19 @@ import { useAccount } from "wagmi";
 import ManagerStats from "./ManagerStats";
 import { motion } from "framer-motion";
 import MIME_TOKEN_ABI from "@/constants/abis/MimeToken.json";
+import OSMOTIC_POOL_ABI from "@/constants/abis/Pool.json";
 import MERKLE_PROOF from "@/constants/merkle/MerkleProof.json";
 import {
   usePrepareContractWrite,
   useContractWrite,
   useWaitForTransaction,
+  useContractRead,
 } from "wagmi";
 
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import EChartsReact from "echarts-for-react";
 import TransactionModal from "../TransactionModal";
-import { BigNumber } from "ethers";
 
 const poolStatsQuery = `query ($currentPool: String!){
   osmoticPool(id: $currentPool) {
@@ -38,16 +39,27 @@ const poolStatsQuery = `query ($currentPool: String!){
   }
   `;
 
+const OSMOTIC_CONTROLLER_ADDRESS = "0x0b9f52138050881C4d061e6A92f72d8851B59F8e"; //proxy
+
 const ManagerClient = ({ pools }: { pools: any }) => {
   const [openManager, setOpenManager] = useState(false);
-  const [currentPool, setCurrentPool] = useState("");
+  const [currentPool, setCurrentPool] = useState<string>("");
   const [poolStats, setPoolStats] = useState<any>([]);
   const [govTokenAddress, setGovTokenAddress] = useState("");
+  //const [currentRound, setCurrentRound] = useState(0);
 
   const [currentStakedValue, setCurrentStakedValue] = useState(0);
 
   // current connected address
   const { address: participant } = useAccount();
+
+  //
+  const { data: currentRound } = useContractRead({
+    //TODO: change it to dynamic, based on current pool
+    address: "0xDC66c3c481540dC737212A582880EC2D441BDc54",
+    abi: OSMOTIC_POOL_ABI,
+    functionName: "getCurrentRound",
+  });
 
   //fetch pool stats
   useEffect(() => {
@@ -73,7 +85,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
           },
           {
             name: "Round",
-            data: currentPool == "" ? "" : "1",
+            data: currentPool == "" ? "" : Number(currentRound),
           },
         ]);
         setGovTokenAddress(result.data.osmoticPool?.mimeToken.id);
@@ -102,7 +114,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
             {/* TODO: delete */}
             <button
               onClick={() => setOpenManager(false)}
-              className="absolute right-5 top-5 z-50 rounded-full px-2 py-2 text-xl uppercase text-textSecondary "
+              className="absolute -top-8 right-5 z-50 rounded-full px-2 py-2 text-xs text-textSecondary hover:opacity-80 "
             >
               X
             </button>
@@ -131,6 +143,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   {/* pool selection + chart  */}
                   <SelectedPoolAndChart
                     pools={pools}
+                    round={currentRound}
                     setCurrentPool={setCurrentPool}
                     currentPool={currentPool}
                     currentStakedValue={currentStakedValue}

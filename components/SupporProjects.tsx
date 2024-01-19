@@ -14,32 +14,18 @@ import {
 } from "wagmi";
 import TransactionModal from "./TransactionModal";
 import { ProjectIdBadge } from "./Project/ProjectIdBadge";
-
-import { Chart } from "./Chart";
 import Link from "next/link";
 
-const osmoticPool = `query (id: "0xdc66c3c481540dc737212a582880ec2d441bdc54") {
-    id
-    poolProjects(first: 10) {
-      id
-      poolProjectSupports {
-        support
-        poolProjectParticipantsSupports {
-          support
-          participant
-        }
-      }
-    }
-  }`;
-
-const queryBySupportAndListed = `query  ($pool: String!, $participant: String!) {
+const queryBySupportAndListed = `query  ($pool: String!, $participant: String!, $round: Int) {
     osmoticPool(id: $pool) {
-      poolProjects(first: 25) {
+      poolProjects(first: 50) {
         id
-        poolProjectSupports(first: 20) {
+        active
+        poolProjectSupports(first: 50, where: {round: $round}) {
           support
+          round
           poolProjectParticipantsSupports(
-            where: {participant: $participant}
+            where: {participant: $participant }
           ) {
             support
             participant
@@ -48,8 +34,9 @@ const queryBySupportAndListed = `query  ($pool: String!, $participant: String!) 
         id
       }
       projectList {
-        projects(first: 25) {
+        projects(first: 100) {
           id
+          
         }
       }
     }
@@ -102,6 +89,7 @@ function extractSubstring(inputString: string) {
 
 export const SupporProjects = ({
   pool,
+  currentRound,
   currentStakedValue,
   setCurrentStakedValue,
 }: any) => {
@@ -132,6 +120,10 @@ export const SupporProjects = ({
     return str?.[str.length - 1];
   }
 
+  const round = currentRound;
+
+  console.log("round", round);
+
   //new logic which includes all projects in list and supported by participant
   useEffect(() => {
     const fetchSupportedProjectInList = async () => {
@@ -139,7 +131,10 @@ export const SupporProjects = ({
         const result = await getUrqlClient().query(queryBySupportAndListed, {
           pool,
           participant,
+          round,
         });
+
+        console.log("result", result.data);
 
         const participantSupports = (
           result.data?.osmoticPool?.poolProjects || []
@@ -153,6 +148,7 @@ export const SupporProjects = ({
             id: getIdOfProyectId(project.id),
             value: supportInfo.support || 0,
             static: supportInfo.support || 0,
+            active: project.active,
             participantSupport: participantSupportInfo.support || 0,
           };
         });
