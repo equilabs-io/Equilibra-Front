@@ -18,10 +18,10 @@ import Link from "next/link";
 
 const queryBySupportAndListed = `query  ($pool: String!, $participant: String!, $round: Int) {
     osmoticPool(id: $pool) {
-      poolProjects(first: 50) {
+      poolProjects {
         id
         active
-        poolProjectSupports(first: 50, where: {round: $round}) {
+        poolProjectSupports(where: {round: $round}) {
           support
           round
           poolProjectParticipantsSupports(
@@ -113,11 +113,6 @@ export const SupporProjects = ({
 
   const [projectSelected, setProjectSelected] = useState<any>([]);
 
-  //TODO: delete round, for testing purposes
-  const round = 7;
-
-  const newCurrentRound = Number(currentRound);
-
   //new logic which includes all projects in list and supported by participant
   useEffect(() => {
     const fetchSupportedProjectInList = async () => {
@@ -125,8 +120,10 @@ export const SupporProjects = ({
         const result = await getUrqlClient().query(queryBySupportAndListed, {
           pool,
           participant,
-          newCurrentRound,
+          round: currentRound,
         });
+
+        console.log("result", result.data?.osmoticPool?.poolProjects);
 
         const participantSupports = (
           result.data?.osmoticPool?.poolProjects || []
@@ -435,13 +432,6 @@ export const SupporProjects = ({
           staked={actualCurrentValue}
           poolAddress={pool}
         />
-        {/* <button
-          onClick={handleCheckout}
-          disabled={checkoutValues.length === 0}
-          className="absolute bottom-0 left-0 w-full cursor-pointer rounded-md border-2  bg-highlight px-4  py-4 font-semibold  text-textSecondary transition-all duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Checkout
-        </button> */}
 
         {/* Right column area */}
         <aside className="grid h-full flex-1 shrink-0 grid-rows-2 gap-4 p-2 shadow">
@@ -625,6 +615,8 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                         isLoading={isLoading}
                         isWaitLoading={isWaitLoading}
                         isSuccess={isSuccess}
+                        isError={isError}
+                        error={error}
                         isWaitSuccess={isWaitSuccess}
                         label={"Support Projects"}
                         writeFunction={handle}

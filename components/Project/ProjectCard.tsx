@@ -27,9 +27,14 @@ type Project = {
 export default function ProjectCard({
   project,
   projectCheckout,
+  selectedList,
 }: {
   project: Project;
   projectCheckout: (newId: string) => void;
+  selectedList: {
+    name: string;
+    id: string;
+  };
 }) {
   const {
     id,
@@ -96,6 +101,7 @@ export default function ProjectCard({
         <div className="my-2"></div>
         <AddListButton
           projectList={list}
+          selectedList={selectedList}
           active={active}
           id={id}
           projectCheckout={projectCheckout}

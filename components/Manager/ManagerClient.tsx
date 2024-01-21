@@ -173,7 +173,7 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   <main className="h-full w-full flex-1 p-2">
                     {/* <ShiftingCountdown /> */}
                     <SupporProjects
-                      currentRound={currentRound}
+                      currentRound={Number(currentRound)}
                       isClaimed={isClaimed}
                       pool={currentPool}
                       setCurrentStakedValue={setCurrentStakedValue}
@@ -414,10 +414,6 @@ const Claimbutton = ({
       setIsClaimed(claim?.result as boolean);
     },
   });
-
-  console.log("claim", isClaimed);
-  console.log("claim", claim?.result);
-  console.log(govTokenAddress);
 
   //balanceOf:
   const { data: balance } = usePrepareContractWrite({

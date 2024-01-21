@@ -7,7 +7,7 @@ import { PoolCardProps, PoolProps } from "@/types";
 
 const poolsQuery = `
   query {
-    osmoticPools(first: 50) {
+    osmoticPools {
       id
       maxActiveProjects
       address
@@ -16,7 +16,7 @@ const poolsQuery = `
         name
         symbol
       }
-      poolProjects(first: 100) {
+      poolProjects {
         id
       }
     }

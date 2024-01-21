@@ -31,6 +31,7 @@ const ProjectGrid = ({ projects }: { projects: Project[] }) => {
   >([]);
   const [openCart, setOpenCart] = useState(false);
   const [lists, setLists] = useState([]);
+  const [selectedList, setSelectedList] = useState<any>([]);
 
   const projectInCart = projectsCheckoutInfo.length;
 
@@ -75,9 +76,15 @@ const ProjectGrid = ({ projects }: { projects: Project[] }) => {
           <SelectedList
             lists={lists}
             setLists={setLists}
+            selectedList={selectedList}
+            setSelectedList={setSelectedList}
             onClick={hanldeOpenCart}
             amount={projectInCart}
-            disabled={projectInCart < 2 || lists.length === 0}
+            disabled={
+              projectInCart < 2 ||
+              lists.length === 0 ||
+              selectedList.length === 0
+            }
           />
 
           <h2 className="sr-only">projects</h2>
@@ -89,6 +96,7 @@ const ProjectGrid = ({ projects }: { projects: Project[] }) => {
                     <ProjectCard
                       project={{ ...project, list: [] }}
                       projectCheckout={createProjectsCheckoutInfo}
+                      selectedList={selectedList}
                     />
                   </div>
                 );
@@ -98,6 +106,7 @@ const ProjectGrid = ({ projects }: { projects: Project[] }) => {
       </div>
       <CheckoutProjectaCart
         list={lists}
+        selectedList={selectedList}
         open={openCart}
         setOpen={setOpenCart}
         projectChekoutInfo={projectsCheckoutInfo}

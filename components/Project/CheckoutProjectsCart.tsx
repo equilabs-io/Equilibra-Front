@@ -1,5 +1,5 @@
-import { Dialog } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Dialog, Disclosure } from "@headlessui/react";
+import { ChevronUpIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Transition } from "@headlessui/react";
 import { Fragment, use } from "react";
 import {
@@ -10,21 +10,19 @@ import {
 import PROJECT_LIST_ABI from "@/constants/abis/OwnableList.json";
 import TransactionModal from "../TransactionModal";
 import { ProjectIdBadge } from "./ProjectIdBadge";
+import { formatAddress } from "@/lib/format";
 
 export const CheckoutProjectaCart = ({ ...props }) => {
-  const { open, setOpen, projectChekoutInfo, list } = props;
-
-  console.log(list);
+  const { open, setOpen, projectChekoutInfo, selectedList } = props;
 
   const PROJECT_LENGTH = projectChekoutInfo.length || 0;
-  const LIST_NAME = list[0]?.name;
 
   const projectIds = projectChekoutInfo.map(
     (project: { id: any }) => project.id,
   );
 
   const { config } = usePrepareContractWrite({
-    address: list[0]?.id,
+    address: selectedList?.id,
     abi: PROJECT_LIST_ABI,
     functionName: "addProjects",
     args: [projectIds],
@@ -33,20 +31,17 @@ export const CheckoutProjectaCart = ({ ...props }) => {
     },
   });
 
-  const { write, isLoading, isError, error } = useContractWrite(config);
+  const { write, data, isLoading, isSuccess, isError, error } =
+    useContractWrite(config);
 
-  const {
-    data,
-    isError: waitIsError,
-    isLoading: isWaitLoading,
-    isSuccess,
-  } = useWaitForTransaction();
+  const { isLoading: isWaitLoading, isSuccess: isWaitSuccess } =
+    useWaitForTransaction({
+      hash: data?.hash,
+    });
 
   const handle = () => {
-    console.log("closing checkout");
-    setOpen(false);
-    console.log("writing...");
     write?.();
+    setOpen(false);
   };
 
   return (
@@ -110,7 +105,7 @@ export const CheckoutProjectaCart = ({ ...props }) => {
                           aria-labelledby="summary-heading"
                           className="px-4 pb-10 pt-16 sm:px-6 lg:col-start-2 lg:row-start-1 lg:bg-transparent lg:px-0 lg:pb-16"
                         >
-                          <div className="mx-auto max-w-lg space-y-10 text-textSecondary lg:max-w-none">
+                          <div className="mx-auto max-w-lg space-y-14 text-textSecondary lg:max-w-none">
                             <ProjectCheckOut projects={projectChekoutInfo} />
 
                             <div className="flex h-[150px] flex-col justify-evenly pl-4">
@@ -119,9 +114,9 @@ export const CheckoutProjectaCart = ({ ...props }) => {
                                 <span className="line-clamp text-lg">
                                   Your are adding {PROJECT_LENGTH} projects to{" "}
                                 </span>
-                                <span className="text-2xl">
-                                  {LIST_NAME} Management list
-                                </span>
+                                <span className="text-2xl text-primary">
+                                  {selectedList.name ?? "not list selected"}{" "}
+                                </span>{" "}
                               </div>
                             </div>
                           </div>
@@ -131,8 +126,12 @@ export const CheckoutProjectaCart = ({ ...props }) => {
                           <TransactionModal
                             isLoading={isLoading}
                             isError={isError}
+                            error={error}
                             isSuccess={isSuccess}
+                            isWaitLoading={isWaitLoading}
+                            isWaitSuccess={isWaitSuccess}
                             label="Add Projects"
+                            action="Add projects to Managemt List"
                             writeFunction={handle}
                           />
                         </div>
@@ -152,7 +151,7 @@ export const CheckoutProjectaCart = ({ ...props }) => {
 function ProjectCheckOut({ projects }: { projects: any }) {
   return (
     <div>
-      <ul role="list" className="grid- mt-0 grid grid-cols-1 gap-8">
+      <ul role="list" className="grid- mt-0 grid grid-cols-1 gap-12">
         {projects.map((project: any) => (
           <li
             key={project.name}

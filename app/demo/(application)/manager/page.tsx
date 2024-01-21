@@ -58,8 +58,6 @@ export default async function Manager({
 
   const pools = fetchPoolbyOwner.data?.osmoticPools;
 
-  console.log("pools", pools);
-
   const participantSupports =
     participantQueryResult.data?.poolProjectParticipantSupports;
 
