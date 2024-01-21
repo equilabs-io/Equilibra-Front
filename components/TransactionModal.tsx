@@ -33,18 +33,20 @@ export default function TransactionModal({
   hash,
   writeFunction,
 }: TransactionModalProps) {
-  const [openModal, setOpenModal] = useState(false);
+  const [openTransactionModal, setOpenTransactionModal] = useState(false);
 
   // useEffect(() => {
-  //   if (openModal) {
+  //   if (openTransactionModal) {
   //     handle?.();
   //   }
-  // }, [openModal]);
+  // }, [openTransactionModal]);
 
   const handleModal = () => {
-    setOpenModal(true);
+    //setOpenTransactionModal(!openTransactionModal);
     writeFunction?.();
   };
+
+  console.log(openTransactionModal);
 
   return (
     <>
@@ -55,8 +57,12 @@ export default function TransactionModal({
       >
         {label}
       </button>
-      <Transition.Root show={openModal} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setOpenModal}>
+      <Transition.Root show={openTransactionModal} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={() => setOpenTransactionModal(false)}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -124,7 +130,7 @@ export default function TransactionModal({
                     {(isWaitSuccess || isError) && (
                       <button
                         className="absolute right-3 top-3 hover:opacity-70"
-                        onClick={() => setOpenModal(false)}
+                        onClick={() => setOpenTransactionModal(false)}
                       >
                         close
                       </button>

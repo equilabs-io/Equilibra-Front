@@ -460,8 +460,8 @@ const Claimbutton = ({
             {isClaimed ? (
               <span className="max-w-[200px] text-textSecondary">
                 {/* //TODO: add current round  */}
-                Points claimed{" "}
-                <span className="ml-2 text-xl font-thin text-primary">
+                Points claimed:{" "}
+                <span className="font-semi-bold ml-2 text-xl text-primary">
                   {Number(balance?.result)}
                 </span>
               </span>

@@ -95,7 +95,6 @@ export default async function Projects({}) {
         description="Shape the destiny of your organization and the Web3 landscape. The journey begins with creating a meaningful project."
         href="./create-project"
       />
-
       <ProjectGrid projects={PROJECTS as Project[]} />
     </>
   );

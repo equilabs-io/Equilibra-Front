@@ -5,7 +5,7 @@ import POOL_ABI from "@/constants/abis/Pool.json";
 import { getUrqlClient } from "@/services/urqlService";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   useAccount,
   useContractWrite,
@@ -122,8 +122,6 @@ export const SupporProjects = ({
           participant,
           round: currentRound,
         });
-
-        console.log("result", result.data?.osmoticPool?.poolProjects);
 
         const participantSupports = (
           result.data?.osmoticPool?.poolProjects || []
