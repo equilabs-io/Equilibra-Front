@@ -67,6 +67,17 @@ const queryByPoolAndParticipant = `query ($pool: String!, $participant: String!)
         }
       }
 }`;
+function getFourChars(str: string, indexFunc: any): string {
+  if (!str) return "";
+  const lastDashIndex = indexFunc(str, "-");
+  const fourChars = str.substring(lastDashIndex - 3, lastDashIndex);
+  const id = fourChars.substring(0, 1);
+  return id;
+}
+//return the last element of a string, use it to get the id
+function getIdOfProyectId(str: string): string {
+  return str?.[str.length - 1];
+}
 
 function extractSubstring(inputString: string) {
   // Split the string by hyphen ('-')
@@ -90,39 +101,22 @@ function extractSubstring(inputString: string) {
 export const SupporProjects = ({
   pool,
   currentRound,
+  isClaimed,
   currentStakedValue,
   setCurrentStakedValue,
 }: any) => {
   const { address: participant } = useAccount();
 
-  //TODO! Info to show in the dashboard:
-  //Pool: ListName - projects - support - total support - percentage of support - currentRound and time to end
-  //MimeToken: name, symbol, balance, total supply
-  //Participant: address, Mimetoken balance, Staked balance, percentage of support
-  //Checkout - difference between new support and previous support
-
   const [open, setOpen] = useState(false);
-  const [poolInfo, setPoolInfo] = useState<any>([{}]);
   const [participantSupports, setParticipantSupports] = useState<any>([{}]);
-  const [maxValue, setMaxValue] = useState(350);
-  const [newData, setNewData] = useState<any>([]);
+  const [maxValue, setMaxValue] = useState(500);
+
   const [projectSelected, setProjectSelected] = useState<any>([]);
 
-  function getFourChars(str: string, indexFunc: any): string {
-    if (!str) return "";
-    const lastDashIndex = indexFunc(str, "-");
-    const fourChars = str.substring(lastDashIndex - 3, lastDashIndex);
-    const id = fourChars.substring(0, 1);
-    return id;
-  }
-  //return the last element of a string, use it to get the id
-  function getIdOfProyectId(str: string): string {
-    return str?.[str.length - 1];
-  }
+  //TODO: delete round, for testing purposes
+  const round = 7;
 
-  const round = currentRound;
-
-  console.log("round", round);
+  const newCurrentRound = Number(currentRound);
 
   //new logic which includes all projects in list and supported by participant
   useEffect(() => {
@@ -131,10 +125,8 @@ export const SupporProjects = ({
         const result = await getUrqlClient().query(queryBySupportAndListed, {
           pool,
           participant,
-          round,
+          newCurrentRound,
         });
-
-        console.log("result", result.data);
 
         const participantSupports = (
           result.data?.osmoticPool?.poolProjects || []
@@ -212,13 +204,6 @@ export const SupporProjects = ({
         participant,
       });
       // TODO!: not using this info
-      setPoolInfo([
-        {
-          address: result.data?.osmoticPool?.address,
-          projectList: result.data?.osmoticPool?.projectList,
-          mimeToken: result.data?.osmoticPool?.mimeToken,
-        },
-      ]);
 
       // const participantSupports = result.data?.osmoticPool?.poolProjects.map(
       //   (project: {
@@ -366,7 +351,7 @@ export const SupporProjects = ({
                       <input
                         type="range"
                         id={`range${index + 1}`}
-                        disabled={isMaxValueReached}
+                        disabled={isMaxValueReached || !isClaimed}
                         name={`range${index + 1}`}
                         min="0"
                         list="tickmarks"
@@ -446,7 +431,7 @@ export const SupporProjects = ({
           open={open}
           setOpen={setOpen}
           checkoutValues={checkoutValues}
-          balance={350}
+          balance={500}
           staked={actualCurrentValue}
           poolAddress={pool}
         />

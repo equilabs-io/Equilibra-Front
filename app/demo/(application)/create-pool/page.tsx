@@ -1,6 +1,7 @@
 "use client";
-import { useState, FormEvent, useCallback, useEffect } from "react";
+import { useState, FormEvent, useCallback, useEffect, use } from "react";
 import {
+  useAccount,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
@@ -13,8 +14,16 @@ import InputText from "@/components/Form/InputText";
 import InputSelect from "@/components/Form/InputSelect";
 import { motion } from "framer-motion";
 import { parseEther } from "viem";
-import { useHover } from "@/hooks/useHover";
-import { time } from "console";
+import { getUrqlClient } from "@/services/urqlService";
+import { formatAddress } from "@/lib/format";
+
+const listQuery = `query ($owner: String!){
+  projectLists(where: {owner: $owner}) {
+    owner
+    name
+    id
+  }
+}`;
 
 const MIME_TOKEN_ABI = [
   "function initialize(string,string,bytes32,uint256,uint256)",
@@ -22,8 +31,8 @@ const MIME_TOKEN_ABI = [
 
 const MIME_TOKENS_DATA = [
   {
-    name: "Demo Fede",
-    symbol: "DFT",
+    name: "Mati Mime",
+    symbol: "MMT",
     merkleRoot:
       "0x659d9490a902c959e5229c5e585281e2bbd0f643256c8561526381fe82ef2ff0",
   },
@@ -43,6 +52,39 @@ const tokens = [
     name: "Super Fake DAI",
     symbol: "DAIx",
     address: "0x4e17a5e14331038a580c84172386f1bc2461f647",
+  },
+];
+
+const mimeTokens = [
+  {
+    name: "Select a token",
+    symbol: "MMT",
+    address: "",
+  },
+  {
+    name: "Mati Mime",
+    symbol: "MMT",
+    address: "0xbaedf1db32869764682f6b216c5cd1b164c11ab4",
+  },
+  {
+    name: "Gaby Demo",
+    symbol: "MMT",
+    address: "",
+  },
+  {
+    name: "Lucho Demo",
+    symbol: "MMT",
+    address: "",
+  },
+  {
+    name: "Paul Demo",
+    symbol: "MMT",
+    address: "",
+  },
+  {
+    name: "Fede Demo",
+    symbol: "MMT",
+    address: "",
   },
 ];
 
@@ -136,10 +178,18 @@ const Form = () => {
   const [encodedData, setEncodedData] = useState<string | null>(null);
   const [mimeEncodeData, setMimeEncodeData] = useState<string | null>(null);
   const [listName, setListName] = useState<string>("");
+  const [listsOptions, setListsOptions] = useState<any[]>([
+    {
+      name: "Create or Select a List",
+      address: "",
+    },
+  ]); //TODO: change any type
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setListName(event.target.value);
   };
+
+  const { address: owner } = useAccount();
 
   // handle the create list transaction
   const { config: createListConfig } = usePrepareContractWrite({
@@ -147,16 +197,6 @@ const Form = () => {
     abi: POOL_ABI,
     functionName: "createProjectList",
     args: [listName],
-    onError: (error) => {
-      console.log("error", error);
-    },
-    onSuccess: (data) => {
-      setFormState((prevFormState) => {
-        const updatedState = { ...prevFormState };
-        updatedState.listAddress = data?.result as string;
-        return updatedState;
-      });
-    },
   });
   const {
     data: listNameData,
@@ -170,11 +210,39 @@ const Form = () => {
   const { isLoading: isWaitListNameLoading, isSuccess: isWaitListNameSuccess } =
     useWaitForTransaction({
       hash: listNameData?.hash,
-      onError: (error) => {
-        console.log("error", error);
-      },
     });
   //
+  //
+  //
+  //
+  //fetchs all the lists by owner => account connected
+  useEffect(() => {
+    const fetchListByOwner = async () => {
+      try {
+        if (owner) {
+          const result = await getUrqlClient().query(listQuery, { owner });
+          const lists = result?.data?.projectLists.map((list: any) => ({
+            name: list.name,
+            address: list.id,
+          }));
+          setListsOptions([
+            {
+              name: `${
+                isWaitListNameSuccess ? "Select a List" : "Create a List"
+              }`,
+              address: "",
+            },
+            ...lists,
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching lists:", error);
+      }
+    };
+
+    fetchListByOwner();
+  }, [owner]);
+
   //
   //
   //
@@ -197,6 +265,20 @@ const Form = () => {
         const selectedToken = tokens.find((token) => token.address === value);
 
         updatedState.listAddress = selectedToken ? selectedToken.address : "";
+      }
+      if (name === "governanceToken") {
+        const selectedToken = mimeTokens.find(
+          (token) => token.address === value,
+        );
+
+        updatedState.governanceToken = selectedToken
+          ? selectedToken.address
+          : "";
+      }
+      if (name === "managementList") {
+        const selectedList = listsOptions.find((list) => list.name === value);
+
+        updatedState.listAddress = selectedList ? selectedList.address : "";
       }
 
       return updatedState;
@@ -251,7 +333,7 @@ const Form = () => {
     },
   });
 
-  // Shoots transaction to the blockchain ..
+  // Shoots create pool transaction to the blockchain ..
   const {
     data,
     isLoading: isPoolLoading,
@@ -261,14 +343,11 @@ const Form = () => {
     write: poolWrite,
   } = useContractWrite(config);
 
-  // Wait for transaction to be mined!
+  // Wait for create pool transaction to be mined!
   const { isLoading: isWaitPoolLoading, isSuccess: isWaitPoolSuccess } =
     useWaitForTransaction({
       hash: data?.hash,
-      confirmations: 2,
-      onError: (error) => {
-        console.log("error", error);
-      },
+      confirmations: 1,
     });
 
   //handle form to submit to the blockchain and create the pool
@@ -300,10 +379,10 @@ const Form = () => {
         MIME_TOKENS_DATA[0].name,
         MIME_TOKENS_DATA[0].symbol,
         MIME_TOKENS_DATA[0].merkleRoot,
-        1699722000, // claim timeStamp from osmotic controller proxy // 0x0b9f52138050881C4d061e6A92f72d8851B59F8e //
+        1681578000, // claim timeStamp from osmotic controller proxy // 0x0b9f52138050881C4d061e6A92f72d8851B59F8e //
         2419200, // claim duration 28 days //
       ]);
-      //console.log("mimeTokenInitCode", mimeTokenInitCode);
+      console.log("mimeTokenInitCode", mimeTokenInitCode);
       setMimeEncodeData(mimeTokenInitCode);
 
       return mimeTokenInitCode;
@@ -339,7 +418,7 @@ const Form = () => {
               <div className="mb-10 sm:col-span-4">
                 <div className="flex items-center justify-between  p-2">
                   <span className="w-96 text-textSecondary">
-                    First!: create a Management List ..
+                    Create a Management List
                   </span>
                   <div className="">
                     <TransactionModal
@@ -365,11 +444,11 @@ const Form = () => {
                     placeholder={"List Name"}
                     value={listName}
                     onChange={handleInputChange}
-                    className="block h-full w-full  border-0 bg-surface px-3 py-4 text-sm leading-6 placeholder-grey_light shadow-sm ring-1 ring-inset ring-grey_mlight first:rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+                    className="block h-full w-full  border-0 bg-surface px-3 py-2 text-sm leading-6 placeholder-grey_light shadow-sm ring-1 ring-inset ring-grey_mlight first:rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </div>
               </div>
-              {/* create list ends  */}
+
               <div className="sm:col-span-4">
                 <InputSelect
                   list={tokens}
@@ -380,7 +459,16 @@ const Form = () => {
                 />
               </div>
               <div className="sm:col-span-4">
-                <InputText
+                <InputSelect
+                  list={mimeTokens}
+                  label="Governance token"
+                  name="governanceToken"
+                  handleChange={(value) =>
+                    handleChange(value, "governanceToken")
+                  }
+                  required
+                />
+                {/* <InputText
                   label="Governance token address"
                   name="governanceToken"
                   handleChange={(value) =>
@@ -391,19 +479,16 @@ const Form = () => {
                   placeholder="Governance token contract address..."
                   required
                   disabled={false}
-                />
+                /> */}
               </div>
 
               <div className="mb-10 sm:col-span-4">
-                <InputText
-                  label="Add your Management List Address"
-                  name="list name"
+                <InputSelect
+                  list={listsOptions}
+                  label="Choose your Management List"
+                  name="managementList"
                   handleChange={(value) => handleChange(value, "listAddress")}
-                  value={formState.listAddress}
-                  type="text"
-                  placeholder="Management list address..."
                   required
-                  disabled={false}
                 />
               </div>
               <div className="sm:col-span-4">
@@ -451,35 +536,45 @@ const Form = () => {
             action="Creating a Pool"
             hash={data?.hash}
           />
-          {/* <CustomButton
-            text={`${isLoading ? "Creating ..." : "Create pool"}`}
-            type="submit"
-            handleOnClick={() => handleEncodeData()}
-            disabled={
-              formState.governanceToken === "" || formState.listAddress === ""
-            }
-          /> */}
         </div>
       </form>
     </>
   );
 };
 
-// const AddProjectList = () => {
-//   return (
-//     <>
-//       {/* TODO: add projects and logic  */}
-//       <h2>Congratulation! ..you just create a pool with the addres:</h2>
-//       <h4>
-//         Select the projects you would like to be elegible bt the community
-//       </h4>
-//     </>
-//   );
-// };
+const lastPool = `query ($owner: String!){
+  
+    osmoticPools(where: {owner: $owner}, first:1) {
+      id
+    }
+  
+}`;
 
 const AddFunds = ({ pool }: { pool: string | undefined }) => {
+  const { address: owner } = useAccount();
   const [value, setValue] = useState("");
-  const [to, setTo] = useState("0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b");
+  const [to, setTo] = useState("...");
+
+  useEffect(() => {
+    const fetchListByOwner = async () => {
+      try {
+        const result = await getUrqlClient().query(lastPool, { owner });
+        if (result?.data?.osmoticPools && result.data.osmoticPools.length > 0) {
+          const poolAddress = result.data.osmoticPools[0].id;
+
+          console.log("resul", result?.data?.osmoticPools);
+          setTo(poolAddress);
+        } else {
+          console.log("No osmoticPools found for the given owner.");
+          setTo("...");
+        }
+      } catch (error) {
+        console.error("Error fetching pool:", error);
+      }
+    };
+
+    fetchListByOwner();
+  }, [owner]);
 
   const { config } = usePrepareContractWrite({
     address: "0x4e17a5e14331038a580C84172386F1bc2461F647",
@@ -513,13 +608,15 @@ const AddFunds = ({ pool }: { pool: string | undefined }) => {
     // error,
   } = useWaitForTransaction({
     hash: data?.hash,
+    confirmations: 1,
   });
 
   return (
     <>
       <h4>
         How much <span className="text-primary">Super Fake Dai</span> do you
-        want to deposit to the pool?
+        want to deposit to the pool{" "}
+        <span className="text-primary">{formatAddress(to)}</span> ?
       </h4>
       <div className="flex h-[600px] w-full flex-col items-center justify-center space-y-8">
         <div>
@@ -534,11 +631,12 @@ const AddFunds = ({ pool }: { pool: string | undefined }) => {
               type="text"
               name="price"
               id="price"
-              className="border-1 block h-full  w-full rounded-full bg-surface py-1.5 pl-7 pr-12 text-center ring-1 ring-surface_var  transition-all duration-300 ease-in-out placeholder:text-gray-400 focus:border-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0 sm:text-sm sm:leading-6 md:text-2xl"
+              className="border-1 block h-full  w-full rounded-full bg-surface py-1.5 pl-7 pr-12 text-center ring-1 ring-surface_var  transition-all duration-300 ease-in-out placeholder:text-gray-400 focus:border-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm sm:leading-6 md:text-2xl"
               placeholder="0.00"
               aria-describedby="price-currency"
               onChange={(e) => setValue(e.target.value)}
               value={value}
+              disabled={to === "..."}
             />
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
               <span className="text-primary sm:text-sm" id="price-currency">
@@ -549,7 +647,7 @@ const AddFunds = ({ pool }: { pool: string | undefined }) => {
         </div>
         <div>
           <TransactionModal
-            isLoading={isWaitLoading}
+            isLoading={isLoading}
             isWaitLoading={isWaitLoading}
             isSuccess={isSuccess}
             isWaitSuccess={isWaitSuccess}

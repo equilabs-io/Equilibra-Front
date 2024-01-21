@@ -5,7 +5,7 @@ import { getUrqlClient } from "@/services/urqlService";
 //query to get the participant support to projects
 const participantSupportQuery = `
 query ($participant: String!) {
-  poolProjectParticipantSupports(first: 100, where: {participant: $participant}) {
+  poolProjectParticipantSupports(where: {participant: $participant}) {
     id    
     support
   }
@@ -14,7 +14,6 @@ query ($participant: String!) {
 const queryPoolbyOwner = `
 query ($owner: String!) {
     osmoticPools(
-        first: 100
         where: {owner: $owner}
       ) {
         address
@@ -22,7 +21,7 @@ query ($owner: String!) {
           name
           symbol
         }    
-        poolProjects(first: 50) {
+        poolProjects {
             id
             poolProjectSupports {
               support
@@ -57,7 +56,9 @@ export default async function Manager({
     owner: address,
   });
 
-  const pools = fetchPoolbyOwner.data?.osmoticPools.slice(-3);
+  const pools = fetchPoolbyOwner.data?.osmoticPools;
+
+  console.log("pools", pools);
 
   const participantSupports =
     participantQueryResult.data?.poolProjectParticipantSupports;

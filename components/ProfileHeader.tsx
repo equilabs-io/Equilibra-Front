@@ -1,22 +1,16 @@
-"use client";
-
-import React from "react";
-import { formatAddress } from "@/lib/format";
-import { useAccount } from "wagmi";
-
 export const ProfileHeader = () => {
-  const { address: participant } = useAccount();
   return (
     <>
       <header>
         <div className="container mx-auto grid grid-cols-3 px-6 pb-32 pt-32 md:px-12 lg:px-7 lg:pb-[4.8rem] lg:pt-[4.8rem]">
           <div className="relative  col-span-2 space-y-8  lg:py-28 ">
             <h2 className="font-semibold text-surface_var md:text-7xl lg:w-full ">
-              Manage you Pool - Projects - Support
+              Manage you Pools - Projects - Support
             </h2>
             <p className="line-clamp-5 max-w-3xl  text-xl font-thin text-textSecondary">
               Bring your organization ecosystem to the next level by claiming
-              and allocating your voting power to support projects.
+              and allocating your voting power to support the projects of your
+              choice.
             </p>
           </div>
           {/* TODO: improve this section styles and data */}
