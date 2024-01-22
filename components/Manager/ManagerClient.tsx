@@ -470,7 +470,7 @@ const Claimbutton = ({
                 </span>
               </span>
             ) : (
-              <div className="hover:-primary py-  relative rounded-full px-4">
+              <div className="relative rounded-full px-4">
                 <TransactionModal
                   label="Claim Voting Power"
                   isLoading={isLoading}
@@ -483,11 +483,6 @@ const Claimbutton = ({
                   writeFunction={write}
                   hash={data?.hash}
                 />
-
-                <span className="absolute right-5 top-1 flex h-3 w-3 ">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex h-3 w-3 rounded-full bg-primary"></span>
-                </span>
               </div>
             )}
           </>

@@ -42,11 +42,9 @@ export default function TransactionModal({
   // }, [openTransactionModal]);
 
   const handleModal = () => {
-    //setOpenTransactionModal(!openTransactionModal);
+    setOpenTransactionModal(!openTransactionModal);
     writeFunction?.();
   };
-
-  console.log(openTransactionModal);
 
   return (
     <>

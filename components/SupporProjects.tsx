@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, use, useCallback, useEffect, useState } from "react";
 import POOL_ABI from "@/constants/abis/Pool.json";
 import { getUrqlClient } from "@/services/urqlService";
 import { Dialog, Menu, Transition } from "@headlessui/react";
@@ -98,16 +98,6 @@ function extractSubstring(inputString: string) {
   }
 }
 
-const statuses = {
-  Active: "text-green-400 bg-green-400/10",
-  Inactive: "text-rose-400 bg-rose-400/10",
-};
-
-//helper function
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export const SupporProjects = ({
   pool,
   currentRound,
@@ -119,6 +109,8 @@ export const SupporProjects = ({
 
   const [openCheckout, setOpenCheckout] = useState(false);
   const [maxValue, setMaxValue] = useState(500);
+
+  // current project selected by clickin ?? or hovering  ??
   const [projectSelected, setProjectSelected] = useState<any>([]);
 
   //all the main data here for this component:
@@ -278,12 +270,32 @@ export const SupporProjects = ({
     }),
     hidden: { opacity: 0.2, scale: 0.8 },
   };
+
+  const {
+    config,
+    error: prepareError,
+    isError: isPrepareError,
+  } = usePrepareContractWrite({
+    address: pool,
+    abi: POOL_ABI,
+    functionName: "activateProject",
+    args: [projectSelected],
+  });
+
+  const { write, data, isLoading, isSuccess, isError, error } =
+    useContractWrite(config);
+
+  const { isLoading: isWaitLoading, isSuccess: isWaitSuccess } =
+    useWaitForTransaction({
+      hash: data?.hash,
+    });
+
   return (
     <>
-      <div className="relative flex h-full items-start gap-4 border border-red-200 p-4">
+      <div className="relative flex h-full items-start gap-4 p-4">
         <ul
           role="list"
-          className="flex h-fit w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden border"
+          className="flex h-fit w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden"
         >
           {/* Data and inputs to support and change support for projects */}
           {participantSupports &&
@@ -326,20 +338,21 @@ export const SupporProjects = ({
                     variants={variants}
                     custom={index}
                     key={index}
-                    onMouseEnter={() => setProjectSelected(project.id)}
+                    onClick={() => setProjectSelected(project.id)}
                     className="flex items-center justify-between gap-x-4 rounded-xl  bg-surface px-2 py-4  hover:border"
                   >
                     {/* projectId */}
                     <ProjectIdBadge id={project.id} size="lg" />
-                    <div className="flex items-center justify-end gap-x-2  sm:justify-start">
-                      <div
-                        className={classNames(
-                          statuses[project.active ? "Active" : "Inactive"],
-                          "flex-none animate-pulse rounded-full",
-                        )}
+                    <div className="flex-[0.1] items-center justify-center">
+                      <svg
+                        className={`h-1.5 w-1.5 ${
+                          project.active ? "fill-green-400" : "fill-rose-400"
+                        }`}
+                        viewBox="0 0 6 6"
+                        aria-hidden="true"
                       >
-                        <div className="h-2 w-2 rounded-full bg-current" />
-                      </div>
+                        <circle cx={3} cy={3} r={3} />
+                      </svg>
                       {/* <div className="hidden text-xs text-white sm:block">
                         {project.active ? "Active" : "Inactive"}
                       </div> */}
@@ -420,15 +433,29 @@ export const SupporProjects = ({
 
         {/* Right column area */}
         <aside className="grid h-full flex-1 shrink-0 grid-rows-2 gap-4  shadow">
-          <div className="border text-center">
+          <div className="text-center">
             {/* project basico info */}
+
             <h4>Project: {projectSelected} </h4>
           </div>
-          <div className="flex items-end border px-6">
+          <div className="flex flex-col items-center justify-end space-y-10  px-6">
+            <TransactionModal
+              label="Activate Project"
+              action={`Activating project ${projectSelected}`}
+              isLoading={isLoading}
+              isSuccess={isSuccess}
+              isWaitLoading={isWaitLoading}
+              isWaitSuccess={isWaitSuccess}
+              error={error}
+              isError={isError}
+              writeFunction={write}
+              disabledButton={projectSelected.length === 0}
+              hash={data?.hash}
+            />
             <button
               onClick={handleCheckout}
               disabled={checkoutValues.length === 0}
-              className="w-full cursor-pointer rounded-md  bg-surface px-4 py-4 text-textSecondary transition-all duration-200 ease-in-out hover:bg-highlight hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-full border px-6 py-1 text-xl transition-opacity duration-300 ease-in-out hover:border-primary hover:bg-primary hover:text-highlight disabled:cursor-not-allowed disabled:opacity-50"
             >
               Checkout
             </button>

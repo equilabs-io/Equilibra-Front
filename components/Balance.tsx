@@ -10,7 +10,7 @@ type BalanceProps = {
 const Balance = ({ address, token, symbol = true }: BalanceProps) => {
   const balance = useBalance({
     address: address,
-    token: "0x5943F705aBb6834Cad767e6E4bB258Bc48D9C947",
+    token: "0x4e17a5e14331038a580C84172386F1bc2461F647",
     chainId: 5,
   });
   const { data, isError, isLoading } = balance;
