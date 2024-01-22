@@ -28,13 +28,13 @@ export default function ManagerStats({ poolStats }: { poolStats: any }) {
                   variants={variants}
                   custom={i}
                   key={stat.name}
-                  className="group rounded-lg  bg-surface px-1 py-2 shadow transition-all duration-300 ease-in sm:px-6 lg:px-8"
+                  className="group rounded-lg bg-surface px-1 py-2 shadow transition-all duration-300 ease-in sm:px-6 lg:px-8"
                 >
                   <p className="text-xs font-medium leading-6 text-textSecondary">
                     {stat.name}
                   </p>
                   <p className="mt-2 flex items-baseline gap-x-2">
-                    <span className="text-xl font-semibold tracking-tight text-white">
+                    <span className="text-2xl font-semibold tracking-tight text-secondary">
                       {stat.data}
                     </span>
                   </p>
@@ -57,7 +57,6 @@ function LoadingStats() {
             <div className="grid grid-cols-3 gap-4">
               <div className="col-span-3 h-3 rounded-full bg-slate-700"></div>
             </div>
-            {/* <div className="h-2 rounded bg-slate-700"></div> */}
           </div>
         </div>
       </div>

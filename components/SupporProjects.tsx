@@ -98,6 +98,16 @@ function extractSubstring(inputString: string) {
   }
 }
 
+const statuses = {
+  Active: "text-green-400 bg-green-400/10",
+  Inactive: "text-rose-400 bg-rose-400/10",
+};
+
+//helper function
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export const SupporProjects = ({
   pool,
   currentRound,
@@ -107,11 +117,12 @@ export const SupporProjects = ({
 }: any) => {
   const { address: participant } = useAccount();
 
-  const [open, setOpen] = useState(false);
-  const [participantSupports, setParticipantSupports] = useState<any>([{}]);
+  const [openCheckout, setOpenCheckout] = useState(false);
   const [maxValue, setMaxValue] = useState(500);
-
   const [projectSelected, setProjectSelected] = useState<any>([]);
+
+  //all the main data here for this component:
+  const [participantSupports, setParticipantSupports] = useState<any>([{}]);
 
   //new logic which includes all projects in list and supported by participant
   useEffect(() => {
@@ -198,28 +209,6 @@ export const SupporProjects = ({
         pool,
         participant,
       });
-      // TODO!: not using this info
-
-      // const participantSupports = result.data?.osmoticPool?.poolProjects.map(
-      //   (project: {
-      //     id: string;
-      //     poolProjectSupports: {
-      //       support: any;
-      //       poolProjectParticipantsSupports: { support: any }[];
-      //     }[];
-      //   }) => {
-      //     return {
-      //       idOriginal: project.id,
-      //       id: getIdOfProyectId(project.id),
-      //       value: project.poolProjectSupports?.[0].support,
-      //       static: project.poolProjectSupports?.[0].support,
-      //       participantSupport:
-      //         project.poolProjectSupports?.[0]
-      //           .poolProjectParticipantsSupports?.[0].support,
-      //     };
-      //   },
-      // );
-      // setParticipantSupports(participantSupports);
     };
 
     fetchParticipantSupports();
@@ -272,9 +261,9 @@ export const SupporProjects = ({
   }, [participantSupports]);
 
   const handleCheckout = useCallback(() => {
-    setOpen(true);
+    setOpenCheckout(true);
     generateCheckoutArray(); // Ensure generateCheckoutArray is memoized
-  }, [generateCheckoutArray, setOpen]);
+  }, [generateCheckoutArray, setOpenCheckout]);
 
   const checkoutValues = generateCheckoutArray();
   const isMaxValueReached = actualCurrentValue === maxValue;
@@ -291,16 +280,17 @@ export const SupporProjects = ({
   };
   return (
     <>
-      <div className="relative flex h-full items-center gap-2  p-4">
+      <div className="relative flex h-full items-start gap-4 border border-red-200 p-4">
         <ul
           role="list"
-          className="flex h-fit w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden "
+          className="flex h-fit w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden border"
         >
           {/* Data and inputs to support and change support for projects */}
           {participantSupports &&
             participantSupports.map(
               (
                 project: {
+                  [x: string]: any;
                   idOriginal: any;
                   id:
                     | boolean
@@ -325,6 +315,7 @@ export const SupporProjects = ({
                     | React.PromiseLikeOfReactNode
                     | null
                     | undefined;
+                  active: boolean;
                 },
                 index: number,
               ) => (
@@ -340,13 +331,25 @@ export const SupporProjects = ({
                   >
                     {/* projectId */}
                     <ProjectIdBadge id={project.id} size="lg" />
-
+                    <div className="flex items-center justify-end gap-x-2  sm:justify-start">
+                      <div
+                        className={classNames(
+                          statuses[project.active ? "Active" : "Inactive"],
+                          "flex-none animate-pulse rounded-full",
+                        )}
+                      >
+                        <div className="h-2 w-2 rounded-full bg-current" />
+                      </div>
+                      {/* <div className="hidden text-xs text-white sm:block">
+                        {project.active ? "Active" : "Inactive"}
+                      </div> */}
+                    </div>
                     {/* Range inputs */}
                     <div className="flex flex-1 items-center justify-center bg-surface">
                       <input
                         type="range"
                         id={`range${index + 1}`}
-                        disabled={isMaxValueReached || !isClaimed}
+                        disabled={!isClaimed}
                         name={`range${index + 1}`}
                         min="0"
                         list="tickmarks"
@@ -367,7 +370,7 @@ export const SupporProjects = ({
                     </div>
                     <Menu as="div" className="relative flex-none">
                       <Menu.Button className="-m-2.5 block p-2.5 text-gray-500 hover:text-textSecondary">
-                        <span className="sr-only">Open options</span>
+                        <span className="sr-only">OpenCheckout options</span>
                         <EllipsisVerticalIcon
                           className="h-5 w-5"
                           aria-hidden="true"
@@ -405,26 +408,10 @@ export const SupporProjects = ({
         </ul>
 
         {/* maxValue notofication */}
-        {/* {isMaxValueReached && (
-        <>
-          <div className="mt-4 flex items-center justify-center bg-background">
-            <span className="rounded-md  p-2">
-              You reach the maximum support value of {maxValue}, please checkout
-              or reset and try again
-            </span>
-            <button
-              onClick={handleResetValues}
-              className="ml-4 rounded-md bg-secondary px-4 py-2 font-semibold text-highlight transition-all duration-200  ease-in-out hover:bg-highlight hover:text-primary "
-            >
-              Reset All Values
-            </button>
-          </div>
-        </>
-      )} */}
 
         <Checkout
-          open={open}
-          setOpen={setOpen}
+          openCheckout={openCheckout}
+          setOpenCheckout={setOpenCheckout}
           checkoutValues={checkoutValues}
           balance={500}
           staked={actualCurrentValue}
@@ -432,12 +419,12 @@ export const SupporProjects = ({
         />
 
         {/* Right column area */}
-        <aside className="grid h-full flex-1 shrink-0 grid-rows-2 gap-4 p-2 shadow">
-          <div className="text-center">
+        <aside className="grid h-full flex-1 shrink-0 grid-rows-2 gap-4  shadow">
+          <div className="border text-center">
             {/* project basico info */}
             <h4>Project: {projectSelected} </h4>
           </div>
-          <div className="flex items-end px-6">
+          <div className="flex items-end border px-6">
             <button
               onClick={handleCheckout}
               disabled={checkoutValues.length === 0}
@@ -454,8 +441,8 @@ export const SupporProjects = ({
 
 //CHECKOUT COMPONENT
 type CheckoutProps = {
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  openCheckout: boolean;
+  setOpenCheckout: (openCheckout: boolean) => void;
   checkoutValues: [];
   balance: number;
   staked: number;
@@ -463,7 +450,14 @@ type CheckoutProps = {
 };
 
 const Checkout = ({ ...props }: CheckoutProps) => {
-  const { checkoutValues, open, setOpen, balance, staked, poolAddress } = props;
+  const {
+    checkoutValues,
+    openCheckout,
+    setOpenCheckout,
+    balance,
+    staked,
+    poolAddress,
+  } = props;
 
   const argValues = checkoutValues.map((value: any) => {
     return [value[0], value[1]];
@@ -489,13 +483,13 @@ const Checkout = ({ ...props }: CheckoutProps) => {
     });
 
   const handle = () => {
-    setOpen(false);
+    setOpenCheckout(false);
     write?.();
   };
   return (
     <>
-      <Transition.Root show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={setOpen}>
+      <Transition.Root show={openCheckout} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={setOpenCheckout}>
           <Transition.Child
             as={Fragment}
             enter="ease-in-out duration-200"
@@ -534,7 +528,7 @@ const Checkout = ({ ...props }: CheckoutProps) => {
                         <button
                           type="button"
                           className="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                          onClick={() => setOpen(false)}
+                          onClick={() => setOpenCheckout(false)}
                         >
                           <span className="absolute -inset-2.5" />
                           <span className="sr-only">Close panel</span>

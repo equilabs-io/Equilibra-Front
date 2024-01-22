@@ -136,16 +136,16 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   initial={{ x: -100 }}
                   animate={{ x: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="cols-span-1 flex h-full flex-col items-center justify-between rounded-lg py-2"
+                  className="cols-span-1 flex h-full flex-col items-center justify-evenly rounded-lg py-2"
                 >
                   {/* claim voting power */}
-                  <Claimbutton
+                  {/* <Claimbutton
                     govTokenAddress={govTokenAddress}
                     currentPool={currentPool}
                     participant={participant}
                     isClaimed={isClaimed}
                     setIsClaimed={setIsClaimed}
-                  />
+                  /> */}
 
                   {/* pool selection + chart  */}
                   <SelectedPoolAndChart
@@ -170,8 +170,15 @@ const ManagerClient = ({ pools }: { pools: any }) => {
 
                 {/* Main section: vote inputs + and chart + checkout */}
                 <div className="items-start-2 col-start-2 col-end-5 h-full w-full">
-                  <main className="h-full w-full flex-1 p-2">
+                  <main className="flex h-full w-full flex-1 flex-col p-2">
                     {/* <ShiftingCountdown /> */}
+                    <Claimbutton
+                      govTokenAddress={govTokenAddress}
+                      currentPool={currentPool}
+                      participant={participant}
+                      isClaimed={isClaimed}
+                      setIsClaimed={setIsClaimed}
+                    />
                     <SupporProjects
                       currentRound={Number(currentRound)}
                       isClaimed={isClaimed}
@@ -277,20 +284,31 @@ const SelectedPoolAndChart = ({
 
   return (
     <>
-      <div className="">
-        <Link href={`/demo/pools/${currentPool}`}>pools</Link>
+      <div className="text-center">
+        <Link
+          href={`/demo/pools/${currentPool}`}
+          className="text-textSecondary"
+        >
+          {" "}
+          Pool:{" "}
+          <span className="ml-1 text-xl text-primary">
+            {" "}
+            {formatAddress(currentPool)}
+          </span>
+        </Link>
+
         <Disclosure>
           {({ open }) => (
             <>
-              <Disclosure.Button className="hover: flex items-center space-x-4  py-2 hover:opacity-80">
+              <Disclosure.Button className="hover: flex w-full items-center justify-center  space-x-4 py-2 hover:opacity-80">
                 <span
-                  className={`text-sm text-textSecondary ${
+                  className={`text-xs text-textSecondary ${
                     currentPool === ""
                       ? "animate-pulse text-xl text-red-300"
                       : "text-md"
                   }`}
                 >
-                  {currentPool === "" ? "Select a pool" : "Select another pool"}
+                  {currentPool === "" ? "Select a pool" : "select pool"}
                 </span>
                 <ChevronUpIcon
                   className={`${
@@ -325,35 +343,21 @@ const SelectedPoolAndChart = ({
           )}
         </Disclosure>
       </div>
-      {currentPool === "" ? (
-        <>
-          {" "}
-          {/* <div className="animate-pulse text-center text-textSecondary">
-            Select a pool to manage!
-          </div> */}
-        </>
-      ) : (
-        <>
-          {" "}
-          <div className="w-full">
-            <EChartsReact
-              // handles everything for the chart
-              option={option}
-              // add className to chart container, is it neccesary ??
-              className=""
-              // controls width and height of chart
-              style={{ height: "400px", width: "100%" }}
-              // echarts renderer, default is canvas ??
-              opts={{ renderer: "svg" }}
-              // callback
-              //onChartReady={() => console.log("Chart is ready")}
-            />
-          </div>
-          {/* <Chart maxValue={500} currentValue={currentStakedValue} /> */}
-          <div className="text-md -mt-20 truncate text-center">
-            Pool: {formatAddress(currentPool)}
-          </div>
-        </>
+      {currentPool && (
+        <div className="w-full">
+          <EChartsReact
+            // handles everything for the chart
+            option={option}
+            // add className to chart container, is it neccesary ??
+            className=""
+            // controls width and height of chart
+            style={{ height: "400px", width: "100%" }}
+            // echarts renderer, default is canvas ??
+            opts={{ renderer: "svg" }}
+            // callback
+            //onChartReady={() => console.log("Chart is ready")}
+          />
+        </div>
       )}
     </>
   );
@@ -454,7 +458,7 @@ const Claimbutton = ({
 
   return (
     <>
-      <div className="flex w-full justify-center">
+      <div className="flex w-full justify-center p-2">
         {currentPool === "" ? null : (
           <>
             {isClaimed ? (
@@ -466,7 +470,7 @@ const Claimbutton = ({
                 </span>
               </span>
             ) : (
-              <div className="relative rounded-full  px-4 py-2 hover:border-primary">
+              <div className="hover:-primary py-  relative rounded-full px-4">
                 <TransactionModal
                   label="Claim Voting Power"
                   isLoading={isLoading}
@@ -490,93 +494,5 @@ const Claimbutton = ({
         )}
       </div>
     </>
-  );
-};
-
-//
-// NOTE: Change this date to whatever date you want to countdown to :)
-// COUNTDOWN_FROM = "01/20/2024"; => 20th of January 2024 it change to round 10!
-//
-const COUNTDOWN_FROM = "01/20/2024";
-
-const SECOND = 1000;
-const MINUTE = SECOND * 60;
-const HOUR = MINUTE * 60;
-const DAY = HOUR * 24;
-
-const ShiftingCountdown = () => {
-  const intervalRef = useRef(null);
-
-  const [remaining, setRemaining] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-
-  useEffect(() => {
-    intervalRef.current = setInterval(handleCountdown, 1000);
-
-    return () => clearInterval(intervalRef.current || undefined);
-  }, []);
-
-  const handleCountdown = () => {
-    let end = new Date(COUNTDOWN_FROM);
-
-    const now = new Date();
-
-    let distance = +end - +now;
-
-    // if (distance <= 0) {
-    //   // If countdown reaches zero, reset to 28 days in the future
-    //   distance = 28 * DAY;
-    // }
-
-    const days = Math.floor(distance / DAY);
-    const hours = Math.floor((distance % DAY) / HOUR);
-    const minutes = Math.floor((distance % HOUR) / MINUTE);
-    const seconds = Math.floor((distance % MINUTE) / SECOND);
-
-    setRemaining({
-      days,
-      hours,
-      minutes,
-      seconds,
-    });
-  };
-
-  return (
-    <div className="bg-gradient-to-br from-violet-600 to-indigo-600 p-4">
-      <div className="mx-auto flex w-full max-w-5xl items-center bg-white">
-        <CountdownItem num={remaining.days} text="days" />
-        <CountdownItem num={remaining.hours} text="hours" />
-        <CountdownItem num={remaining.minutes} text="minutes" />
-        <CountdownItem num={remaining.seconds} text="seconds" />
-      </div>
-    </div>
-  );
-};
-
-const CountdownItem = ({ num, text }: { num: number; text: string }) => {
-  return (
-    <div className="flex h-24 w-1/4 flex-col items-center justify-center gap-1 border-r-[1px] border-slate-200 font-mono md:h-36 md:gap-2">
-      <div className="relative w-full overflow-hidden text-center">
-        <AnimatePresence mode="popLayout">
-          <motion.span
-            key={num}
-            initial={{ y: "100%" }}
-            animate={{ y: "0%" }}
-            exit={{ y: "-100%" }}
-            transition={{ ease: "backIn", duration: 0.75 }}
-            className="block text-2xl font-medium text-black md:text-4xl lg:text-6xl xl:text-7xl"
-          >
-            {num}
-          </motion.span>
-        </AnimatePresence>
-      </div>
-      <span className="text-xs font-light text-slate-500 md:text-sm lg:text-base">
-        {text}
-      </span>
-    </div>
   );
 };
