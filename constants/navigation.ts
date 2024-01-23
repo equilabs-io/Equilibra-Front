@@ -21,7 +21,6 @@ export const oldNavs = [
 ];
 
 export const navItems = [
-  { name: "Home", href: "/demo/home", icon: HomeIcon, current: false },
   {
     name: "Pools",
     href: "/demo/pools",

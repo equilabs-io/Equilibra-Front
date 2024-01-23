@@ -148,20 +148,14 @@ const ManagerClient = ({ pools }: { pools: any }) => {
                   /> */}
 
                   {/* pool selection + chart  */}
+
                   <SelectedPoolAndChart
                     pools={pools}
                     setCurrentPool={setCurrentPool}
                     currentPool={currentPool}
                     currentStakedValue={currentStakedValue}
                   />
-
                   <div className="text-textSecoondary flex w-full flex-col">
-                    {/* TODO: add href to docs ??? */}
-                    {/* <a href="#" target="_blank">
-                      <button className="w-full py-2  text-center text-sm text-textSecondary  hover:bg-surface">
-                        Documentation
-                      </button>
-                    </a> */}
                     <span className="flex justify-center py-2 text-center text-xs text-primary">
                       osmoticFund - Demo v.1
                     </span>

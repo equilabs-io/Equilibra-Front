@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 
 export default function TopNavBar() {
   const [showNav, setShowNav] = useState(true);
-  const [selectedID, setSelectedID] = useState<null | number>(2);
+  const [selectedID, setSelectedID] = useState<null | number>(null);
   const pathname = usePathname();
 
   const { currentScrollTop, previousScrollTop } = useDocumentScroll();
@@ -33,7 +33,7 @@ export default function TopNavBar() {
       }`}
     >
       <div className="container m-auto px-6 md:px-12 lg:px-7">
-        <div className="relative flex flex-wrap items-center justify-between gap-6 py-6 md:gap-0 md:py-4">
+        <div className="relative flex flex-wrap items-center justify-between gap-6 py-4 md:gap-0 md:py-2">
           <input
             type="checkbox"
             name="toggle_nav"

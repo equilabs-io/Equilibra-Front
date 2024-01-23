@@ -295,7 +295,7 @@ export const SupporProjects = ({
       <div className="relative flex h-full items-start gap-4 p-4">
         <ul
           role="list"
-          className="flex h-fit w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-hidden"
+          className="flex h-fit max-h-[500px] w-full max-w-[685px] flex-col justify-start gap-4 space-y-4 overflow-scroll overflow-x-hidden "
         >
           {/* Data and inputs to support and change support for projects */}
           {participantSupports &&

@@ -3,6 +3,7 @@ import { getUrqlClient } from "@/services/urqlService";
 import Balance from "@/components/Balance";
 import { formatAddress } from "@/lib/format";
 import { ProjectIdBadge } from "@/components/Project/ProjectIdBadge";
+import { etherUnits, formatEther } from "viem";
 
 const poolQuery = `
       query ($id: String!) {
@@ -60,7 +61,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
       symbol: "DAIx",
     },
     { name: "Total Streamed", value: "0", symbol: "DAIx" },
-    { name: "Current Listed Projects", value: pool?.poolProjects.length },
+    { name: "Active Projects", value: pool?.poolProjects.length },
   ];
   //status colors for pool projects
   const statuses = {
@@ -75,6 +76,10 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
   //pool name
   const poolName = getLastFourLetters(pool?.id);
 
+  const formatFlow = (flow: number | string) => {
+    return formatEther(BigInt(flow)).toString().slice(0, -8);
+  };
+
   //all pool projects {}
   const allPoolsProjects = pool.poolProjects.map((project: ItemType) => {
     return {
@@ -84,13 +89,10 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
 
       address: project.id,
       active: project.active,
-      flowLastRate: project.flowLastRate,
+      flowLastRate: formatFlow(project.flowLastRate),
       flowLastTime: project.flowLastTime,
-      currentRound: project.currentRound,
     };
   });
-
-  console.log("allPoolsProjects", allPoolsProjects);
 
   //helper function to format date from flow Last Time
   function formatDate(timestamp: number): string {
@@ -217,11 +219,12 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
 
           {/* project table view */}
           <div className="pt-11">
-            <div className="flex items-center justify-between rounded-md bg-surface py-2">
+            <div className="mb-10 flex items-center justify-between rounded-md bg-surface py-2">
               <h2 className="px-4 text-base  leading-7 text-white sm:px-6 lg:px-8">
-                Pool Projects
+                Round <span className="ml-2 text-xl">10</span>
               </h2>
-              <h3 className="px-4 text-base">Round</h3>
+              <h3 className="px-4 text-base">Timer: </h3>
+              <h3 className="px-4 text-base">Last Sync Date: </h3>
             </div>
             <table className="mt-6 w-full whitespace-nowrap text-left">
               <colgroup>
