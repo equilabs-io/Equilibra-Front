@@ -1,14 +1,14 @@
 "use client";
 import React, { useEffect, FormEvent } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useContractWrite } from "wagmi";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { toast } from "react-toastify";
 import { ethers } from "ethers";
 import InputText from "@/components/Form/InputText";
 import InputImage from "@/components/Form/InputImage";
 import InputSelect from "@/components/Form/InputSelect";
 import { projectRegistry } from "@/constants/abis";
-import CustomButton from "@/components/CustomButton";
+import TransactionModal from "@/components/TransactionModal";
 
 interface ErrorCause {
   metaMessages: string[];
@@ -80,6 +80,11 @@ export default function CreateProjectForm({
       functionName: "registerProject",
     });
 
+  const { isLoading: isWaitLoading, isSuccess: isWaitSuccess } =
+    useWaitForTransaction({
+      hash: data?.hash,
+    });
+
   const ipfsJsonUpload = async () => {
     try {
       const response = await fetch("/api/ipfs", {
@@ -100,14 +105,6 @@ export default function CreateProjectForm({
       return Promise.reject(err);
     }
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success("Successfully Created a Project!");
-    } else if (isError && error) {
-      toast.error((error.cause as ErrorCause)?.metaMessages[0]);
-    }
-  }, [isLoading, isSuccess, isError, error]);
 
   return (
     <>
@@ -190,7 +187,17 @@ export default function CreateProjectForm({
           </div>
         </div>
         <div className="mt-6 flex items-center justify-center gap-x-6">
-          <CustomButton text="Create project" type="submit" />
+          <TransactionModal
+            label="Create Project"
+            action="Creating Project"
+            isLoading={isLoading}
+            isWaitLoading={isWaitLoading}
+            isWaitSuccess={isWaitSuccess}
+            error={error}
+            isError={isError}
+            hash={data?.hash}
+            writeFunction={write}
+          />
         </div>
       </form>
     </>

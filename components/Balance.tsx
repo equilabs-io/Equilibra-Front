@@ -15,7 +15,8 @@ const Balance = ({ address, token, symbol = true }: BalanceProps) => {
   });
   const { data, isError, isLoading } = balance;
 
-  const tokenBalance = data?.formatted.slice(0, 5) ?? "";
+  const tokenBalance = data?.formatted.slice(0, 6) ?? "";
+
   const tokenSymbol = data?.symbol ?? "";
 
   if (isLoading) {

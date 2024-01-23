@@ -9,7 +9,7 @@ export const ProjectIdBadge = ({ id, size }: { id: any; size?: any }) => {
 
   return (
     <>
-      <div className="group flex items-center  bg-surface">
+      <div className="group flex items-center   bg-surface">
         <IdentificationIcon
           className={`${
             idIconSize[size as keyof typeof idIconSize] ?? idIconSize.sm

@@ -1,11 +1,9 @@
-import { NextPage } from "next";
+"use client";
 import { getUrqlClient } from "@/services/urqlService";
-import { PoolCardProps } from "@/types";
-import { Link } from "@/components/Link";
 import Balance from "@/components/Balance";
 import { formatAddress } from "@/lib/format";
+import { ProjectIdBadge } from "@/components/Project/ProjectIdBadge";
 
-//TODO: create Querys folder for all queries and move this to it
 const poolQuery = `
       query ($id: String!) {
         osmoticPool(id: $id ) {
@@ -17,7 +15,7 @@ const poolQuery = `
             name
             symbol
           }
-          poolProjects(first: 10) {
+          poolProjects {
             id
             active
             flowLastRate
@@ -84,13 +82,15 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
 
       // TODO! change to real address
 
-      address: "0xf46c2a3c093Ecf5c8F9b0B76e0A449f42739A25b",
+      address: project.id,
       active: project.active,
       flowLastRate: project.flowLastRate,
-      flowLastTime: 1701128880,
+      flowLastTime: project.flowLastTime,
       currentRound: project.currentRound,
     };
   });
+
+  console.log("allPoolsProjects", allPoolsProjects);
 
   //helper function to format date from flow Last Time
   function formatDate(timestamp: number): string {
@@ -101,78 +101,6 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
     return `${day} / ${month} / ${year}`;
   }
 
-  function convertUnixTimestampWithDifference(timestamp: number) {
-    if (timestamp === 0) {
-      return {};
-    }
-    // Convert the Unix timestamp to milliseconds
-    const milliseconds = timestamp * 1000;
-
-    // Create a new Date object for the provided timestamp
-    const dateObject = new Date(milliseconds);
-
-    // Get the current date and time
-    const currentDate = new Date();
-
-    // Calculate the time difference in milliseconds
-    // const timeDifference = currentDate - dateObject;
-    const timeDifference = currentDate.getTime() - dateObject.getTime();
-
-    // Calculate days and hours
-    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-    );
-
-    // Format the date as a string
-    const formattedDate = dateObject.toUTCString();
-
-    return {
-      formattedDate,
-      days,
-      hours,
-    };
-  }
-
-  // Example usage with the provided timestamp
-  const timestamp = 0;
-  const timestampVariant = 1701128880;
-  const result = convertUnixTimestampWithDifference(timestamp);
-  // console.log(`Converted Date: ${result.formattedDate || 0}`);
-  // console.log(`Days Passed: ${result.days || 0} days`);
-  // console.log(`Hours Passed: ${result.hours || 0} hours`);
-
-  //
-  // const activityItems = [
-  //   {
-  //     user: {
-  //       name: "Project " + projectOneName,
-  //       imageUrl:
-  //         "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  //     },
-  //     commit: "2d89f0c8",
-  //     branch: "main",
-  //     status: "Active",
-  //     duration: "25s",
-  //     date: "45 minutes ago",
-  //     dateTime: "2023-01-23T11:00",
-  //   },
-  //   {
-  //     user: {
-  //       name: "Project " + projectTwoName,
-  //       imageUrl:
-  //         "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  //     },
-  //     commit: "2d89f0c8",
-  //     branch: "main",
-  //     status: "Active",
-  //     duration: "25s",
-  //     date: "45 minutes ago",
-  //     dateTime: "2023-01-23T11:00",
-  //   },
-
-  //   // More items...
-  // ];
   return (
     <>
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-0">
@@ -205,7 +133,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
             <div className="col-span-2  min-h-[100px] space-y-4  p-4">
               <div className=" flex justify-between">
                 <h1 className="flex gap-x-3 text-base leading-7">
-                  <span className="text-4xl font-semibold">
+                  <span className="text-4xl ">
                     POOL {""}
                     <span className="ml-2 text-primary">{poolName}</span>
                   </span>
@@ -216,12 +144,12 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                     target="_blank"
                   >
                     <p className="max-w-content text-Secondary overflow-hidden text-clip">
-                      Governance: {pool?.mimeToken.name}
+                      Governance Token: {pool?.mimeToken.name}
                     </p>
                   </a>
                 </span>
               </div>
-              <div className="py-4 text-justify text-textSecondary">
+              <div className="py-4 text-justify font-thin text-textSecondary">
                 <p>
                   Testing text for demo purpose. Lorem ipsum dolor sit amet
                   consectetur adipisicing elit. Molestiae a, nihil quis modi,
@@ -253,28 +181,34 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                 </div>
               </div>
             </div>
-            <div className=" border-red-300">
+            <div>
               <aside className="grid h-full grid-cols-1 space-y-2">
                 {poolStats.map((stat, statIdx) => (
                   <div
                     key={stat.name}
                     className={classNames(
-                      "rounded-xl bg-surface px-2 py-4 transition-all duration-150 ease-in-out hover:opacity-80 sm:px-6 lg:px-8",
+                      "flex items-center justify-between rounded-xl bg-surface px-2 py-4 transition-all duration-150 ease-in-out hover:opacity-80 sm:px-6 lg:px-8",
                     )}
                   >
-                    <p className="text-lg font-medium leading-6 text-textSecondary">
-                      {stat.name}
-                    </p>
-                    <p className="mt-2 flex items-baseline gap-x-2">
-                      <span className="text-4xl font-semibold tracking-tight text-white">
-                        {stat.value}
-                      </span>
-                      {stat.symbol ? (
-                        <span className="text-sm text-textSecondary">
-                          {stat.symbol}
+                    <div>
+                      <p className="text-md font-medium leading-6 text-textSecondary">
+                        {stat.name}
+                      </p>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-baseline space-x-2 ">
+                        <span className="w-full text-right text-3xl  tracking-tight text-white">
+                          {stat.value}
                         </span>
-                      ) : null}
-                    </p>
+                        {stat.symbol ? (
+                          <span className="max-w-[20px] text-sm text-textSecondary">
+                            {stat.symbol}
+                          </span>
+                        ) : (
+                          <span className="min-w-[20px]"></span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </aside>
@@ -284,8 +218,8 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
           {/* project table view */}
           <div className="pt-11">
             <div className="flex items-center justify-between rounded-md bg-surface py-2">
-              <h2 className="px-4 text-base font-semibold leading-7 text-white sm:px-6 lg:px-8">
-                Current Pool Projects
+              <h2 className="px-4 text-base  leading-7 text-white sm:px-6 lg:px-8">
+                Pool Projects
               </h2>
               <h3 className="px-4 text-base">Round</h3>
             </div>
@@ -299,33 +233,30 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
               </colgroup>
               <thead className="text-md border-b border-slate-800 leading-6 text-textSecondary">
                 <tr>
-                  <th
-                    scope="col"
-                    className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
-                  >
-                    Project Id
+                  <th scope="col" className="py-2 pl-4 pr-8  sm:pl-6 lg:pl-8">
+                    Project
                   </th>
                   <th
                     scope="col"
-                    className="hidden py-2 pl-0 pr-8 font-semibold sm:table-cell"
+                    className="hidden py-2 pl-0 pr-8  sm:table-cell"
                   >
                     Address
                   </th>
                   <th
                     scope="col"
-                    className="py-2 pl-0 pr-4 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20"
+                    className="py-2 pl-0 pr-4 text-right  sm:pr-8 sm:text-left lg:pr-20"
                   >
                     Status
                   </th>
                   <th
                     scope="col"
-                    className="hidden py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
+                    className="hidden py-2 pl-0 pr-8  md:table-cell lg:pr-20"
                   >
                     Flow Rate
                   </th>
                   <th
                     scope="col"
-                    className="hidden py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
+                    className="hidden py-2 pl-0 pr-4 text-right  sm:table-cell sm:pr-6 lg:pr-8"
                   >
                     Sync Date
                   </th>
@@ -341,9 +272,10 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                             alt=""
                             className="h-8 w-8 rounded-full bg-gray-800"
                           /> */}
-                        <div className="truncate text-sm font-medium leading-6 text-white">
-                          Project{" "}
-                          <span className="ml-2 text-primary">{item.id}</span>
+                        <div className="flex items-center py-2">
+                          <span className="text-primary">
+                            {<ProjectIdBadge id={item.id} size="lg" />}
+                          </span>
                         </div>
                       </div>
                     </td>
@@ -371,7 +303,7 @@ export default async function PoolId({ params }: { params: PoolIdProps }) {
                       </div>
                     </td>
                     <td className="hidden py-4 pl-0 pr-8 text-sm leading-6 text-textSecondary md:table-cell lg:pr-20">
-                      {item.flowLastRate}
+                      + {item.flowLastRate} / mo
                     </td>
                     <td className="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-textSecondary sm:table-cell sm:pr-6 lg:pr-8">
                       <time dateTime={item.flowLastTime.toString()}>
